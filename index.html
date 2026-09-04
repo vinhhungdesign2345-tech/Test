@@ -66,31 +66,58 @@
            --- 2. CỤM NÚT CHUYỂN ĐỔI LỚP BẢN ĐỒ VÀ ĐO KHOẢNG CÁCH (PC) ---
            ========================================================================== */
         .map-layer-control {
+            /* Đặt kiểu định vị tuyệt đối để nhóm nút nổi lên trên bề mặt bản đồ */
             position: absolute; 
+            
+            /* Đặt khoảng cách cách mép dưới của khung bản đồ là 5 pixel */
             bottom: 5px; 
+            
+            /* Đặt khoảng cách cách mép trái của khung bản đồ là 10 pixel */
             left: 10px; 
+            
+            /* Thiết lập tầng hiển thị ưu tiên ở mức 100 để nằm đè lên lớp bản đồ */
             z-index: 100; 
         }
 
         #toggleLayerBtn {
+            /* Khoảng đệm phía trong: trên/dưới là 2px, trái/phải là 4px */
             padding: 2px 4px; 
+            
+            /* Thiết lập màu nền mặc định cho nút là màu trắng */
             background: white; 
+            
+            /* Tạo đường viền xung quanh nút có độ dày 1px, nét liền và màu xám nhạt */
             border: 1px solid #ccc; 
+            
+            /* Buộc con trỏ chuột giữ nguyên dạng mặc định (không đổi thành hình bàn tay) */
             cursor: default !important; 
+            
+            /* Bo tròn các góc của nút với bán kính cong là 6 pixel */
             border-radius: 6px; 
+            
+            /* Thiết lập kích thước chữ hiển thị trong nút nhỏ gọn ở mức 9 pixel */
             font-size: 9px; 
+            
+            /* Buộc kiểu chữ hiển thị bình thường, tuyệt đối không bị in đậm */
             font-weight: normal !important;
+            
+            /* Thiết lập màu sắc chữ bên trong nút là màu xám đậm (#333) */
             color: #333; 
+            
+            /* Thiết lập hiệu ứng chuyển đổi mượt mà khi thay đổi màu nền và màu viền trong 0.2 giây */
             transition: background-color 0.2s ease, border-color 0.2s ease; 
+            
+            /* Tạo hiệu ứng đổ bóng nhẹ phía dưới nút (độ dịch chuyển ngang 0, dọc 2px, bán kính mờ 5px, màu đen trong suốt 10%) */
             box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
         }
 
         #toggleLayerBtn:hover {
-            background-color: #d3e4ed; 
-            border-color: #b0b0b0; 
-        }
+            /* Đổi màu nền của nút sang màu xanh nhạt khi người dùng di chuột vào */
+            background-color: #81bbd4; 
+            }
 
         #measureDistBtn {
+            /* Buộc kiểu chữ của nút đo khoảng cách hiển thị bình thường, không in đậm */
             font-weight: normal !important;
         }
 
