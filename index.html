@@ -25,25 +25,41 @@
            --- 1. CÀI ĐẶT CHUNG CHO TOÀN BỘ TRANG WEB ---
            ========================================================================== */
         body { 
+            /* Loại bỏ hoàn toàn khoảng cách lề ngoài mặc định của trình duyệt */
             margin: 0; 
+            
+            /* Loại bỏ khoảng cách đệm bên trong mặc định của trình duyệt */
             padding: 0; 
+            
+            /* Thiết lập kiểu phông chữ mặc định là Arial, dự phòng sang sans-serif */
             font-family: Arial, sans-serif;
         }
 
         #map { 
+            /* Đặt kiểu định vị tuyệt đối để khung bản đồ phủ toàn bộ không gian */
             position: absolute; 
+            
+            /* Neo sát mép trên cùng của màn hình (khoảng cách bằng 0) */
             top: 0; 
+            
+            /* Kéo giãn khung bản đồ xuống tận mép dưới cùng của màn hình */
             bottom: 0; 
+            
+            /* Thiết lập chiều rộng bao phủ trọn vẹn 100% màn hình ngang */
             width: 100%; 
         }
 
         .maplibregl-canvas-container .maplibregl-canvas {
+            /* Tối ưu hóa độ tương phản và nét chữ trên các trình duyệt sử dụng nhân WebKit/Safari */
             image-rendering: -webkit-optimize-contrast; 
+            
+            /* Giữ cho các đường nét đồ họa, ký tự, số đo trên bản đồ hiển thị sắc nét, không bị mờ */
             image-rendering: crisp-edges; 
         }
 
         .maplibregl-marker, 
         .maplibregl-popup {
+            /* Thiết lập tầng hiển thị ưu tiên (z-index) ở mức 50 để đè lên các lớp nền thông thường */
             z-index: 50; 
         }
 
