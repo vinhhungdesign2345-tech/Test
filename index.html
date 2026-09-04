@@ -78,7 +78,7 @@
             left: 12px;                  /* Cách mép trái bản đồ 12 pixel */
             z-index: 100;                /* Độ ưu tiên lớp hiển thị trên cùng (mức 100) */
             background: rgba(255, 255, 255, 0.92); /* Màu nền trắng trong suốt 92% */
-            padding: 4px 4px 4px 4px;    /* Đặt đều 4 cạnh là 4px để cân đối tuyệt đối */
+            padding: 4px;                /* Đặt đều 4 cạnh là 4px */
             border-radius: 6px;          /* Bo góc toàn bộ bảng điều khiển bán kính 6 pixel */
             max-width: 300px;            /* Giới hạn chiều rộng tối đa là 300 pixel */
             width: calc(100% - 20px);    /* Tự động co giãn theo màn hình, trừ ra 20px lề */
@@ -86,6 +86,11 @@
             display: flex;               /* Sử dụng Flexbox để quản lý các thành phần con */
             flex-direction: column;      /* Sắp xếp các thành phần theo chiều dọc */
             gap: 4px;                    /* Khoảng cách đều giữa các ô tìm kiếm con */
+        }
+
+        /* TRIỆT TIÊU HOÀN TOÀN KHOẢNG TRỐNG DƯ THỪA Ở PHẦN TỬ CUỐI CÙNG */
+        .map-control > *:last-child {
+            margin-bottom: 0 !important;
         }
 
         /* 2. CẤU TRÚC HÀNG VÀ CÁC THÀNH PHẦN CON BÊN TRONG */
