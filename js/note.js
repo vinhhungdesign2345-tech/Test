@@ -1,5 +1,5 @@
 // ==========================================
-// HÀM MỞ POPUP XEM HOẶC NHẬP GHI CHÚ VÀ CẬP NHẬT NGÀY GHI CHÚ (CỘT O)
+// TRÌNH QUẢN LÝ CHẾ ĐỘ GHI CHÚ
 // ==========================================
 function openColumnNPopup(parcelId, mode, currentData = '') {
     
