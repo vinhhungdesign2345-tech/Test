@@ -1,387 +1,578 @@
 // ==========================================
-// js/map.js - QUẢN LÝ BẢN ĐỒ MAPLIBRE VÀ TƯƠNG TÁC
+// map.js
+TỔNG HỢP CẤU HÌNH (CONFIG) VÀ QUẢN LÝ BẢN ĐỒ
 // ==========================================
 
-// --- KHAI BÁO BIẾN TOÀN CỤC QUẢN LÝ NHÃN SỐ ĐO CẠNH VÀ ID THỬA ĐẤT ---
-let activeMarkers = []; // Mảng lưu trữ danh sách các đối tượng Marker hiển thị số đo kích thước cạnh thửa đất trên bản đồ
-window.selectedThuaDatId = null; // Biến toàn cục lưu trữ ID của thửa đất đang được click chọn
-
-// ==========================================
-// HÀM XÓA SẠCH CÁC NHÃN SỐ ĐO CẠNH TRÊN BẢN ĐỒ
-// ==========================================
-function clearLengthMarkers() {
-  // Duyệt qua mảng activeMarkers và gỡ bỏ từng marker hiển thị chiều dài cạnh khỏi bản đồ
-  activeMarkers.forEach(marker => marker.remove());
-  activeMarkers = []; // Reset mảng về rỗng
-}
-
-// ==========================================
-// HÀM ĐỊNH DẠNG SỐ CHUẨN VIỆT NAM (HỖ TRỢ GIỮ NGUYÊN SỐ THỰC)
-// ==========================================
-function formatNumberVN(val) {
-  // Kiểm tra nếu giá trị rỗng, null hoặc dấu gạch ngang thì trả về nguyên bản
-  if (val === null || val === undefined || val === '' || val === '-') return '-';
-  
-  // Thay thế dấu phẩy thành dấu chấm để chuẩn hóa chuỗi số JavaScript
-  const stringVal = String(val).replace(',', '.');
-  const num = parseFloat(stringVal);
-  
-  // Nếu không phải là số hợp lệ thì trả về giá trị cũ
-  if (isNaN(num)) return val;
-
-  // Định dạng lại số theo chuẩn Việt Nam (phân cách hàng nghìn, tối đa 2 chữ số thập phân)
-  return num.toLocaleString('vi-VN', { 
-    minimumFractionDigits: 0, 
-    maximumFractionDigits: 2 
-  });
-}
-
-// ==========================================
-// HÀM ĐÓNG BẢNG THÔNG TIN VÀ XÓA TRẠNG THÁI LÀM NỔI BẬT THỬA ĐẤT
-// ==========================================
-function closeParcelPanel() {
-  const panel = document.getElementById('parcel-info-panel');
-  
-  // Ẩn bảng hiển thị thông tin chi tiết thửa đất ở giao diện
-  if (panel) panel.style.display = 'none';
-
-  // Đặt lại ID thửa đất được chọn về null
-  window.selectedThuaDatId = null;
-
-  // Xóa các nhãn đo cạnh của thửa đất cũ
-  clearLengthMarkers();
-
-  const mapInstance = window.currentMapInstance;
-  if (mapInstance) {
-    // Xóa hiệu ứng làm nổi bật phần nền (fill) của thửa đất trên bản đồ
-    if (mapInstance.getLayer('sheet-thua-dat-highlight-fill')) {
-      mapInstance.setFilter('sheet-thua-dat-highlight-fill', ['==', ['get', 'ID Thửa Đất'], '']);
-    }
-    
-    // Xóa hiệu ứng làm nổi bật phần đường viền (line) của thửa đất trên bản đồ
-    if (mapInstance.getLayer('sheet-thua-dat-highlight-line')) {
-      mapInstance.setFilter('sheet-thua-dat-highlight-line', ['==', ['get', 'ID Thửa Đất'], '']);
-    }
-
-    // Làm sạch nguồn dữ liệu vẽ kích thước cạnh thửa đất
-    if (mapInstance.getSource('parcel-dimensions-source')) {
-      mapInstance.getSource('parcel-dimensions-source').setData({
-        type: 'FeatureCollection',
-        features: [] 
-      });
-    }
-  }
-}
-
-// ==========================================
-// HÀM KHỞI TẠO VÀ CẤU HÌNH TOÀN BỘ BẢN ĐỒ
-// ==========================================
-function initMap() {
-  // Khởi tạo đối tượng bản đồ MapLibre GL bên trong thẻ div có id là 'map'
-  const map = new maplibregl.Map({
-    container: 'map', 
-    style: CONFIG.MAP_STYLE, // Lấy style cấu hình từ tệp cấu hình chung
-    center: CONFIG.MAP_CENTER, // Tọa độ trung tâm mặc định khi mở bản đồ
-    zoom: CONFIG.MAP_ZOOM // Mức phóng to (zoom) mặc định
-  });
-
-  // Lưu lại instance của bản đồ vào biến toàn cục để các hàm khác có thể gọi chung
-  window.currentMapInstance = map;
-
-  // Tạo công cụ định vị vị trí người dùng trên bản đồ
-  const geolocate = new maplibregl.GeolocateControl({
-    positionOptions: { 
-      enableHighAccuracy: true, 
-      maximumAge: 0, 
-      timeout: 20000 
+// --- 1. CẤU HÌNH HỆ THỐNG VÀ BẢN ĐỒ (CONFIG) ---
+const CONFIG = {
+    PROVINCES: [
+        { id: "CaMau", name: "1. Tỉnh Cà Mau", file: "./geojson/Ca-Mau.json" },
+        { id: "AnGiang", name: "2. Tỉnh An Giang", file: "./geojson/An-Giang.json" },
+        { id: "TPCanTho", name: "3. Thành Phố Cần Thơ", file: "./geojson/TP-Can-Tho.json" },
+        { id: "VinhLong", name: "4.Tỉnh Vĩnh Long", file: "./geojson/Vinh-Long.json" },
+        { id: "DongThap", name: "5. Tỉnh Đồng Tháp", file: "./geojson/Dong-Thap.json" },
+        { id: "TPHoChiMinh", name: "6. Thành Phố Hồ Chí Minh", file: "./geojson/TP-Ho-Chi-Minh.json" },
+        { id: "TayNinh", name: "7. Tỉnh Tây Ninh", file: "./geojson/Tay-Ninh.json" },
+        { id: "TPDongNai", name: "8. Thành Phố Đồng Nai", file: "./geojson/TP-Dong-Nai.json" },
+        { id: "LamDong", name: "9. Tỉnh Lâm Đồng", file: "./geojson/Lam-Dong.json" },
+        { id: "KhanhHoa", name: "10. Tỉnh Khánh Hòa", file: "./geojson/Khanh-Hoa.json" },
+        { id: "DakLak", name: "11. Tỉnh Dak Lak", file: "./geojson/Dak-Lak.json" },
+        { id: "GiaLai", name: "12. Tỉnh Gia Lai", file: "./geojson/Gia-Lai.json" },
+        { id: "QuangNgai", name: "13. Tỉnh Quảng Ngãi", file: "./geojson/Quang-Ngai.json" },
+        { id: "TPDaNang", name: "14. Thành Phố Đà Nẵng", file: "./geojson/TP-Da-Nang.json" },
+        { id: "TPHue", name: "15. Thành Phố Huế", file: "./geojson/TP-Hue.json" },
+        { id: "QuangTri", name: "16. Tỉnh Quảng Trị", file: "./geojson/Quang-Tri.json" },
+        { id: "HaTinh", name: "17. Tỉnh Hà Tĩnh", file: "./geojson/Ha-Tinh.json" },
+        { id: "NgheAn", name: "18. Tỉnh Nghệ An", file: "./geojson/Nghe-An.json" },
+        { id: "ThanhHoa", name: "19. Tỉnh Thanh Hóa", file: "./geojson/Thanh-Hoa.json" },
+        { id: "NinhBinh", name: "20. Tỉnh Ninh Bình", file: "./geojson/Ninh_Binh.json" },
+        { id: "HungYen", name: "21. Tỉnh Hưng Yên", file: "./geojson/Hung-Yen.json" },
+        { id: "SonLa", name: "22. Tỉnh Sơn La", file: "./geojson/Son-La.json" },
+        { id: "PhuTho", name: "23. Tỉnh Phú Thọ", file: "./geojson/Phu-Tho.json" },
+        { id: "TPHaNoi", name: "24. Thành Phố Hà Nội", file: "./geojson/TP-Ha-Noi.json" },
+        { id: "TPHaiPhong", name: "25. Thành Phố Hải Phòng", file: "./geojson/TP-Hai-Phong.json" },
+        { id: "BacNinh", name: "26. TP. Bắc Ninh", file: "./geojson/Bac-Ninh.json" },
+        { id: "QuangNinh", name: "27. TP. Quảng Ninh", file: "./geojson/Quang-Ninh.json" },
+        { id: "DienBien", name: "28. Tỉnh Điện Biên", file: "./geojson/Dien-Bien.json" },
+        { id: "LaiChau", name: "29. Tỉnh Lai Châu", file: "./geojson/Lai-Chau.json" },
+        { id: "LaoCai", name: "30. Tỉnh Lào Cai", file: "./geojson/Lao-Cai.json" },
+        { id: "TuyenQuang", name: "31. Tỉnh Tuyên Quang", file: "./geojson/Tuyen-Quang.json" },
+        { id: "ThaiNguyen", name: "32. Tỉnh Thái Nguyên", file: "./geojson/Thai-Nguyên.json" },
+        { id: "CaoBang", name: "33. Tỉnh Cao Bằng", file: "./geojson/Cao-Bang.json" },
+        { id: "LangSon", name: "34. Tỉnh Lạng Sơn", file: "./geojson/Lang-Son.json" }, 
+    ],
+    SHEET_DATA_URL: 'https://script.google.com/macros/s/AKfycbz87dcUkndM5w5BeFqUFYJt8JDEcPu98IH5mbzNdov_6eXTNUEhIiknFQ9P7H2c0ZQE/exec',
+    MAP_STYLE: {
+        'version': 8,
+        'sources': {
+            'google-satellite': {
+                'type': 'raster',
+                'tiles': ['https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}'],
+                'tileSize': 256
+            },
+            'osm-map': { 
+                'type': 'raster',
+                'tiles': ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+                'tileSize': 256,
+                'attribution': '&copy; OpenStreetMap contributors'
+            },
+            'ha-tang-dien-source': {
+                'type': 'geojson',
+                'data': './geojson/Ca-Mau-ha-tang-dien.json'
+            }
+        },
+        'layers': [
+            {
+                'id': 'google-satellite-layer',
+                'type': 'raster',
+                'source': 'google-satellite',
+                'minzoom': 0, 'maxzoom': 22
+            },
+            {
+                'id': 'osm-layer', 
+                'type': 'raster',
+                'source': 'osm-map',
+                'layout': { 'visibility': 'none' },
+                'minzoom': 0, 'maxzoom': 22
+            },
+            {
+                'id': 'ha-tang-dien-line',
+                'type': 'line',
+                'source': 'ha-tang-dien-source',
+                'filter': ['==', '$type', 'LineString'],
+                'minzoom': 0, 'maxzoom': 22,
+                'paint': {
+                    'line-color': '#ffcc00',
+                    'line-width': 1,
+                    'line-opacity': 0.5
+                }
+            },
+            {
+                'id': 'ha-tang-dien-points',
+                'type': 'circle',
+                'source': 'ha-tang-dien-source',
+                'filter': ['==', '$type', 'Point'],
+                'minzoom': 14,
+                'maxzoom': 22,
+                'paint': {
+                    'circle-radius': 4,
+                    'circle-color': '#ff0000',
+                    'circle-stroke-width': 1,
+                    'circle-stroke-color': '#ffffff'
+                }
+            }
+        ]
     },
-    trackUserLocation: true, 
-    showUserHeading: true 
-  });
-  
-  // Thêm nút định vị vào góc trên bên phải bản đồ
-  map.addControl(geolocate, 'top-right');
+    MAP_CENTER: [105.15, 9.18],
+    MAP_ZOOM: 12,
+    FILL_COLOR: '#00ffcc',
+    FILL_OPACITY: 0.3,
+    OUTLINE_COLOR: '#ffffff'
+};
 
-  // Sự kiện xảy ra khi định vị thành công vị trí hiện tại của người dùng
-  geolocate.on('geolocate', async (position) => {
-    const lng = position.coords.longitude; 
-    const lat = position.coords.latitude; 
+const COLOR_MATCH_EXPRESSION = [
+    'match',
+    ['get', 'Loại Đất'],
+    'Đất ở tại đô thị', '#e063ce',
+    'Đất ở tại nông thôn', '#cf99c7',
+    'Đất nuôi trồng thuỷ sản', '#00b4d8',
+    'Đất nuôi trồng thủy sản', '#00b4d8',
+    'Đất trồng cây lâu năm', '#519e05',
+    'Đất trồng cây hàng năm khác', '#519e05',
+    'Đất trồng lúa', '#f5e753',
+    'Đất chuyên trồng lúa nước', '#ffea00',
+    '#c2b9ab'
+];
 
-    // Nếu hàm lấy Phường/Xã từ tọa độ tồn tại thì gọi để tự động tra cứu khu vực
-    if (typeof selectPhuongFromPoint === 'function') {
-      await selectPhuongFromPoint(lng, lat, map);
-    }
-  });
+// --- 2. BIẾN TOÀN CỤC & HÀM TIỆN ÍCH ---
+let activeMarkers = [];
+window.selectedThuaDatId = null;
+let currentGeoData = null;
 
-  // Sự kiện khi bản đồ đã tải hoàn tất toàn bộ tài nguyên cốt lõi
-  map.on('load', () => {
-    const satLayer = 'google-satellite-layer'; // ID lớp bản đồ vệ tinh
-    const osmLayer = 'osm-layer'; // ID lớp bản đồ OpenStreetMap
+function clearLengthMarkers() {
+    activeMarkers.forEach(marker => marker.remove());
+    activeMarkers = [];
+}
 
-    // Mặc định bật lớp vệ tinh và ẩn lớp OSM khi mới vào trang
-    map.setLayoutProperty(satLayer, 'visibility', 'visible');
-    map.setLayoutProperty(osmLayer, 'visibility', 'none');
+function formatNumberVN(val) {
+    if (val === null || val === undefined || val === '' || val === '-') return '-';
+    const stringVal = String(val).replace(',', '.');
+    const num = parseFloat(stringVal);
+    if (isNaN(num)) return val;
+    return num.toLocaleString('vi-VN', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+}
 
-    // Cấu hình nút chuyển đổi qua lại giữa bản đồ Vệ tinh và OSM
-    const toggleBtn = document.getElementById('toggleLayerBtn');
-    if (toggleBtn) {
-      toggleBtn.innerText = 'Chuyển sang Bản đồ OSM';
+function closeParcelPanel() {
+    const panel = document.getElementById('parcel-info-panel');
+    if (panel) panel.style.display = 'none';
+    window.selectedThuaDatId = null;
+    clearLengthMarkers();
 
-      toggleBtn.onclick = function() {
-        const isSatVisible = map.getLayoutProperty(satLayer, 'visibility') === 'visible';
-        
-        if (isSatVisible) {
-          // Nếu đang là vệ tinh thì chuyển sang OSM
-          map.setLayoutProperty(satLayer, 'visibility', 'none');
-          map.setLayoutProperty(osmLayer, 'visibility', 'visible');
-          this.innerText = 'Chuyển sang Bản đồ Vệ tinh';
-        } else {
-          // Nếu đang là OSM thì chuyển về vệ tinh
-          map.setLayoutProperty(satLayer, 'visibility', 'visible');
-          map.setLayoutProperty(osmLayer, 'visibility', 'none');
-          this.innerText = 'Chuyển sang Bản đồ OSM';
+    const mapInstance = window.currentMapInstance;
+    if (mapInstance) {
+        if (mapInstance.getLayer('sheet-thua-dat-highlight-fill')) {
+            mapInstance.setFilter('sheet-thua-dat-highlight-fill', ['==', ['get', 'ID Thửa Đất'], '']);
         }
-      };
-    }
-
-    // Cấu hình thanh kéo (slider) điều chỉnh độ mờ/đậm (opacity) của lớp bản đồ thửa đất
-    const opacitySlider = document.getElementById('opacitySlider');
-    const opacityValueLabel = document.getElementById('opacityValue');
-
-    if (opacitySlider) {
-      opacitySlider.oninput = function() {
-        const val = parseFloat(this.value);
-        if (opacityValueLabel) opacityValueLabel.innerText = val;
-
-        // Thay đổi độ mờ của lớp nền thửa đất thông thường
-        if (map.getLayer('sheet-thua-dat-fill')) {
-          map.setPaintProperty('sheet-thua-dat-fill', 'fill-opacity', val);
+        if (mapInstance.getLayer('sheet-thua-dat-highlight-line')) {
+            mapInstance.setFilter('sheet-thua-dat-highlight-line', ['==', ['get', 'ID Thửa Đất'], '']);
         }
-        
-        // Thay đổi độ mờ của thửa đất đang được chọn (highlight) cho đậm hơn một chút
-        if (map.getLayer('sheet-thua-dat-highlight-fill')) {
-          map.setPaintProperty('sheet-thua-dat-highlight-fill', 'fill-opacity', Math.min(val + 0.2, 1.0));
+        if (mapInstance.getSource('parcel-dimensions-source')) {
+            mapInstance.getSource('parcel-dimensions-source').setData({ type: 'FeatureCollection', features: [] });
         }
-      };
     }
+}
 
-    // Khởi tạo nguồn dữ liệu và giao diện layer hiển thị kích thước các cạnh thửa đất
-    if (!map.getSource('parcel-dimensions-source')) {
-      map.addSource('parcel-dimensions-source', {
-        type: 'geojson',
-        data: { 
-          type: 'FeatureCollection', 
-          features: [] 
+// --- 3. XỬ LÝ LOGIC HÀNH CHÍNH & BỘ LỌC ---
+async function selectPhuongFromPoint(lng, lat, map) {
+    const tinhSelect = document.getElementById('tinhFilter');
+    const phuongSelect = document.getElementById('phuongFilter');
+    const point = turf.point([lng, lat]); 
+
+    let matchedProvince = null;
+    let matchedPhuong = null;
+    let targetGeoData = null;
+
+    for (const provinceInfo of CONFIG.PROVINCES) {
+        const geoData = await fetchGeoDataByUrl(provinceInfo.file);
+        if (geoData && geoData.features) {
+            for (const feature of geoData.features) {
+                if (turf.booleanPointInPolygon(point, feature)) {
+                    matchedProvince = provinceInfo;
+                    targetGeoData = geoData;
+                    const p = feature.properties || {};
+                    matchedPhuong = p.name || p.dia_chi || p.Phuong || p.Xa || p.NAME_2 || p.NAME_3;
+                    break;
+                }
+            }
         }
-      });
-
-      map.addLayer({
-        id: 'parcel-dimensions-layer',
-        type: 'circle',
-        source: 'parcel-dimensions-source',
-        paint: {
-          'circle-radius': 4, 
-          'circle-color': '#ffffff', 
-          'circle-stroke-width': 1.5, 
-          'circle-stroke-color': '#000000'
-        }
-      });
+        if (matchedProvince) break;
     }
 
-    // Khởi tạo tính năng đo đạc khoảng cách/diện tích chuyên dụng từ tệp measure.js
-    if (typeof initMeasureFeature === 'function') {
-      initMeasureFeature(map);
-    }
+    if (matchedProvince && targetGeoData) {
+        if (tinhSelect.value !== matchedProvince.id) {
+            tinhSelect.value = matchedProvince.id;
+            currentGeoData = targetGeoData;
 
-    // Khởi tạo tính năng đánh dấu tọa độ địa điểm chuyên dụng từ tệp mark.js
-    if (typeof initMarkFeature === 'function') {
-      initMarkFeature(map);
-    }
+            if (map.getSource('thua-dat-src')) {
+                map.getSource('thua-dat-src').setData(targetGeoData);
+            } else {
+                map.addSource('thua-dat-src', { type: 'geojson', data: targetGeoData });
+                map.addLayer({
+                    'id': 'thua-dat-layer', 'type': 'fill', 'source': 'thua-dat-src',
+                    'paint': { 'fill-color': '#000000', 'fill-opacity': 0 }
+                });
+                map.addLayer({
+                    'id': 'thua-dat-line-layer', 'type': 'line', 'source': 'thua-dat-src',
+                    'paint': { 'line-color': '#ff0000', 'line-width': 2 }
+                });
+            }
 
-    // Gọi các hàm khởi tạo bộ lọc và tìm kiếm thửa đất
-    initFilter(map);
-    initThuaDatSearch(map);
-  });
-
-   // Mảng chứa ID các lớp (layer) của thửa đất trên bản đồ cần lắng nghe sự kiện click
-  const sheetLayers = ['sheet-thua-dat-fill', 'sheet-thua-dat-line'];
-  let isFeatureClicked = false; // Biến cờ kiểm tra xem có click trúng thửa đất hay không
-
-  sheetLayers.forEach(layerId => {
-    // Sự kiện khi người dùng click chuột vào một thửa đất trên bản đồ
-    map.on('click', layerId, (e) => {
-      // Nếu đang trong chế độ đo đạc tự do hoặc chế độ đánh dấu thì bỏ qua sự kiện click chọn thửa đất
-      if (isMeasuring || (typeof isMarkingMode !== 'undefined' && isMarkingMode)) return; 
-
-      if (!e.features || !e.features.length) return;
-      isFeatureClicked = true; // Đánh dấu là đã click trúng thửa đất
-
-      const selectedFeature = e.features[0]; // Lấy đối tượng thửa đất đầu tiên được click
-      const rawProps = selectedFeature.properties || {}; // Trích xuất toàn bộ thuộc tính dữ liệu từ Google Sheet gắn với thửa đất
-
-      window._currentParcelRawProps = rawProps;
-
-      const parcelId = rawProps['ID Thửa Đất'] || rawProps['id'] || '';
-      window.selectedThuaDatId = parcelId;
-
-      // Xóa các nhãn đo chiều dài cạnh cũ trước khi vẽ nhãn mới của thửa đất này
-      clearLengthMarkers();
-
-      // Sử dụng thư viện Turf.js để tính toán chiều dài các cạnh của đa giác thửa đất
-      if (typeof turf !== 'undefined' && selectedFeature.geometry) {
-        try {
-          const lineSegments = turf.lineSegment(selectedFeature); // Tách đa giác thành các đoạn thẳng đơn lẻ
-          const dimensionFeatures = [];
-
-          // Duyệt qua từng đoạn thẳng cạnh của thửa đất
-          lineSegments.features.forEach(segment => {
-            const lengthMeters = turf.length(segment, { units: 'meters' }); // Tính chiều dài theo mét
+            phuongSelect.innerHTML = '<option value="">-- Phường / Xã --</option>';
+            phuongSelect.disabled = false;
             
-            // Làm tròn số đo cạnh (dưới 10m lấy 2 số thập phân, trên 10m lấy 1 số thập phân)
-            const formattedLength = lengthMeters >= 10 
-              ? `${lengthMeters.toFixed(1)}m` 
-              : `${lengthMeters.toFixed(2)}m`;
-
-            segment.properties.length = formattedLength;
-            dimensionFeatures.push(segment);
-
-            // Tính toán điểm giữa (midpoint) của cạnh để đặt nhãn hiển thị số đo
-            const coords = segment.geometry.coordinates;
-            const midCoord = [(coords[0][0] + coords[1][0]) / 2, (coords[0][1] + coords[1][1]) / 2];
-
-            // Tạo phần tử HTML chứa nhãn hiển thị kích thước cạnh
-            const el = document.createElement('div');
-            el.style.color = '#ffffff'; 
-            el.style.fontSize = '12px'; 
-            el.style.fontWeight = 'Bold'; 
-            el.style.textShadow = '1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000'; 
-            el.style.whiteSpace = 'nowrap'; 
-            el.innerText = formattedLength; 
-
-            // Tạo Marker của MapLibre để ghim nhãn số đo lên tọa độ điểm giữa cạnh
-            const marker = new maplibregl.Marker({
-              element: el,
-              anchor: 'center'
-            })
-            .setLngLat(midCoord) 
-            .addTo(map); 
-
-            activeMarkers.push(marker); // Thêm vào mảng quản lý để tiện xóa sau này
-          });
-
-          // Cập nhật nguồn dữ liệu vẽ các điểm/đường kích thước cạnh
-          if (map.getSource('parcel-dimensions-source')) {
-            map.getSource('parcel-dimensions-source').setData({
-              type: 'FeatureCollection',
-              features: dimensionFeatures
+            const phuongSet = new Set();
+            targetGeoData.features.forEach(f => {
+                const p = f.properties || {};
+                const val = p.name || p.dia_chi || p.Phuong || p.Quan || p.Xa || p.NAME_2 || p.NAME_3;
+                if (val) phuongSet.add(String(val).trim());
             });
-          }
-        } catch (err) {
-          console.error("Lỗi trong quá trình tính toán độ dài cạnh thửa đất:", err);
+            
+            Array.from(phuongSet).sort().forEach(pName => {
+                const opt = document.createElement('option');
+                opt.value = pName; opt.textContent = pName;
+                phuongSelect.appendChild(opt);
+            });
+
+            await loadThuaDatFromSheet(map);
         }
-      }
 
-      // Trích xuất các thông tin chi tiết từ thuộc tính Google Sheet để hiển thị lên bảng thông tin
-      const soTo = rawProps['Số tờ'] || rawProps['So to'] || '-';
-      const soThua = rawProps['Số thửa'] || rawProps['So thua'] || '-';
-      
-      const rawDienTich = rawProps['Diện tích'] || 
-        rawProps['Dien tich'] || 
-        rawProps['dien_tich'] || 
-        rawProps['DienTich'] || 
-        rawProps['DIỆN TÍCH'] || 
-        rawProps['Diện tích\nm²'] || 
-        rawProps['Diện\ntích'] || '-';
-      
-      const dienTich = formatNumberVN(rawDienTich); // Định dạng lại diện tích theo chuẩn Việt Nam
+        if (matchedPhuong && phuongSelect) {
+            phuongSelect.value = matchedPhuong;
+            const filterExpr = [
+                'any',
+                ['==', ['get', 'name'], matchedPhuong],
+                ['==', ['get', 'dia_chi'], matchedPhuong],
+                ['==', ['get', 'Phuong'], matchedPhuong],
+                ['==', ['get', 'Xa'], matchedPhuong]
+            ];
+            const sheetFilterExpr = ['==', ['get', 'Địa Chỉ Thửa Đất'], matchedPhuong];
 
-      const loaiDat = rawProps['Loại Đất'] || rawProps['Loại Đất:'] || rawProps['Loại đất'] || rawProps['loai_dat'] || '-';
-      const tenChu = rawProps['Tên Chủ'] || rawProps['Tên chủ'] || '-';
-      const soDinhDanh = rawProps['Số định danh chủ đất'] || rawProps['Số định danh'] || 'Không có';
-      
-      // Xử lý logic hiển thị nút Xem/Nhập dữ liệu cho cột ghi chú phụ (Cột N)
-      const columnNValue = rawProps['Cột N'] || rawProps['cot_n'] || rawProps['Ghi Chú'] || rawProps['Ghi chú'] || '';
-      let columnNLinkHTML = '';
+            if (map.getLayer('thua-dat-layer')) map.setFilter('thua-dat-layer', filterExpr);
+            if (map.getLayer('thua-dat-line-layer')) map.setFilter('thua-dat-line-layer', filterExpr);
+            if (map.getLayer('sheet-thua-dat-fill')) map.setFilter('sheet-thua-dat-fill', sheetFilterExpr);
+            if (map.getLayer('sheet-thua-dat-line')) map.setFilter('sheet-thua-dat-line', sheetFilterExpr);
+        }
+    }
+}
 
-      if (columnNValue && columnNValue.trim() !== '' && columnNValue !== 'Không có') {
-        window[`_viewColN_${parcelId}`] = () => openColumnNPopup(parcelId, 'view', columnNValue);
-        columnNLinkHTML = `<a href="javascript:void(0);" onclick="window._viewColN_${parcelId}();" style="color: #007bff; text-decoration: underline; font-weight: bold;">Xem</a>`;
-      } else {
-        window[`_inputColN_${parcelId}`] = () => openColumnNPopup(parcelId, 'input', '');
-        columnNLinkHTML = `<a href="javascript:void(0);" onclick="window._inputColN_${parcelId}();" style="color: #d93025; text-decoration: underline; font-weight: bold;">Nhập</a>`;
-      }
+async function loadProvinceData(provinceId, map) {
+    const phuongSelect = document.getElementById('phuongFilter');
+    phuongSelect.innerHTML = '<option value="">-- Phường / Xã --</option>';
+    hideThuaDat(map);
 
-      // Thiết lập bộ lọc để làm nổi bật (highlight) thửa đất vừa click trên bản đồ
-      let selectFilter = parcelId ? ['==', ['get', 'ID Thửa Đất'], rawProps['ID Thửa Đất'] || parcelId] : ['==', ['get', 'Tên Chủ'], tenChu];
+    if (!provinceId) {
+        phuongSelect.disabled = true;
+        currentGeoData = null;
+        return;
+    }
 
-      if (map.getLayer('sheet-thua-dat-highlight-fill')) map.setFilter('sheet-thua-dat-highlight-fill', selectFilter);
-      if (map.getLayer('sheet-thua-dat-highlight-line')) map.setFilter('sheet-thua-dat-highlight-line', selectFilter);
+    const provinceInfo = CONFIG.PROVINCES.find(p => p.id === provinceId);
+    if (!provinceInfo) return;
 
-      // Xây dựng cấu trúc HTML nội dung hiển thị trong bảng thông tin chi tiết thửa đất
-      const panelContent = `
-        <div><b>Số tờ:</b> ${soTo}</div>
-        <div><b>Số thửa:</b> ${soThua}</div>
-        <div><b>Diện tích:</b> ${dienTich} m²</div>
-        <div><b>Loại đất:</b> ${loaiDat}</div>
-        <div style="grid-column: span 2;"><b>Tên chủ:</b> ${tenChu}</div>
-        <div><b>Số định danh:</b> ${soDinhDanh}</div>
-        <div><b>Ghi chú:</b> ${columnNLinkHTML}</div>
-      `;
+    const geoData = await fetchGeoDataByUrl(provinceInfo.file); 
+    if (!geoData || !geoData.features) {
+        alert("Chưa tải được file GeoJSON!");
+        return;
+    }
 
-      // Đưa nội dung vào khung giao diện và hiển thị bảng thông tin lên màn hình
-      const panelContentEl = document.getElementById('panel-content');
-      const panelEl = document.getElementById('parcel-info-panel');
-      if (panelContentEl) panelContentEl.innerHTML = panelContent;
-      if (panelEl) panelEl.style.display = 'block'; 
+    currentGeoData = geoData;
+    const phuongSet = new Set();
+    geoData.features.forEach(f => {
+        const p = f.properties || {};
+        const val = p.name || p.dia_chi || p.Phuong || p.Quan || p.Xa || p.NAME_2 || p.NAME_3;
+        if (val) phuongSet.add(String(val).trim());
     });
 
-    // Cấu hình đổi kiểu con trỏ chuột khi di chuyển qua lại trên ranh giới thửa đất
-    map.on('mouseenter', layerId, () => map.getCanvas().style.cursor = 'default');
-    map.on('mouseleave', layerId, () => map.getCanvas().style.cursor = 'default');
-  });
-
-  // Sự kiện click trực tiếp lên nền bản đồ (vùng trống không có thửa đất)
-  map.on('click', (e) => {
-    // Nếu đang trong chế độ đo đạc (measure) thì xử lý nhận tọa độ điểm đo
-    if (isMeasuring) {
-      if (window._isDraggingMarker) return;
-
-      const coords = [e.lngLat.lng, e.lngLat.lat];
-      
-      // Kiểm tra nếu click gần điểm bắt đầu (dưới 5 mét) thì tự động đóng kín đa giác đo đạc
-      if (measureCoordinates.length >= 2 && typeof turf !== 'undefined') {
-        const firstCoord = measureCoordinates[0];
-        const distanceToFirst = turf.distance(
-          turf.point(firstCoord),
-          turf.point(coords),
-          { units: 'meters' }
-        );
-        
-        if (distanceToFirst < 5) {
-          pushMeasureState();
-          measureCoordinates.push([...firstCoord]);
-          updateMeasureGeometry(map, false);
-          return;
-        }
-      }
-
-      pushMeasureState();
-      measureCoordinates.push(coords);
-      updateMeasureGeometry(map, false);
-      return;
+    if (map.getSource('thua-dat-src')) {
+        map.getSource('thua-dat-src').setData(geoData);
+    } else {
+        map.addSource('thua-dat-src', { type: 'geojson', data: geoData });
+        map.addLayer({
+            'id': 'thua-dat-layer', 'type': 'fill', 'source': 'thua-dat-src',
+            'paint': { 'fill-color': '#000000', 'fill-opacity': 0 }
+        });
+        map.addLayer({
+            'id': 'thua-dat-line-layer', 'type': 'line', 'source': 'thua-dat-src',
+            'paint': { 'line-color': '#ff0000', 'line-width': 2 }
+        });
     }
 
-    // Nếu click vào khoảng trắng ngoài thửa đất thì đóng bảng thông tin và thực hiện tra cứu vị trí hành chính (Phường/Xã)
-    if (!isFeatureClicked) {
-      closeParcelPanel(); 
+    const showAllProvinceFilter = ['!=', '$type', 'Point']; 
+    if (map.getLayer('thua-dat-layer')) map.setFilter('thua-dat-layer', showAllProvinceFilter);
+    if (map.getLayer('thua-dat-line-layer')) map.setFilter('thua-dat-line-layer', showAllProvinceFilter);
 
-      if (typeof selectPhuongFromPoint === 'function') {
-        selectPhuongFromPoint(e.lngLat.lng, e.lngLat.lat, map);
-      }
+    try {
+        const bbox = turf.bbox(geoData);
+        map.fitBounds(bbox, { padding: 50, maxZoom: 15, duration: 300 }); 
+    } catch (err) {
+        console.error("Lỗi tự động zoom khung tỉnh:", err);
     }
-    isFeatureClicked = false; 
-  });
+
+    phuongSelect.disabled = false;
+    Array.from(phuongSet).sort().forEach(pName => {
+        const opt = document.createElement('option');
+        opt.value = pName; opt.textContent = pName;
+        phuongSelect.appendChild(opt);
+    });
 }
 
-// Gọi hàm khởi tạo bản đồ ngay khi tài liệu HTML tải xong hoàn toàn
+function initFilter(map) {
+    const tinhSelect = document.getElementById('tinhFilter');
+    const phuongSelect = document.getElementById('phuongFilter');
+
+    tinhSelect.innerHTML = '<option value="">-- Tỉnh / TP --</option>';
+    CONFIG.PROVINCES.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.id; opt.textContent = p.name;
+        tinhSelect.appendChild(opt);
+    });
+
+    tinhSelect.addEventListener('change', (e) => {
+        loadProvinceData(e.target.value, map);
+    });
+
+    phuongSelect.addEventListener('change', async (e) => {
+        const selectedPhuong = e.target.value;
+        if (!selectedPhuong) {
+            hideThuaDat(map);
+            const showAllProvinceFilter = ['!=', '$type', 'Point'];
+            if (map.getLayer('thua-dat-layer')) map.setFilter('thua-dat-layer', showAllProvinceFilter);
+            if (map.getLayer('thua-dat-line-layer')) map.setFilter('thua-dat-line-layer', showAllProvinceFilter);
+        } else {
+            const filterExpr = [
+                'any',
+                ['==', ['get', 'name'], selectedPhuong],
+                ['==', ['get', 'dia_chi'], selectedPhuong],
+                ['==', ['get', 'Phuong'], selectedPhuong],
+                ['==', ['get', 'Xa'], selectedPhuong]
+            ];
+            const sheetFilterExpr = ['==', ['get', 'Địa Chỉ Thửa Đất'], selectedPhuong];
+
+            if (map.getLayer('thua-dat-layer')) map.setFilter('thua-dat-layer', filterExpr);
+            if (map.getLayer('thua-dat-line-layer')) map.setFilter('thua-dat-line-layer', filterExpr);
+            
+            await loadThuaDatFromSheet(map);
+
+            if (map.getLayer('sheet-thua-dat-fill')) map.setLayer('sheet-thua-dat-fill', sheetFilterExpr);
+            if (map.getLayer('sheet-thua-dat-line')) map.setLayer('sheet-thua-dat-line', sheetFilterExpr);
+
+            if (currentGeoData) {
+                const filtered = currentGeoData.features.filter(f => {
+                    const p = f.properties || {};
+                    return p.name === selectedPhuong || p.dia_chi === selectedPhuong || p.Phuong === selectedPhuong || p.Xa === selectedPhuong;
+                });
+                if (filtered.length > 0) {
+                    const fc = turf.featureCollection(filtered);
+                    const bbox = turf.bbox(fc);
+                    map.fitBounds(bbox, { padding: 50, duration: 300 });
+                }
+            }
+        }
+    });
+}
+
+// --- 4. KHỞI TẠO BẢN ĐỒ CHÍNH ---
+function initMap() {
+    const map = new maplibregl.Map({
+        container: 'map', 
+        style: CONFIG.MAP_STYLE,
+        center: CONFIG.MAP_CENTER,
+        zoom: CONFIG.MAP_ZOOM
+    });
+
+    window.currentMapInstance = map;
+
+    const geolocate = new maplibregl.GeolocateControl({
+        positionOptions: { enableHighAccuracy: true, maximumAge: 0, timeout: 20000 },
+        trackUserLocation: true, 
+        showUserHeading: true 
+    });
+    map.addControl(geolocate, 'top-right');
+
+    geolocate.on('geolocate', async (position) => {
+        const lng = position.coords.longitude; 
+        const lat = position.coords.latitude; 
+        if (typeof selectPhuongFromPoint === 'function') {
+            await selectPhuongFromPoint(lng, lat, map);
+        }
+    });
+
+    map.on('load', () => {
+        const satLayer = 'google-satellite-layer';
+        const osmLayer = 'osm-layer';
+
+        map.setLayoutProperty(satLayer, 'visibility', 'visible');
+        map.setLayoutProperty(osmLayer, 'visibility', 'none');
+
+        const toggleBtn = document.getElementById('toggleLayerBtn');
+        if (toggleBtn) {
+            toggleBtn.innerText = 'Chuyển sang Bản đồ OSM';
+            toggleBtn.onclick = function() {
+                const isSatVisible = map.getLayoutProperty(satLayer, 'visibility') === 'visible';
+                if (isSatVisible) {
+                    map.setLayoutProperty(satLayer, 'visibility', 'none');
+                    map.setLayoutProperty(osmLayer, 'visibility', 'visible');
+                    this.innerText = 'Chuyển sang Bản đồ Vệ tinh';
+                } else {
+                    map.setLayoutProperty(satLayer, 'visibility', 'visible');
+                    map.setLayoutProperty(osmLayer, 'visibility', 'none');
+                    this.innerText = 'Chuyển sang Bản đồ OSM';
+                }
+            };
+        }
+
+        const opacitySlider = document.getElementById('opacitySlider');
+        const opacityValueLabel = document.getElementById('opacityValue');
+        if (opacitySlider) {
+            opacitySlider.oninput = function() {
+                const val = parseFloat(this.value);
+                if (opacityValueLabel) opacityValueLabel.innerText = val;
+                if (map.getLayer('sheet-thua-dat-fill')) {
+                    map.setPaintProperty('sheet-thua-dat-fill', 'fill-opacity', val);
+                }
+                if (map.getLayer('sheet-thua-dat-highlight-fill')) {
+                    map.setPaintProperty('sheet-thua-dat-highlight-fill', 'fill-opacity', Math.min(val + 0.2, 1.0));
+                }
+            };
+        }
+
+        if (!map.getSource('parcel-dimensions-source')) {
+            map.addSource('parcel-dimensions-source', {
+                type: 'geojson',
+                data: { type: 'FeatureCollection', features: [] }
+            });
+            map.addLayer({
+                id: 'parcel-dimensions-layer',
+                type: 'circle',
+                source: 'parcel-dimensions-source',
+                paint: { 'circle-radius': 4, 'circle-color': '#ffffff', 'circle-stroke-width': 1.5, 'circle-stroke-color': '#000000' }
+            });
+        }
+
+        if (typeof initMeasureFeature === 'function') initMeasureFeature(map);
+        if (typeof initMarkFeature === 'function') initMarkFeature(map);
+
+        initFilter(map);
+        initThuaDatSearch(map);
+    });
+
+    const sheetLayers = ['sheet-thua-dat-fill', 'sheet-thua-dat-line'];
+    let isFeatureClicked = false;
+
+    sheetLayers.forEach(layerId => {
+        map.on('click', layerId, (e) => {
+            if (isMeasuring || (typeof isMarkingMode !== 'undefined' && isMarkingMode)) return; 
+            if (!e.features || !e.features.length) return;
+            isFeatureClicked = true;
+
+            const selectedFeature = e.features[0];
+            const rawProps = selectedFeature.properties || {};
+            window._currentParcelRawProps = rawProps;
+
+            const parcelId = rawProps['ID Thửa Đất'] || rawProps['id'] || '';
+            window.selectedThuaDatId = parcelId;
+
+            clearLengthMarkers();
+
+            if (typeof turf !== 'undefined' && selectedFeature.geometry) {
+                try {
+                    const lineSegments = turf.lineSegment(selectedFeature);
+                    const dimensionFeatures = [];
+
+                    lineSegments.features.forEach(segment => {
+                        const lengthMeters = turf.length(segment, { units: 'meters' });
+                        const formattedLength = lengthMeters >= 10 ? `${lengthMeters.toFixed(1)}m` : `${lengthMeters.toFixed(2)}m`;
+                        segment.properties.length = formattedLength;
+                        dimensionFeatures.push(segment);
+
+                        const coords = segment.geometry.coordinates;
+                        const midCoord = [(coords[0][0] + coords[1][0]) / 2, (coords[0][1] + coords[1][1]) / 2];
+
+                        const el = document.createElement('div');
+                        el.style.color = '#ffffff'; 
+                        el.style.fontSize = '12px'; 
+                        el.style.fontWeight = 'Bold'; 
+                        el.style.textShadow = '1px 1px 2px #000000, -1px -1px 2px #000000'; 
+                        el.style.whiteSpace = 'nowrap'; 
+                        el.innerText = formattedLength; 
+
+                        const marker = new maplibregl.Marker({ element: el, anchor: 'center' })
+                            .setLngLat(midCoord) 
+                            .addTo(map); 
+                        activeMarkers.push(marker);
+                    });
+
+                    if (map.getSource('parcel-dimensions-source')) {
+                        map.getSource('parcel-dimensions-source').setData({
+                            type: 'FeatureCollection',
+                            features: dimensionFeatures
+                        });
+                    }
+                } catch (err) {
+                    console.error("Lỗi tính toán độ dài cạnh:", err);
+                }
+            }
+
+            const soTo = rawProps['Số tờ'] || rawProps['So to'] || '-';
+            const soThua = rawProps['Số thửa'] || rawProps['So thua'] || '-';
+            const rawDienTich = rawProps['Diện tích'] || rawProps['Dien tich'] || rawProps['dien_tich'] || rawProps['DienTich'] || rawProps['DIỆN TÍCH'] || '-';
+            const dienTich = formatNumberVN(rawDienTich);
+            const loaiDat = rawProps['Loại Đất'] || rawProps['Loại Đất:'] || rawProps['Loại đất'] || '-';
+            const tenChu = rawProps['Tên Chủ'] || rawProps['Tên chủ'] || '-';
+            const soDinhDanh = rawProps['Số định danh chủ đất'] || rawProps['Số định danh'] || 'Không có';
+            
+            const columnNValue = rawProps['Cột N'] || rawProps['cot_n'] || rawProps['Ghi Chú'] || rawProps['Ghi chú'] || '';
+            let columnNLinkHTML = '';
+            if (columnNValue && columnNValue.trim() !== '' && columnNValue !== 'Không có') {
+                window[`_viewColN_${parcelId}`] = () => openColumnNPopup(parcelId, 'view', columnNValue);
+                columnNLinkHTML = `<a href="javascript:void(0);" onclick="window._viewColN_${parcelId}();" style="color: #007bff; text-decoration: underline; font-weight: bold;">Xem</a>`;
+            } else {
+                window[`_inputColN_${parcelId}`] = () => openColumnNPopup(parcelId, 'input', '');
+                columnNLinkHTML = `<a href="javascript:void(0);" onclick="window._inputColN_${parcelId}();" style="color: #d93025; text-decoration: underline; font-weight: bold;">Nhập</a>`;
+            }
+
+            let selectFilter = parcelId ? ['==', ['get', 'ID Thửa Đất'], rawProps['ID Thửa Đất'] || parcelId] : ['==', ['get', 'Tên Chủ'], tenChu];
+            if (map.getLayer('sheet-thua-dat-highlight-fill')) map.setFilter('sheet-thua-dat-highlight-fill', selectFilter);
+            if (map.getLayer('sheet-thua-dat-highlight-line')) map.setFilter('sheet-thua-dat-highlight-line', selectFilter);
+
+            const panelContent = `
+                <div><b>Số tờ:</b> ${soTo}</div>
+                <div><b>Số thửa:</b> ${soThua}</div>
+                <div><b>Diện tích:</b> ${dienTich} m²</div>
+                <div><b>Loại đất:</b> ${loaiDat}</div>
+                <div style="grid-column: span 2;"><b>Tên chủ:</b> ${tenChu}</div>
+                <div><b>Số định danh:</b> ${soDinhDanh}</div>
+                <div><b>Ghi chú:</b> ${columnNLinkHTML}</div>
+            `;
+
+            const panelContentEl = document.getElementById('panel-content');
+            const panelEl = document.getElementById('parcel-info-panel');
+            if (panelContentEl) panelContentEl.innerHTML = panelContent;
+            if (panelEl) panelEl.style.display = 'block'; 
+        });
+
+        map.on('mouseenter', layerId, () => map.getCanvas().style.cursor = 'default');
+        map.on('mouseleave', layerId, () => map.getCanvas().style.cursor = 'default');
+    });
+
+    map.on('click', (e) => {
+        if (isMeasuring) {
+            if (window._isDraggingMarker) return;
+            const coords = [e.lngLat.lng, e.lngLat.lat];
+            if (measureCoordinates.length >= 2 && typeof turf !== 'undefined') {
+                const firstCoord = measureCoordinates[0];
+                const distanceToFirst = turf.distance(turf.point(firstCoord), turf.point(coords), { units: 'meters' });
+                if (distanceToFirst < 5) {
+                    pushMeasureState();
+                    measureCoordinates.push([...firstCoord]);
+                    updateMeasureGeometry(map, false);
+                    return;
+                }
+            }
+            pushMeasureState();
+            measureCoordinates.push(coords);
+            updateMeasureGeometry(map, false);
+            return;
+        }
+
+        if (!isFeatureClicked) {
+            closeParcelPanel(); 
+            if (typeof selectPhuongFromPoint === 'function') {
+                selectPhuongFromPoint(e.lngLat.lng, e.lngLat.lat, map);
+            }
+        }
+        isFeatureClicked = false; 
+    });
+}
+
 document.addEventListener('DOMContentLoaded', initMap);
