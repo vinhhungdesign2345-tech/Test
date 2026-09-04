@@ -155,12 +155,12 @@
         }
        
         /* ==========================================================================
-           --- 3B, 3C, 3D, 3E. CÁC THẺ DROPDOWN VÀ Ô NHẬP LIỆU CHUNG ---
+           --- CÁC THẺ DROPDOWN & Ô NHẬP ---
            ========================================================================== */
         .map-control select,
         .map-control input[type="text"] {
             width: 100%;                 /* Chiếm trọn 100% chiều rộng ô chứa */
-            padding: 0 6px;              /* Khoảng đệm ngang bên trong (trên/dưới bằng 0 để tận dụng chiều cao) */
+            padding: 3px 6px;            /* Khôi phục khoảng đệm trên/dưới (3px) để chữ không bị sát mép */
             border-radius: 4px;          /* Bo góc 4 pixel đồng bộ */
             border: 1px solid #d0d0d0;   /* Viền xám nhạt */
             font-size: 11px;             /* Kích thước chữ đồng nhất 11 pixel */
@@ -168,8 +168,7 @@
             outline: none;               
             background-color: #fff;      /* Nền trắng */
             color: #222;                 /* Màu chữ xám đen */
-            height: 20px;                /* CHIỀU CAO CHUẨN CỦA TỪNG PHẦN TỬ CON (Bạn chỉ cần đổi số này là tất cả tự thay đổi theo) */
-            line-height: 24px;           /* Canh dòng chữ nằm giữa chiều cao khung */
+            height: 28px;                /* Tăng nhẹ chiều cao lên 28px để chứa vừa vặn khoảng đệm mới */
             box-sizing: border-box;      /* Tính gộp padding và border vào kích thước */
             text-overflow: ellipsis;     /* Cắt bớt văn bản dài bằng dấu ba chấm (...) */
             white-space: nowrap;         /* Giữ văn bản trên một dòng duy nhất */
