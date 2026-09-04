@@ -165,7 +165,7 @@
            ========================================================================== */
         .map-control select {
             width: 100%;                 /* Chiếm trọn 100% chiều rộng ô chứa */
-            padding: 1px 6px 7px 6px;      /* Đẩy chữ lên bằng padding: Trên còn 1px dưới còn 7px */
+            padding: 0 24px 0 6px;       /* Chừa khoảng trống bên phải (24px) để hiển thị mũi tên tự chế */
             border-radius: 4px;          /* Bo góc 4 pixel đồng bộ */
             border: 1px solid #d0d0d0;   /* Viền xám nhạt */
             font-size: 11px;             /* Cỡ chữ 11 pixel */
@@ -174,11 +174,18 @@
             background-color: #fff;      /* Nền trắng */
             color: #222;                 /* Màu chữ xám đen */
             height: 30px;                /* Cố định chiều cao tổng thể 30 pixel */
-            line-height: 18px;           /* Khống chế dòng chữ gọn gàng trong 18px */
             box-sizing: border-box;      
-            text-overflow: ellipsis;     /* Cắt bớt văn bản dài bằng dấu ba chấm (...) */
+            text-overflow: ellipsis;     /* Cắt bớt văn bản quá dài bằng dấu ba chấm (...) */
             white-space: nowrap;         /* Giữ toàn bộ chữ nằm trên một dòng */
             overflow: hidden;            /* Ẩn phần chữ bị tràn khung */
+            
+            /* Ép trình duyệt tự căn chỉnh lại hiển thị văn bản và vẽ lại mũi tên sạch sẽ */
+            appearance: none;            /* Xóa giao diện dropdown mặc định thô cứng của hệ điều hành */
+            -webkit-appearance: none;    /* Hỗ trợ cho Chrome, Safari */
+            -moz-appearance: none;       /* Hỗ trợ cho Firefox */
+            background-image: url("data:image/svg+xml;utf8,<svg fill='%23333333' height='10' viewBox='0 0 24 24' width='10' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 8px center; /* Đặt icon mũi tên cách lề phải 8px và nằm chính giữa tuyệt đối */
         }
 
         /* ==========================================================================
