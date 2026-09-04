@@ -161,11 +161,11 @@
         }
 
         /* ==========================================================================
-           --- 3B CÁC THẺ DROPDOWN (SELECT - TỈNH THÀNH, PHƯỜNG XÃ) ---
+           --- 3B, 3C, 3D, 3E. CÁC THẺ DROPDOWN (SELECT - TỈNH THÀNH, PHƯỜNG XÃ) ---
            ========================================================================== */
         .map-control select {
             width: 100%;                 /* Chiếm trọn 100% chiều rộng ô chứa */
-            padding: 0 4px;              /* Đệm ngang 4px chừa chỗ cho icon mũi tên hệ thống */
+            padding: 0 20px 0 6px;       /* Chừa khoảng trống bên phải (20px) để không bị đè vào mũi tên xổ xuống */
             border-radius: 4px;          /* Bo góc 4 pixel đồng bộ */
             border: 1px solid #d0d0d0;   /* Viền xám nhạt */
             font-size: 11px;             /* Cỡ chữ 11 pixel */
@@ -173,12 +173,19 @@
             outline: none;               
             background-color: #fff;      /* Nền trắng */
             color: #222;                 /* Màu chữ xám đen */
-            height: 30px;                /* Tăng chiều cao tổng thể của ô lên 30 pixel */
-            line-height: 27px;           /* Đẩy dòng chữ dịch lên cao một chút (giúp chữ nằm đẹp và cân đối hơn trong ô 30px) */
+            height: 30px;                /* Cố định chiều cao tổng thể 30 pixel */
             box-sizing: border-box;      
-            text-overflow: ellipsis;     /* Cắt bớt văn bản quá dài bằng dấu ba chấm (...) */
+            text-overflow: ellipsis;     /* Cắt bớt văn bản dài bằng dấu ba chấm (...) */
             white-space: nowrap;         /* Giữ toàn bộ chữ nằm trên một dòng */
-            overflow: hidden;            /* Ẩn phần chữ bị tràn khung thừa ra ngoài */
+            overflow: hidden;            /* Ẩn phần chữ bị tràn khung */
+            
+            /* KỸ THUẬT ÉP TRÌNH DUYỆT HIỂN THỊ CHỮ NẰM GIỮA TUYỆT ĐỐI */
+            appearance: none;            /* Xóa giao diện dropdown mặc định xấu xí của hệ điều hành */
+            -webkit-appearance: none;    /* Hỗ trợ xóa giao diện trên Chrome/Safari */
+            -moz-appearance: none;       /* Hỗ trợ xóa giao diện trên Firefox */
+            background-image: url("data:image/svg+xml;utf8,<svg fill='%23666666' height='12' viewBox='0 0 24 24' width='12' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>"); /* Tự vẽ một icon mũi tên màu xám cực kỳ tinh tế ở đuôi */
+            background-repeat: no-repeat;
+            background-position: right 6px center; /* Đặt icon mũi tên cách lề phải 6px và nằm chính giữa theo chiều dọc */
         }
 
         /* ==========================================================================
