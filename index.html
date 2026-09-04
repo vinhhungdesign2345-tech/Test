@@ -1,42 +1,49 @@
-/* ==========================================================================
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <!-- Thiết lập bảng mã ký tự tiếng Việt chuẩn quốc tế UTF-8 -->
+    <meta charset="UTF-8">
+    
+    <!-- Cấu hình khung nhìn hiển thị tương thích trên các thiết bị di động và màn hình (Responsive) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Tiêu đề hiển thị trên thanh tab của trình duyệt -->
+    <title>VinhHung_map</title>
+
+    <!-- Thư viện MapLibre GL CSS: Định dạng giao diện các điều khiển, thanh công cụ của bản đồ -->
+    <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+    
+    <!-- Thư viện MapLibre GL JS: Công cụ cốt lõi điều khiển bản đồ vector tương tác -->
+    <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+
+    <!-- Thư viện TurfJS: Xử lý các thuật toán toán học không gian địa lý, tính toán khoảng cách và diện tích GIS -->
+    <script src="https://unpkg.com/@turf/turf/turf.min.js"></script>
+
+    <!-- PHẦN CSS ĐÃ ĐƯỢC GỘP CHUNG VÀO ĐÂY -->
+    <style>
+        /* ==========================================================================
            --- 1. CÀI ĐẶT CHUNG CHO TOÀN BỘ TRANG WEB ---
            ========================================================================== */
         body { 
-            /* Loại bỏ hoàn toàn khoảng cách lề ngoài mặc định của trình duyệt */
             margin: 0; 
-            
-            /* Loại bỏ khoảng cách đệm bên trong mặc định của trình duyệt */
             padding: 0; 
-            
-            /* Thiết lập kiểu phông chữ mặc định là Arial, dự phòng sang sans-serif */
             font-family: Arial, sans-serif;
         }
 
         #map { 
-            /* Đặt kiểu định vị tuyệt đối để khung bản đồ phủ toàn bộ không gian */
             position: absolute; 
-            
-            /* Neo sát mép trên cùng của màn hình (khoảng cách bằng 0) */
             top: 0; 
-            
-            /* Kéo giãn khung bản đồ xuống tận mép dưới cùng của màn hình */
             bottom: 0; 
-            
-            /* Thiết lập chiều rộng bao phủ trọn vẹn 100% màn hình ngang */
             width: 100%; 
         }
 
         .maplibregl-canvas-container .maplibregl-canvas {
-            /* Tối ưu hóa độ tương phản và nét chữ trên các trình duyệt sử dụng nhân WebKit/Safari */
             image-rendering: -webkit-optimize-contrast; 
-            
-            /* Giữ cho các đường nét đồ họa, ký tự, số đo trên bản đồ hiển thị sắc nét, không bị mờ */
             image-rendering: crisp-edges; 
         }
 
         .maplibregl-marker, 
         .maplibregl-popup {
-            /* Thiết lập tầng hiển thị ưu tiên (z-index) ở mức 50 để đè lên các lớp nền thông thường */
             z-index: 50; 
         }
 
@@ -44,61 +51,31 @@
            --- 2. CỤM NÚT CHUYỂN ĐỔI LỚP BẢN ĐỒ VÀ ĐO KHOẢNG CÁCH (PC) ---
            ========================================================================== */
         .map-layer-control {
-            /* Đặt kiểu định vị tuyệt đối để nhóm nút nổi lên trên bề mặt bản đồ */
             position: absolute; 
-            
-            /* Đặt khoảng cách cách mép dưới của khung bản đồ là 5 pixel */
             bottom: 5px; 
-            
-            /* Đặt khoảng cách cách mép trái của khung bản đồ là 10 pixel */
             left: 10px; 
-            
-            /* Thiết lập tầng hiển thị ưu tiên ở mức 100 để nằm đè lên lớp bản đồ */
             z-index: 100; 
         }
 
         #toggleLayerBtn {
-            /* Khoảng đệm phía trong: trên/dưới cách 2px, trái/phải cách 4px */
             padding: 2px 4px; 
-            
-            /* Thiết lập màu nền mặc định cho nút là màu trắng */
             background: white; 
-            
-            /* Tạo đường viền xung quanh nút có độ dày 1px, nét liền và màu xám nhạt */
             border: 1px solid #ccc; 
-            
-            /* Buộc con trỏ chuột giữ nguyên dạng mặc định (không đổi thành hình bàn tay) */
             cursor: default !important; 
-            
-            /* Bo tròn các góc của nút với bán kính cong là 6 pixel */
             border-radius: 6px; 
-            
-            /* Thiết lập kích thước chữ hiển thị trong nút nhỏ gọn ở mức 9 pixel */
             font-size: 9px; 
-            
-            /* Buộc kiểu chữ hiển thị bình thường, tuyệt đối không bị in đậm */
             font-weight: normal !important;
-            
-            /* Thiết lập màu sắc chữ bên trong nút là màu xám đậm (#333) */
             color: #333; 
-            
-            /* Thiết lập hiệu ứng chuyển đổi mượt mà khi thay đổi màu nền và màu viền trong 0.2 giây */
             transition: background-color 0.2s ease, border-color 0.2s ease; 
-            
-            /* Tạo hiệu ứng đổ bóng nhẹ phía dưới nút (độ dịch chuyển ngang 0, dọc 2px, bán kính mờ 5px, màu đen trong suốt 10%) */
             box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
         }
 
         #toggleLayerBtn:hover {
-            /* Đổi màu nền của nút sang màu xanh nhạt khi người dùng di chuột vào */
             background-color: #d3e4ed; 
-            
-            /* Đổi màu viền của nút đậm hơn một chút khi di chuột vào */
             border-color: #b0b0b0; 
         }
 
         #measureDistBtn {
-            /* Buộc kiểu chữ của nút đo khoảng cách hiển thị bình thường, không bị in đậm */
             font-weight: normal !important;
         }
 
@@ -106,211 +83,95 @@
            --- 3. BẢNG ĐIỀU KHIỂN DROPDOWN & BỘ LỌC (PC) ---
            ========================================================================== */
         .map-control {
-            /* Đặt kiểu định vị tuyệt đối để bảng điều khiển nổi lên trên góc trái bản đồ */
             position: absolute; 
-            
-            /* Đặt khoảng cách cách mép trên của bản đồ là 12 pixel */
             top: 12px; 
-            
-            /* Đặt khoảng cách cách mép trái của bản đồ là 12 pixel */
             left: 12px; 
-            
-            /* Thiết lập tầng hiển thị ưu tiên ở mức 100 để hiển thị rõ trên bản đồ */
             z-index: 100; 
-            
-            /* Thiết lập màu nền trắng với độ trong suốt 92% (mã màu dạng RGBA) */
             background: rgba(255, 255, 255, 0.92); 
-            
-            /* Tạo hiệu ứng làm mờ các chi tiết hiển thị phía sau bảng điều khiển với độ mờ 10px */
             backdrop-filter: blur(10px); 
-            
-            /* Hỗ trợ hiệu ứng làm mờ tương tự dành riêng cho trình duyệt sử dụng nhân WebKit/Safari */
             -webkit-backdrop-filter: blur(10px); 
-            
-            /* Thiết lập khoảng đệm đều ở bên trong bảng điều khiển là 6 pixel */
             padding: 6px; 
-            
-            /* Bo tròn các góc bên ngoài của bảng điều khiển với bán kính 10 pixel */
             border-radius: 10px; 
-            
-            /* Tạo hiệu ứng đổ bóng sâu và rõ nét xung quanh bảng điều khiển */
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.18); 
-            
-            /* Giới hạn chiều rộng tối đa của bảng điều khiển không vượt quá 350 pixel */
             max-width: 350px; 
-            
-            /* Thiết lập chiều rộng tự động co giãn theo màn hình nhưng trừ đi lề 24 pixel (12px mỗi bên) */
             width: calc(100% - 24px); 
-            
-            /* Đảm bảo kích thước padding và border được tính gộp chung vào tổng chiều rộng */
             box-sizing: border-box; 
         }
 
         .filter-row {
-            /* Bật mô hình sắp xếp linh hoạt Flexbox cho các phần tử con */
             display: flex; 
-            
-            /* Cho phép các phần tử con tự động rớt xuống dòng tiếp theo nếu không đủ chỗ hiển thị */
             flex-wrap: wrap; 
-            
-            /* Thiết lập khoảng cách hở đều giữa các phần tử con là 6 pixel */
             gap: 6px; 
-            
-            /* Thiết lập chiều rộng chiếm trọn 100% không gian khung chứa */
             width: 100%; 
-            
-            /* Canh chỉnh các phần tử con nằm căn giữa theo chiều dọc */
             align-items: center; 
         }
 
         .filter-item {
-            /* Ngăn chặn tình trạng lỗi tràn kích thước của các phần tử con trong mô hình Flexbox */
             min-width: 0; 
         }
 
         .filter-row > .filter-item:first-child {
-            /* Ép phần tử con đầu tiên (ô tìm kiếm) chiếm trọn 100% chiều rộng dòng trên */
             width: 100%; 
-            
-            /* Bật chế độ Flexbox riêng cho cụm ô nhập và nút bấm tìm kiếm bên trong */
             display: flex; 
-            
-            /* Thiết lập khoảng cách hở giữa ô nhập văn bản và nút tìm kiếm là 6 pixel */
             gap: 6px; 
         }
 
         #searchThuaDatInput {
-            /* Thiết lập ô nhập liệu tự động giãn nở để chiếm phần không gian trống còn lại */
             flex: 1; 
-            
-            /* Khoảng đệm bên trong ô nhập: trên/dưới 6px, trái/phải 8px */
             padding: 6px 8px; 
-            
-            /* Tạo đường viền mảnh xung quanh ô nhập màu xám nhạt (#d0d0d0) */
             border: 1px solid #d0d0d0; 
-            
-            /* Bo tròn các góc của ô nhập với bán kính 6 pixel */
             border-radius: 6px; 
-            
-            /* Thiết lập kích thước chữ gõ vào bên trong là 12 pixel */
             font-size: 12px; 
-            
-            /* Buộc kiểu chữ hiển thị bình thường, không bị in đậm */
             font-weight: normal !important;
-            
-            /* Cố định chiều cao tổng thể của ô nhập là 34 pixel */
             height: 34px; 
-            
-            /* Đảm bảo padding và border được tính gộp vào kích thước width */
             box-sizing: border-box; 
-            
-            /* Loại bỏ đường viền sáng mặc định của trình duyệt khi người dùng bấm vào ô */
             outline: none; 
-            
-            /* Thiết lập màu nền bên trong ô nhập là màu trắng */
             background-color: #fff; 
-            
-            /* Thiết lập màu sắc chữ khi người dùng gõ vào là màu xám đen (#222) */
             color: #222; 
         }
 
         #searchThuaDatBtn {
-            /* Khoảng đệm ngang bên trong nút: trên/dưới 0, trái/phải 14px */
             padding: 0 14px; 
-            
-            /* Thiết lập màu nền chủ đạo cho nút tìm kiếm là màu xanh dương đặc trưng (#1a73e8) */
             background-color: #1a73e8; 
-            
-            /* Thiết lập màu sắc chữ hiển thị trên nút là màu trắng */
             color: white; 
-            
-            /* Loại bỏ hoàn toàn đường viền mặc định của nút */
             border: none; 
-            
-            /* Bo tròn các góc của nút tìm kiếm với bán kính 6 pixel */
             border-radius: 6px; 
-            
-            /* Thiết lập kích thước chữ trên nút là 12 pixel */
             font-size: 12px; 
-            
-            /* Buộc kiểu chữ trên nút hiển thị bình thường, không bị in đậm */
             font-weight: normal !important;
-            
-            /* Cố định chiều cao của nút khớp hoàn hảo với ô nhập liệu (34 pixel) */
             height: 34px; 
-            
-            /* Buộc con trỏ chuột giữ nguyên dạng mặc định khi di chuyển vào nút */
             cursor: default !important; 
-            
-            /* Ngăn chặn tuyệt đối không cho văn bản bên trong nút bị rớt xuống dòng */
             white-space: nowrap; 
-            
-            /* Thiết lập hiệu ứng đổi màu nền mượt mà trong thời gian 0.2 giây */
             transition: background-color 0.2s; 
         }
 
         #searchThuaDatBtn:hover {
-            /* Chuyển màu nền nút sang tông màu xanh dương đậm hơn khi người dùng di chuột vào */
             background-color: #1557b0; 
         }
 
         .filter-row > .filter-item:not(:first-child) {
-            /* Các thẻ chọn lựa chọn (dropdown) còn lại tự động chia đều không gian ngang bằng nhau */
             flex: 1; 
         }
 
         .map-control select {
-            /* Thiết lập thẻ lựa chọn (dropdown) chiếm trọn 100% chiều rộng khung chứa */
             width: 100%; 
-            
-            /* Khoảng đệm bên trong thẻ chọn: trên/dưới 6px, trái/phải 8px */
             padding: 6px 8px; 
-            
-            /* Bo tròn các góc thẻ chọn với bán kính 6 pixel */
             border-radius: 6px; 
-            
-            /* Tạo đường viền khung thẻ chọn màu xám nhạt (#d0d0d0) */
             border: 1px solid #d0d0d0; 
-            
-            /* Thiết lập kích thước chữ trong danh sách lựa chọn là 12 pixel */
             font-size: 12px; 
-            
-            /* Buộc kiểu chữ hiển thị bình thường, không bị in đậm */
             font-weight: normal !important;
-            
-            /* Loại bỏ đường viền sáng mặc định của trình duyệt khi click vào thẻ chọn */
             outline: none; 
-            
-            /* Thiết lập màu nền của thẻ chọn là màu trắng */
             background-color: #fff; 
-            
-            /* Thiết lập màu sắc chữ tùy chọn bên trong là màu xám đen (#222) */
             color: #222; 
-            
-            /* Cố định chiều cao của thẻ chọn là 34 pixel */
             height: 34px; 
-            
-            /* Đảm bảo padding và border được tính gộp chuẩn xác vào kích thước width */
             box-sizing: border-box; 
-            
-            /* Tự động cắt bớt phần văn bản quá dài bằng ký tự dấu ba chấm (...) */
             text-overflow: ellipsis; 
-            
-            /* Buộc toàn bộ nội dung văn bản lựa chọn nằm gọn trên một dòng duy nhất */
             white-space: nowrap; 
-            
-            /* Ẩn đi phần nội dung văn bản bị tràn ra khỏi kích thước khung */
             overflow: hidden; 
         }
 
         .map-control select:disabled {
-            /* Đổi màu nền sang xám nhạt khi thẻ chọn bị vô hiệu hóa (disabled) */
             background-color: #f0f0f0; 
-            
-            /* Đổi màu chữ sang xám tối để biểu thị trạng thái mờ, không hoạt động */
             color: #888; 
-            
-            /* Đổi kiểu con trỏ chuột thành hình biểu tượng cấm khi di chuyển vào */
             cursor: not-allowed; 
         }
 
@@ -318,102 +179,47 @@
            --- 4. THANH TRƯỢT ĐỘ MỜ & NÚT ĐỊNH VỊ (PC) ---
            ========================================================================== */
         #opacity-control-panel {
-            /* Đặt kiểu định vị tuyệt đối để khung thanh trượt nổi lên trên bản đồ */
             position: absolute; 
-            
-            /* Đặt khoảng cách cách mép trên khung bản đồ là 10 pixel */
             top: 10px; 
-            
-            /* Cố định khoảng cách cách mép phải của khung bản đồ là 10 pixel */
             right: 10px; 
-            
-            /* Thiết lập tầng hiển thị ưu tiên ở mức 100 để nằm trên lớp bản đồ */
             z-index: 100; 
-            
-            /* Thiết lập màu nền trắng với độ trong suốt 92% đồng bộ */
             background: rgba(255, 255, 255, 0.92); 
-            
-            /* Tạo hiệu ứng làm mờ nội dung phía sau khung với bán kính 10px */
             backdrop-filter: blur(10px); 
-            
-            /* Hỗ trợ hiệu ứng làm mờ tương tự dành riêng cho Safari */
             -webkit-backdrop-filter: blur(10px);
-            
-            /* Khoảng đệm bên trong khung rất gọn: trên/dưới 6px, trái/phải 4px */
             padding: 6px 4px; 
-            
-            /* Bo tròn các góc của khung với bán kính 8 pixel */
             border-radius: 8px; 
-            
-            /* Tạo hiệu ứng đổ bóng nổi bật xung quanh khung thanh trượt */
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.18); 
-            
-            /* Bật mô hình Flexbox để sắp xếp các phần tử con theo chiều dọc */
             display: flex; 
-            
-            /* Sắp xếp các phần tử con đi theo chiều dọc từ trên xuống dưới */
             flex-direction: column; 
-            
-            /* Canh chỉnh các phần tử con nằm vào chính giữa theo chiều ngang */
             align-items: center; 
-            
-            /* Cố định chiều rộng chuẩn xác của khung là 34 pixel */
             width: 34px; 
-            
-            /* Đảm bảo padding được tính gộp vào kích thước width tổng thể */
             box-sizing: border-box; 
         }
 
-        /* Ẩn hoàn toàn nhãn chữ và thông số con số độ mờ nếu có bên trong bảng */
         #opacity-control-panel label {
             display: none !important; 
         }
 
         #opacity-control-panel input[type="range"] {
-            /* Chuyển đổi hướng hiển thị của thanh trượt range từ ngang sang dạng dọc (từ trái qua phải thành dưới lên trên) */
             writing-mode: vertical-lr; 
-            
-            /* Đảo chiều thanh trượt: kéo lên trên là tăng giá trị, kéo xuống dưới là giảm giá trị */
             direction: rtl; 
-            
-            /* Thiết lập chiều ngang của thanh trượt range là 16 pixel */
             width: 16px; 
-            
-            /* Thiết lập chiều dài của thanh trượt range theo chiều dọc là 70 pixel */
             height: 70px; 
-            
-            /* Buộc con trỏ chuột giữ nguyên dạng mặc định */
             cursor: default !important; 
-            
-            /* Loại bỏ toàn bộ khoảng cách lề thừa xung quanh */
             margin: 0; 
         }
 
         .maplibregl-ctrl-top-right {
-            /* Vị trí khung điều khiển mặc định của bản đồ cách cạnh trên 85 pixel */
             top: 85px !important; 
-            
-            /* Vị trí cách cạnh phải 10 pixel */
             right: 10px !important; 
         }
 
         .maplibregl-ctrl-top-right .maplibregl-ctrl {
-            /* Loại bỏ khoảng cách lề phải mặc định */
             margin-right: 0 !important;
-            
-            /* Cố định chiều rộng khớp hoàn hảo bằng khối thanh trượt độ mờ (34 pixel) */
             width: 34px !important; 
-            
-            /* Đảm bảo quy chuẩn kích thước hộp được tính chuẩn xác */
             box-sizing: border-box !important;
-            
-            /* Bo tròn các góc khung điều khiển với bán kính 8 pixel */
             border-radius: 8px !important;
-            
-            /* Tạo hiệu ứng đổ bóng nổi khối đồng bộ với các thành phần khác */
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.18) !important;
-            
-            /* Ẩn đi phần nội dung bị tràn ra ngoài khung viền */
             overflow: hidden;
         }
 
@@ -421,161 +227,78 @@
            --- 5. KHUNG THÔNG TIN THỬA ĐẤT (PC) ---
            ========================================================================== */
         .parcel-panel {
-            /* Đặt vị trí cố định trên màn hình, giữ nguyên vị trí không bị trôi theo trang khi cuộn */
             position: fixed; 
-            
-            /* Đặt khoảng cách cách cạnh dưới của màn hình là 10 pixel */
             bottom: 10px; 
-            
-            /* Đặt điểm mốc căn lề trái nằm ở chính giữa màn hình (50%) */
             left: 50%; 
-            
-            /* Dịch chuyển ngược lại 50% bề ngang của chính nó để căn giữa tuyệt đối theo chiều ngang */
             transform: translateX(-50%); 
-            
-            /* Thiết lập tầng hiển thị ưu tiên rất cao (mức 200) để nổi lên trên mọi thành phần khác */
             z-index: 200; 
-            
-            /* Thiết lập màu nền trắng với độ trong suốt cao 95% */
             background: rgba(255, 255, 255, 0.95); 
-            
-            /* Tạo hiệu ứng làm mờ các chi tiết hiển thị nằm ở phía sau bảng thông tin với độ mờ 10px */
             backdrop-filter: blur(10px); 
-            
-            /* Hỗ trợ hiệu ứng làm mờ tương tự dành riêng cho Safari */
             -webkit-backdrop-filter: blur(10px);
-            
-            /* Khoảng đệm bên trong khung: trên/dưới 6px, trái/phải 8px */
             padding: 6px 8px; 
-            
-            /* Bo tròn các góc của khung thông tin thửa đất với bán kính 12 pixel */
             border-radius: 12px; 
-            
-            /* Tạo hiệu ứng đổ bóng đậm và rộng quanh khung tạo chiều nổi khối */
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25); 
-            
-            /* Thiết lập chiều rộng khung chiếm 90% màn hình khi hiển thị trên thiết bị nhỏ */
             width: 90%; 
-            
-            /* Giới hạn chiều rộng tối đa của khung thông tin không vượt quá 450 pixel */
             max-width: 450px; 
-            
-            /* Thiết lập kiểu phông chữ sử dụng là Arial */
             font-family: Arial, sans-serif;
-            
-            /* Thiết lập kích thước chữ bên trong bảng thông tin là 12 pixel */
             font-size: 12px; 
-            
-            /* Thiết lập màu sắc chữ hiển thị là màu đen đậm vừa phải (#1a1a1a) */
             color: #1a1a1a; 
-            
-            /* Đảm bảo tính toán kích thước padding gộp chung vào width */
             box-sizing: border-box; 
         }
 
         .panel-header {
-            /* Bật mô hình Flexbox để sắp xếp tiêu đề và nút đóng theo hàng ngang */
             display: flex; 
-            
-            /* Đẩy tiêu đề sang phía bên trái và nút đóng dạt sang phía bên phải tối đa */
             justify-content: space-between;
-            
-            /* Canh chỉnh tiêu đề và nút đóng nằm thẳng hàng theo chiều dọc ở chính giữa */
             align-items: center; 
-            
-            /* Tạo đường kẻ ngang mỏng màu xám (#ddd) ở dưới phần đầu tiêu đề */
             border-bottom: 1px solid #ddd; 
-            
-            /* Khoảng cách từ chữ tiêu đề xuống tới đường kẻ ngang phía dưới là 3 pixel */
             padding-bottom: 3px; 
-            
-            /* Khoảng cách lề dưới để phân cách với phần nội dung bên dưới là 6 pixel */
             margin-bottom: 6px; 
-            
-            /* Thiết lập kích thước chữ tiêu đề lớn hơn một chút ở mức 14 pixel */
             font-size: 14px; 
-            
-            /* Buộc kiểu chữ tiêu đề hiển thị bình thường, không bị in đậm */
             font-weight: normal !important;
-            
-            /* Thiết lập màu sắc chữ tiêu đề là màu xanh dương nổi bật (#007bff) */
             color: #007bff; 
         }
 
         .close-btn {
-            /* Loại bỏ hoàn toàn màu nền của nút đóng (trở thành trong suốt) */
             background: none; 
-            
-            /* Loại bỏ hoàn toàn đường viền khung xung quanh nút đóng */
             border: none; 
-            
-            /* Thiết lập kích thước ký tự dấu nhân hiển thị lớn và rõ ràng (18 pixel) */
             font-size: 18px; 
-            
-            /* Buộc ký tự dấu nhân hiển thị bình thường, không bị in đậm */
             font-weight: normal !important;
-            
-            /* Giữ nguyên dạng con trỏ chuột mặc định khi di chuyển vào nút */
             cursor: default; 
-            
-            /* Thiết lập màu sắc cho biểu tượng nút đóng là màu xám trung tính (#666) */
             color: #666; 
         }
 
         .close-btn:hover {
-            /* Đổi màu biểu tượng dấu nhân thành màu đen tuyền khi người dùng di chuột vào */
             color: #000; 
         }
 
         .panel-body {
-            /* Bật hệ thống hiển thị dạng lưới (Grid) để sắp xếp các thông số thửa đất */
             display: grid; 
-            
-            /* Chia bố cục nội dung thành đúng 2 cột có chiều rộng bằng nhau (mỗi cột chiếm 1 phần tỷ lệ 1fr) */
             grid-template-columns: 1fr 1fr;
-            
-            /* Thiết lập khoảng cách lưới: khoảng cách hàng cách hàng là 6px, cột cách cột là 12px */
             gap: 6px 12px; 
         }
 
         .panel-body div {
-            /* Ẩn đi các đoạn văn bản dài bị tràn vượt quá kích thước ô lưới */
             overflow: hidden; 
-            
-            /* Tự động thay thế phần văn bản bị vượt quá bằng ký tự dấu ba chấm (...) */
             text-overflow: ellipsis; 
-            
-            /* Buộc nội dung văn bản trong mỗi ô lưới nằm gọn trên một dòng duy nhất */
             white-space: nowrap; 
         }
 
-        /* --- KHUNG KẾT QUẢ GIÁ ĐẤT (GIỚI HẠN CHIỀU CAO VÀ THANH CUỘN) --- */
         #giaDatResultPanel {
-            /* Giới hạn chiều cao tối đa của khung kết quả giá đất bằng 55% chiều cao màn hình */
             max-height: 55vh !important; 
-            
-            /* Tự động hiển thị thanh cuộn dọc khi kết quả tra cứu dài vượt quá chiều cao cho phép */
             overflow-y: auto !important; 
-            
-            /* Ẩn hoàn toàn thanh cuộn ngang để giao diện gọn gàng */
             overflow-x: hidden !important; 
         }
 
         #giaDatResultPanel::-webkit-scrollbar {
-            /* Thiết lập độ dày (chiều rộng) của thanh cuộn dọc là 6 pixel */
             width: 6px; 
         }
 
         #giaDatResultPanel::-webkit-scrollbar-thumb {
-            /* Thiết lập màu sắc cho thanh trượt cuộn là màu xám nhạt (#c1c1c1) */
             background-color: #c1c1c1; 
-            
-            /* Bo tròn các góc của thanh trượt cuộn với bán kính 3 pixel */
             border-radius: 3px; 
         }
 
         #giaDatResultPanel::-webkit-scrollbar-thumb:hover {
-            /* Đổi màu sắc thanh trượt cuộn đậm hơn một chút khi người dùng di chuột vào */
             background-color: #a8a8a8; 
         }
 
@@ -588,7 +311,6 @@
         button, 
         select, 
         input {
-            /* Buộc toàn bộ các thành phần tương tác trên giữ nguyên hình mũi tên chuột mặc định */
             cursor: default !important; 
         }
 
@@ -596,18 +318,12 @@
         .maplibregl-ctrl-top-right .maplibregl-ctrl,
         .maplibregl-ctrl-top-right .maplibregl-ctrl-group,
         .maplibregl-ctrl-top-right .maplibregl-ctrl-geolocate {
-            /* Đặt tầng hiển thị ưu tiên cao ở mức 200 */
             z-index: 200 !important;
-            
-            /* Thiết lập kiểu định vị tương đối */
             position: relative !important;
         }
 
         .maplibregl-ctrl-top-right .maplibregl-ctrl-group button {
-            /* Đặt tầng hiển thị ưu tiên bên trong nút bấm ở mức 100 */
             z-index: 100 !important;
-            
-            /* Buộc con trỏ chuột giữ nguyên dạng mặc định */
             cursor: default !important;
         }
 
@@ -616,143 +332,80 @@
            ========================================================================== */
         @media screen and (max-width: 768px) {
             .parcel-panel {
-                /* Mở rộng bề ngang khung thông tin thửa đất chiếm 95% màn hình di động */
                 width: 95% !important; 
-                
-                /* Xóa bỏ hoàn toàn giới hạn chiều rộng tối đa */
                 max-width: none !important; 
-                
-                /* Đưa khung thông tin dịch sát xuống đáy màn hình hơn (khoảng cách 10px) */
                 bottom: 10px !important; 
-                
-                /* Thu nhỏ khoảng đệm bên trong để tiết kiệm diện tích màn hình di động */
                 padding: 6px 8px !important; 
-                
-                /* Giới hạn chiều cao tối đa của khung trên di động không quá 48% màn hình */
                 max-height: 48vh !important; 
-                
-                /* Cho phép cuộn dọc bên trong khung nếu lượng thông tin hiển thị quá dài */
                 overflow-y: auto !important; 
             }
 
             .panel-header {
-                /* Thu nhỏ kích thước chữ tiêu đề trên màn hình điện thoại xuống 12 pixel */
                 font-size: 12px !important; 
-                
-                /* Thu hẹp khoảng đệm dưới của tiêu đề xuống 3 pixel */
                 padding-bottom: 3px !important;
-                
-                /* Thu hẹp khoảng cách lề dưới xuống 4 pixel */
                 margin-bottom: 4px !important; 
             }
 
             .panel-body {
-                /* Bật lại chế độ hiển thị dạng lưới (Grid) dành cho di động */
                 display: grid !important; 
-                
-                /* Chia bố cục thành đúng 2 cột bằng nhau (mỗi cột chiếm 50% chiều ngang) */
                 grid-template-columns: 1fr 1fr !important; 
-                
-                /* Hủy bỏ kiểu sắp xếp dọc cũ nếu có */
                 flex-direction: unset !important; 
-                
-                /* Thu hẹp khoảng cách lưới: hàng cách hàng 4px, cột cách cột 8px */
                 gap: 4px 8px !important; 
             }
 
             .panel-body div {
-                /* Mỗi ô nội dung tự động chiếm trọn 100% không gian của 1 cột */
                 width: 100% !important; 
-                
-                /* Thu nhỏ kích thước chữ xuống 11 pixel để hiển thị vừa vặn trên màn hình nhỏ */
                 font-size: 11px !important; 
-                
-                /* Giữ nội dung nằm trọn trên một dòng duy nhất */
                 white-space: nowrap !important;
-                
-                /* Tự động cắt bớt văn bản bằng dấu ba chấm (...) nếu bị vượt quá kích thước */
                 text-overflow: ellipsis !important; 
-                
-                /* Ẩn đi phần văn bản bị tràn khung */
                 overflow: hidden !important; 
             }
 
             .map-control {
-                /* Đặt bảng điều khiển dịch sát mép trên màn hình điện thoại hơn (4 pixel) */
                 top: 4px !important; 
-                
-                /* Đặt bảng điều khiển dịch sát lề trái màn hình hơn (4 pixel) */
                 left: 4px !important; 
-                
-                /* Thiết lập chiều rộng trừ hao 38 pixel để chừa khoảng trống bên phải cho thanh trượt không bị đè */
                 width: calc(100% - 38px) !important; 
-                
-                /* Giới hạn chiều ngang tối đa của bảng trên mobile là 320 pixel */
                 max-width: 320px !important; 
-                
-                /* Thu nhỏ khoảng đệm bên trong tối đa trên thiết bị di động */
                 padding: 3px !important; 
             }
 
             .filter-row {
-                /* Thu hẹp tối đa khoảng hở giữa các hàng và ô tìm kiếm xuống 3 pixel */
                 gap: 3px !important; 
             }
 
             .map-control select, 
             #searchThuaDatInput, 
             #searchThuaDatBtn {
-                /* Thu nhỏ kích thước chữ các ô nhập liệu và nút bấm xuống 11 pixel */
                 font-size: 11px !important; 
-                
-                /* Thu gọn chiều cao của các thành phần điều khiển xuống còn 24 pixel */
                 height: 24px !important; 
-                
-                /* Thu hẹp tối đa khoảng đệm bên trong các ô nhập liệu */
                 padding: 2px 5px !important; 
             }
 
             #searchThuaDatBtn {
-                /* Thu gọn bề ngang khoảng đệm của nút Tìm trên di động */
                 padding: 0 8px !important; 
             }
 
             #opacity-control-panel {
-                /* Đặt khung thanh trượt cách cạnh trên 4 pixel trên di động */
                 top: 4px !important; 
-                
-                /* Đặt cách cạnh phải 4 pixel */
                 right: 4px !important; 
-                
-                /* Bề ngang thanh trượt thu nhỏ lại còn 26 pixel */
                 width: 26px !important; 
-                
-                /* Thiết lập khoảng đệm siêu gọn bên trong */
                 padding: 3px 2px !important; 
             }
 
             #opacity-control-panel input[type="range"] {
-                /* Thu ngắn chiều dài thanh trượt dọc xuống còn 50 pixel trên di động */
                 height: 50px !important; 
-                
-                /* Thu hẹp độ rộng thanh trượt dọc xuống còn 10 pixel */
                 width: 10px !important; 
             }
 
             .maplibregl-ctrl-top-right {
-                /* Đặt nút điều khiển bản đồ cách cạnh trên 60 pixel trên di động */
                 top: 60px !important; 
-                
-                /* Đặt cách cạnh phải 4 pixel */
                 right: 4px !important; 
             }
 
             .maplibregl-ctrl-top-right .maplibregl-ctrl {
-                /* Thu hẹp độ rộng khung điều khiển khớp hoàn hảo 26 pixel */
                 width: 26px !important; 
             }
 
-            /* --- ẨN HOÀN TOÀN MŨI TÊN NHỌN CỦA POPUP TRÊN MÀN HÌNH DI ĐỘNG --- */
             .maplibregl-popup-anchor-top .maplibregl-popup-tip,
             .maplibregl-popup-anchor-bottom .maplibregl-popup-tip,
             .maplibregl-popup-anchor-left .maplibregl-popup-tip,
@@ -761,60 +414,250 @@
                 display: none !important;
             }
 
-            /* --- CỐ ĐỊNH POPUP TỌA ĐỘ DỜI LÊN CAO (130px) ĐỂ KHÔNG BỊ CÁC CỤM NÚT CHE KHUẤT --- */
             .maplibregl-popup {
-                /* Chuyển sang định vị cố định trên màn hình di động */
                 position: fixed !important;
-                
-                /* Dời hẳn khung popup lên cao một khoảng 130px để vượt qua cụm nút bên dưới */
                 bottom: 130px !important; 
-                
-                /* Neo điểm giữa theo chiều ngang */
                 left: 50% !important;
-                
-                /* Dịch chuyển ngược lại 50% để căn giữa màn hình */
                 transform: translateX(-50%) !important;
-                
-                /* Hủy bỏ định vị phía trên */
                 top: auto !important;
-                
-                /* Hủy bỏ định vị phía phải */
                 right: auto !important;
-                
-                /* Giới hạn chiều rộng tối đa của popup chiếm 92% màn hình điện thoại */
                 max-width: 92% !important;
-                
-                /* Thiết lập chiều rộng cố định 92% */
                 width: 92% !important;
-                
-                /* Đẩy tầng hiển thị lên cực kỳ cao (10000) để nổi lên trên cùng */
                 z-index: 10000 !important;
-                
-                /* Tạo hiệu ứng chuyển động mượt mà khi popup xuất hiện trong 0.2 giây */
                 transition: bottom 0.2s ease !important;
             }
 
             .maplibregl-popup-content {
-                /* Thiết lập chiều rộng nội dung bên trong popup chiếm trọn 100% khung */
-                width: 100% !important; 
-                
-                /* Đảm bảo padding được tính gộp chuẩn xác vào kích thước */
-                box-sizing: border-box !important; 
-                
-                /* Khoảng đệm bên trong popup trên di động: trên/dưới 8px, trái/phải 12px */
-                padding: 8px 12px !important; 
-                
-                /* Thiết lập màu nền trắng trong suốt 95% */
-                background: rgba(255, 255, 255, 0.95) !important; 
-                
-                /* Bật hiệu ứng làm mờ phía sau */
-                backdrop-filter: blur(10px); 
+                width: 100% !important;
+                box-sizing: border-box !important;
+                padding: 8px 12px !important;
+                background: rgba(255, 255, 255, 0.95) !important;
+                backdrop-filter: blur(10px);
                 -webkit-backdrop-filter: blur(10px);
-                
-                /* Bo tròn các góc popup với bán kính 12 pixel */
-                border-radius: 12px !important; 
-                
-                /* Tạo hiệu ứng đổ bóng nổi khối đậm và rộng quanh popup */
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important; 
+                border-radius: 12px !important;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important;
             }
         }
+    </style>
+</head>
+<body>
+
+    <!-- Khung chứa cụm tìm kiếm cách mép trên 10px -->
+    <div class="map-control" style="
+        width: 320px; 
+        max-width: 100%; 
+        box-sizing: border-box; 
+    ">
+        <div class="filter-row" style="
+            display: flex; 
+            flex-direction: column; 
+            gap: 6px; 
+            width: 100%; 
+        ">
+            
+            <!-- DÒNG 1: Ô tìm kiếm thửa đất toàn cục và nút bấm Tìm -->
+            <div style="
+                display: flex; 
+                gap: 6px; 
+                width: 100%; 
+            ">
+                <input type="text" id="searchThuaDatInput" placeholder="Tìm theo tên, mã ĐD, tờ/thửa (VD: 7/29)..." style="
+                    width: 0; 
+                    flex: 1; 
+                    padding: 8px; 
+                    border: 1px solid #ccc; 
+                    border-radius: 4px; 
+                    box-sizing: border-box; 
+                " />
+                <button id="searchThuaDatBtn" style="
+                    padding: 8px 16px; 
+                    background-color: #1a73e8; 
+                    color: white; 
+                    border: none; 
+                    border-radius: 4px; 
+                    cursor: pointer; 
+                    font-weight: bold; 
+                    white-space: nowrap; 
+                ">Tìm</button>
+            </div>
+
+            <!-- DÒNG 2: Dropdown Tỉnh/TP và Phường/Xã chia đều không gian -->
+            <div style="
+                display: flex; 
+                gap: 6px; 
+                width: 100%; 
+            ">
+                <select id="tinhFilter" style="
+                    width: 0; 
+                    flex: 1; 
+                    padding: 8px; 
+                    border: 1px solid #ccc; 
+                    border-radius: 4px; 
+                    box-sizing: border-box; 
+                ">
+                    <option value="">-- Tỉnh / TP --</option>
+                </select>
+                <select id="phuongFilter" disabled style="
+                    width: 0; 
+                    flex: 1; 
+                    padding: 8px; 
+                    border: 1px solid #ccc; 
+                    border-radius: 4px; 
+                    box-sizing: border-box; 
+                ">
+                    <option value="">-- Phường / Xã --</option>
+                </select>
+            </div>
+
+            <!-- DÒNG 3: Ô nhập tên đường tra cứu giá đất -->
+            <div style="
+                position: relative; 
+                width: 100%; 
+            ">
+                <div style="
+                    display: flex; 
+                    gap: 4px; 
+                    width: 100%; 
+                ">
+                    <input type="text" id="duongFilter" placeholder="Nhập tên đường tra cứu giá đất..." disabled style="
+                        width: 0; 
+                        flex: 1; 
+                        padding: 8px; 
+                        border: 1px solid #ccc; 
+                        border-radius: 4px; 
+                        box-sizing: border-box; 
+                    " />
+                    <button id="searchDuongBtn" disabled style="
+                        padding: 8px 12px; 
+                        background-color: #1a73e8;
+                        color: white; 
+                        border: none; 
+                        border-radius: 4px; 
+                        cursor: pointer; 
+                        font-weight: bold; 
+                        white-space: nowrap; 
+                    ">🔍</button>
+                </div>
+                
+                <!-- Popup nổi liệt kê kết quả tìm kiếm tuyến đường -->
+                <div id="duongPopupList" style="
+                    display: none; 
+                    position: absolute; 
+                    top: 100%; 
+                    left: 0; 
+                    right: 0; 
+                    background: #ffffff; 
+                    border: 1px solid #ccc; 
+                    border-radius: 4px; 
+                    max-height: 200px; 
+                    overflow-y: auto; 
+                    z-index: 1000; 
+                    box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+                    margin-top: 2px; 
+                ">
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Khung panel nhỏ hiển thị kết quả giá đất -->
+        <div id="giaDatResultPanel" style="
+            display: none; 
+            margin-top: 8px; 
+            padding: 8px 10px; 
+            background: #ffffff; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            font-size: 13px; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-sizing: border-box; 
+        ">
+        </div>
+    </div>
+
+    <!-- KHUNG HIỂN THỊ CHÍNH BẢN ĐỒ ĐỊA LÝ TƯƠNG TÁC -->
+    <div id="map"></div>
+
+    <!-- KHUNG BẢNG PANEL NỔI HIỂN THỊ THÔNG TIN THỬA ĐẤT KHI CLICK -->
+    <div id="parcel-info-panel" class="parcel-panel" style="display: none;">
+        <div class="panel-header">
+            <span><b>THÔNG TIN THỬA ĐẤT</b></span>
+            <button onclick="closeParcelPanel()" class="close-btn">&times;</button>
+        </div>
+        <div id="panel-content" class="panel-body">
+        </div>
+    </div>
+
+    <!-- CỤM CÔNG CỤ ĐỔI LỚP NỀN BẢN ĐỒ VÀ ĐO KHOẢNG CÁCH -->
+    <div class="map-layer-control" style="
+        display: flex; 
+        gap: 8px; 
+        align-items: center; 
+    ">
+        <button id="toggleLayerBtn" style="
+            padding: 3px 3px; 
+            height: 25px; 
+            background-color: #ffffff; 
+            color: #333; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: 13px; 
+            box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+            box-sizing: border-box; 
+            white-space: nowrap; 
+        ">
+            Chuyển sang Bản đồ OSM
+        </button>
+        
+        <button id="measureDistBtn" style="
+            padding: 3px 3px; 
+            height: 25px; 
+            background-color: #ffffff; 
+            color: #333; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: 13px; 
+            box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+            box-sizing: border-box; 
+            white-space: nowrap; 
+            display: flex; 
+            align-items: center; 
+            gap: 4px; 
+        ">
+            📏 Đo khoảng cách
+        </button>
+    </div>
+
+    <!-- THANH TRƯỢT ĐIỀU CHỈNH ĐỘ MỜ (OPACITY) -->
+    <div id="opacity-control-panel">
+        <label for="opacitySlider">Mờ: <span id="opacityValue">0.6</span></label>
+        <input type="range" id="opacitySlider" min="0" max="1" step="0.05" value="0.6">
+    </div>
+
+    <!-- CÁC TỆP MÃ NGUỒN JS MÔ-ĐUN -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/sheet.js"></script>
+    <script src="js/province.js"></script>
+    <script src="js/giaDatFilter.js"></script>
+    <script src="js/searchThuaDat.js"></script>
+    <script src="js/note.js"></script>
+    <script src="js/measure.js"></script>
+    <script src="js/mark.js"></script>
+    <script src="js/map.js"></script>
+
+    <!-- MODAL POPUP GHI CHÚ -->
+    <div id="noteModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 20px; border-radius: 8px; width: 400px; max-width: 90%; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+            <h3 id="noteModalTitle" style="margin-top: 0; font-size: 16px; color: #333;">Ghi chú thửa đất</h3>
+            <div id="noteModalBody" style="margin-bottom: 15px;"></div>
+            <div style="text-align: right; display: flex; gap: 8px; justify-content: flex-end;">
+                <button id="noteModalSaveBtn" style="display: none; padding: 6px 14px; background: #1a73e8; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Lưu</button>
+                <button onclick="closeNoteModal()" style="padding: 6px 14px; background: #ccc; border: none; border-radius: 4px; cursor: pointer;">Đóng</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
