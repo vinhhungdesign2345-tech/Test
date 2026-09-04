@@ -105,40 +105,44 @@
         }
         
         /* ==========================================================================
-           --- 3A. Ô TÌM KIẾM THỬA ĐẤT VÀ NÚT TÌM ---
+           --- 3A. Ô TÌM KIẾM THỬA ĐẤT VÀ NÚT TÌM (ĐỒNG BỘ TUYỆT ĐỐI) ---
            ========================================================================== */
         #searchThuaDatInput {
-            flex: 1;                     /* Thiết lập ô nhập liệu tự động giãn nở chiếm không gian trống */
-            padding: 3px 4px;            /* Khoảng đệm bên trong ô nhập: trên/dưới 3px, trái/phải 4px */
-            border-radius: 5px;          /* Bo tròn các góc của ô nhập với bán kính 5 pixel */
-            font-size: 11px;             /* Thiết lập kích thước chữ gõ vào bên trong là 11 pixel */
-            font-weight: normal !important; /* Buộc kiểu chữ hiển thị bình thường, không in đậm */
-            height: 25px;                /* Cố định chiều cao tổng thể của ô nhập là 25 pixel */
-            box-sizing: border-box;      /* Đảm bảo padding và border tính gộp vào kích thước */
-            outline: none;               /* Loại bỏ đường viền sáng mặc định khi click vào ô */
-            background-color: #fff;      /* Thiết lập màu nền bên trong ô nhập là màu trắng */
-            color: #222;                 /* Thiết lập màu sắc chữ khi người dùng gõ vào là màu xám đen */
-            border: 1px solid #d0d0d0;   /* Tạo đường viền khung màu xám nhạt */
+            flex: 1;                     /* Tự động giãn nở chiếm không gian trống */
+            margin: 0;                   /* Xóa bỏ mọi lề ngoài mặc định */
+            padding: 0 6px;              /* Khoảng đệm trái/phải 6px, trên/dưới bằng 0 */
+            border-radius: 5px;          /* Bo góc 5 pixel */
+            font-size: 11px;             /* Cỡ chữ 11px */
+            font-weight: normal !important; /* Không in đậm */
+            height: 25px;                /* Ép cứng chiều cao chuẩn 25 pixel */
+            line-height: 25px;           /* Căn giữa chữ theo chiều dọc */
+            box-sizing: border-box;      /* Tính gộp padding và border vào kích thước */
+            outline: none;               /* Bỏ đường viền sáng khi click */
+            background-color: #fff;      /* Nền trắng */
+            color: #222;                 /* Màu chữ xám đen */
+            border: 1px solid #d0d0d0;   /* Viền xám nhạt */
+            vertical-align: middle;      /* Căn giữa dòng */
         }
         #searchThuaDatBtn {
-            display: flex;               /* Bật Flexbox để canh chỉnh chữ bên trong nút hoàn hảo */
-            align-items: center;         /* Canh giữa chữ theo chiều dọc */
-            justify-content: center;     /* Canh giữa chữ theo chiều ngang */
-            padding: 0 14px;             /* Khoảng đệm ngang bên trong nút */
-            background-color: #1a73e8;   /* Màu nền chủ đạo cho nút tìm kiếm là màu xanh dương đặc trưng */
-            color: white;                /* Thiết lập màu sắc chữ hiển thị trên nút là màu trắng */
-            border: none;                /* Loại bỏ hoàn toàn đường viền mặc định của nút */
-            border-radius: 6px;          /* Bo tròn các góc của nút tìm kiếm với bán kính 6 pixel */
-            font-size: 11px;             /* Thiết lập kích thước chữ trên nút là 11 pixel */
-            font-weight: normal !important; /* Buộc kiểu chữ hiển thị bình thường, không bị in đậm */
-            height: 25px;                /* Cố định chiều cao của nút Tìm khớp chuẩn 25 pixel */
-            box-sizing: border-box;      /* Đảm bảo tính gộp padding vào chiều cao/rộng chuẩn xác */
-            cursor: default !important;  /* Buộc con trỏ chuột giữ nguyên dạng mặc định */
-            white-space: nowrap;         /* Ngăn chặn tuyệt đối không cho văn bản bên trong rớt dòng */
-            transition: background-color 0.2s; /* Hiệu ứng đổi màu nền mượt mà trong 0.2 giây */
+            display: inline-block;       /* Hiển thị dạng khối nội tuyến chuẩn */
+            margin: 0;                   /* Xóa bỏ mọi lề ngoài mặc định */
+            padding: 0 12px;             /* Khoảng đệm ngang bên trong nút */
+            background-color: #1a73e8;   /* Màu nền xanh đặc trưng */
+            color: white;                /* Chữ màu trắng */
+            border: none;                /* Không viền mặc định */
+            border-radius: 6px;          /* Bo góc 6 pixel */
+            font-size: 11px;             /* Cỡ chữ 11px */
+            font-weight: normal !important; /* Không in đậm */
+            height: 25px;                /* Ép cứng chiều cao chuẩn 25 pixel bằng ô input */
+            line-height: 25px;           /* Canh chữ nằm chính giữa chiều cao 25px của nút */
+            box-sizing: border-box;      /* Tính gộp padding vào kích thước */
+            cursor: default !important;  /* Con trỏ chuột mặc định */
+            white-space: nowrap;         /* Không rớt dòng văn bản */
+            vertical-align: middle;      /* Căn giữa dòng */
+            transition: background-color 0.2s; /* Hiệu ứng chuyển màu mượt */
         }
         #searchThuaDatBtn:hover {
-            background-color: #1557b0;   /* Chuyển màu nền nút sang tông xanh dương đậm hơn khi rê chuột */
+            background-color: #1557b0;   /* Đổi màu khi rê chuột */
         }
        
         /* ==========================================================================
