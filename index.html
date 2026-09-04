@@ -105,44 +105,49 @@
         }
         
         /* ==========================================================================
-           --- 3A. Ô TÌM KIẾM THỬA ĐẤT VÀ NÚT TÌM (ĐỒNG BỘ TUYỆT ĐỐI) ---
+           --- 3A. Ô TÌM KIẾM THỬA ĐẤT VÀ NÚT TÌM (CHUẨN FLEXBOX) ---
            ========================================================================== */
+        .filter-row > .filter-item:first-child {
+            width: 100%;                 
+            display: flex;               
+            gap: 3px;                    
+            align-items: stretch;        /* Ép các phần tử con tự động giãn nở cao bằng nhau tuyệt đối */
+        }
+
         #searchThuaDatInput {
-            flex: 1;                     /* Tự động giãn nở chiếm không gian trống */
-            margin: 0;                   /* Xóa bỏ mọi lề ngoài mặc định */
-            padding: 0 6px;              /* Khoảng đệm trái/phải 6px, trên/dưới bằng 0 */
-            border-radius: 5px;          /* Bo góc 5 pixel */
-            font-size: 11px;             /* Cỡ chữ 11px */
-            font-weight: normal !important; /* Không in đậm */
-            height: 25px;                /* Ép cứng chiều cao chuẩn 25 pixel */
-            line-height: 25px;           /* Căn giữa chữ theo chiều dọc */
-            box-sizing: border-box;      /* Tính gộp padding và border vào kích thước */
-            outline: none;               /* Bỏ đường viền sáng khi click */
-            background-color: #fff;      /* Nền trắng */
-            color: #222;                 /* Màu chữ xám đen */
-            border: 1px solid #d0d0d0;   /* Viền xám nhạt */
-            vertical-align: middle;      /* Căn giữa dòng */
+            flex: 1;                     
+            padding: 0 6px;              
+            border-radius: 5px;          
+            font-size: 11px;             
+            font-weight: normal !important; 
+            /* Bỏ hẳn height cố định để nó tự co giãn khớp hoàn toàn theo hàng */
+            box-sizing: border-box;      
+            outline: none;               
+            background-color: #fff;      
+            color: #222;                 
+            border: 1px solid #d0d0d0;   
         }
+
         #searchThuaDatBtn {
-            display: inline-block;       /* Hiển thị dạng khối nội tuyến chuẩn */
-            margin: 0;                   /* Xóa bỏ mọi lề ngoài mặc định */
-            padding: 0 12px;             /* Khoảng đệm ngang bên trong nút */
-            background-color: #1a73e8;   /* Màu nền xanh đặc trưng */
-            color: white;                /* Chữ màu trắng */
-            border: none;                /* Không viền mặc định */
-            border-radius: 6px;          /* Bo góc 6 pixel */
-            font-size: 11px;             /* Cỡ chữ 11px */
-            font-weight: normal !important; /* Không in đậm */
-            height: 25px;                /* Ép cứng chiều cao chuẩn 25 pixel bằng ô input */
-            line-height: 25px;           /* Canh chữ nằm chính giữa chiều cao 25px của nút */
-            box-sizing: border-box;      /* Tính gộp padding vào kích thước */
-            cursor: default !important;  /* Con trỏ chuột mặc định */
-            white-space: nowrap;         /* Không rớt dòng văn bản */
-            vertical-align: middle;      /* Căn giữa dòng */
-            transition: background-color 0.2s; /* Hiệu ứng chuyển màu mượt */
+            padding: 0 12px;             
+            background-color: #1a73e8;   
+            color: white;                
+            border: none;                
+            border-radius: 6px;          
+            font-size: 11px;             
+            font-weight: normal !important; 
+            /* Bỏ hẳn height cố định ở nút luôn */
+            box-sizing: border-box;      
+            cursor: default !important;  
+            white-space: nowrap;         
+            display: flex;               
+            align-items: center;         
+            justify-content: center;     
+            transition: background-color 0.2s; 
         }
+
         #searchThuaDatBtn:hover {
-            background-color: #1557b0;   /* Đổi màu khi rê chuột */
+            background-color: #1557b0;   
         }
        
         /* ==========================================================================
