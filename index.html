@@ -19,73 +19,491 @@
     <!-- Thư viện TurfJS: Xử lý các thuật toán toán học không gian địa lý, tính toán khoảng cách và diện tích GIS -->
     <script src="https://unpkg.com/@turf/turf/turf.min.js"></script>
 
-    <!-- Liên kết tệp kiểu dáng định dạng giao diện tùy chỉnh riêng của dự án -->
-    <link rel="stylesheet" href="css/style.css">
+    <!-- PHẦN CSS ĐÃ ĐƯỢC GỘP CHUNG VÀO ĐÂY -->
+    <style>
+        /* ==========================================================================
+           --- 1. CÀI ĐẶT CHUNG CHO TOÀN BỘ TRANG WEB ---
+           ========================================================================== */
+        body { 
+            margin: 0; 
+            padding: 0; 
+            font-family: Arial, sans-serif;
+        }
+
+        #map { 
+            position: absolute; 
+            top: 0; 
+            bottom: 0; 
+            width: 100%; 
+        }
+
+        .maplibregl-canvas-container .maplibregl-canvas {
+            image-rendering: -webkit-optimize-contrast; 
+            image-rendering: crisp-edges; 
+        }
+
+        .maplibregl-marker, 
+        .maplibregl-popup {
+            z-index: 50; 
+        }
+
+        /* ==========================================================================
+           --- 2. CỤM NÚT CHUYỂN ĐỔI LỚP BẢN ĐỒ VÀ ĐO KHOẢNG CÁCH (PC) ---
+           ========================================================================== */
+        .map-layer-control {
+            position: absolute; 
+            bottom: 5px; 
+            left: 10px; 
+            z-index: 100; 
+        }
+
+        #toggleLayerBtn {
+            padding: 2px 4px; 
+            background: white; 
+            border: 1px solid #ccc; 
+            cursor: default !important; 
+            border-radius: 6px; 
+            font-size: 9px; 
+            font-weight: normal !important;
+            color: #333; 
+            transition: background-color 0.2s ease, border-color 0.2s ease; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+        }
+
+        #toggleLayerBtn:hover {
+            background-color: #d3e4ed; 
+            border-color: #b0b0b0; 
+        }
+
+        #measureDistBtn {
+            font-weight: normal !important;
+        }
+
+        /* ==========================================================================
+           --- 3. BẢNG ĐIỀU KHIỂN DROPDOWN & BỘ LỌC (PC) ---
+           ========================================================================== */
+        .map-control {
+            position: absolute; 
+            top: 12px; 
+            left: 12px; 
+            z-index: 100; 
+            background: rgba(255, 255, 255, 0.92); 
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px); 
+            padding: 6px; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.18); 
+            max-width: 350px; 
+            width: calc(100% - 24px); 
+            box-sizing: border-box; 
+        }
+
+        .filter-row {
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 6px; 
+            width: 100%; 
+            align-items: center; 
+        }
+
+        .filter-item {
+            min-width: 0; 
+        }
+
+        .filter-row > .filter-item:first-child {
+            width: 100%; 
+            display: flex; 
+            gap: 6px; 
+        }
+
+        #searchThuaDatInput {
+            flex: 1; 
+            padding: 6px 8px; 
+            border: 1px solid #d0d0d0; 
+            border-radius: 6px; 
+            font-size: 12px; 
+            font-weight: normal !important;
+            height: 34px; 
+            box-sizing: border-box; 
+            outline: none; 
+            background-color: #fff; 
+            color: #222; 
+        }
+
+        #searchThuaDatBtn {
+            padding: 0 14px; 
+            background-color: #1a73e8; 
+            color: white; 
+            border: none; 
+            border-radius: 6px; 
+            font-size: 12px; 
+            font-weight: normal !important;
+            height: 34px; 
+            cursor: default !important; 
+            white-space: nowrap; 
+            transition: background-color 0.2s; 
+        }
+
+        #searchThuaDatBtn:hover {
+            background-color: #1557b0; 
+        }
+
+        .filter-row > .filter-item:not(:first-child) {
+            flex: 1; 
+        }
+
+        .map-control select {
+            width: 100%; 
+            padding: 6px 8px; 
+            border-radius: 6px; 
+            border: 1px solid #d0d0d0; 
+            font-size: 12px; 
+            font-weight: normal !important;
+            outline: none; 
+            background-color: #fff; 
+            color: #222; 
+            height: 34px; 
+            box-sizing: border-box; 
+            text-overflow: ellipsis; 
+            white-space: nowrap; 
+            overflow: hidden; 
+        }
+
+        .map-control select:disabled {
+            background-color: #f0f0f0; 
+            color: #888; 
+            cursor: not-allowed; 
+        }
+
+        /* ==========================================================================
+           --- 4. THANH TRƯỢT ĐỘ MỜ & NÚT ĐỊNH VỊ (PC) ---
+           ========================================================================== */
+        #opacity-control-panel {
+            position: absolute; 
+            top: 10px; 
+            right: 10px; 
+            z-index: 100; 
+            background: rgba(255, 255, 255, 0.92); 
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px);
+            padding: 6px 4px; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.18); 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            width: 34px; 
+            box-sizing: border-box; 
+        }
+
+        #opacity-control-panel label {
+            display: none !important; 
+        }
+
+        #opacity-control-panel input[type="range"] {
+            writing-mode: vertical-lr; 
+            direction: rtl; 
+            width: 16px; 
+            height: 70px; 
+            cursor: default !important; 
+            margin: 0; 
+        }
+
+        .maplibregl-ctrl-top-right {
+            top: 85px !important; 
+            right: 10px !important; 
+        }
+
+        .maplibregl-ctrl-top-right .maplibregl-ctrl {
+            margin-right: 0 !important;
+            width: 34px !important; 
+            box-sizing: border-box !important;
+            border-radius: 8px !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.18) !important;
+            overflow: hidden;
+        }
+
+        /* ==========================================================================
+           --- 5. KHUNG THÔNG TIN THỬA ĐẤT (PC) ---
+           ========================================================================== */
+        .parcel-panel {
+            position: fixed; 
+            bottom: 10px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            z-index: 200; 
+            background: rgba(255, 255, 255, 0.95); 
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px);
+            padding: 6px 8px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25); 
+            width: 90%; 
+            max-width: 450px; 
+            font-family: Arial, sans-serif;
+            font-size: 12px; 
+            color: #1a1a1a; 
+            box-sizing: border-box; 
+        }
+
+        .panel-header {
+            display: flex; 
+            justify-content: space-between;
+            align-items: center; 
+            border-bottom: 1px solid #ddd; 
+            padding-bottom: 3px; 
+            margin-bottom: 6px; 
+            font-size: 14px; 
+            font-weight: normal !important;
+            color: #007bff; 
+        }
+
+        .close-btn {
+            background: none; 
+            border: none; 
+            font-size: 18px; 
+            font-weight: normal !important;
+            cursor: default; 
+            color: #666; 
+        }
+
+        .close-btn:hover {
+            color: #000; 
+        }
+
+        .panel-body {
+            display: grid; 
+            grid-template-columns: 1fr 1fr;
+            gap: 6px 12px; 
+        }
+
+        .panel-body div {
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            white-space: nowrap; 
+        }
+
+        #giaDatResultPanel {
+            max-height: 55vh !important; 
+            overflow-y: auto !important; 
+            overflow-x: hidden !important; 
+        }
+
+        #giaDatResultPanel::-webkit-scrollbar {
+            width: 6px; 
+        }
+
+        #giaDatResultPanel::-webkit-scrollbar-thumb {
+            background-color: #c1c1c1; 
+            border-radius: 3px; 
+        }
+
+        #giaDatResultPanel::-webkit-scrollbar-thumb:hover {
+            background-color: #a8a8a8; 
+        }
+
+        /* ==========================================================================
+           --- 6. ÉP CON TRỎ CHUỘT MẶC ĐỊNH & LỚP HIỂN THỊ CAO NHẤT ---
+           ========================================================================== */
+        #map, 
+        .maplibregl-canvas-container, 
+        .maplibregl-canvas,
+        button, 
+        select, 
+        input {
+            cursor: default !important; 
+        }
+
+        .maplibregl-ctrl-top-right,
+        .maplibregl-ctrl-top-right .maplibregl-ctrl,
+        .maplibregl-ctrl-top-right .maplibregl-ctrl-group,
+        .maplibregl-ctrl-top-right .maplibregl-ctrl-geolocate {
+            z-index: 200 !important;
+            position: relative !important;
+        }
+
+        .maplibregl-ctrl-top-right .maplibregl-ctrl-group button {
+            z-index: 100 !important;
+            cursor: default !important;
+        }
+
+        /* ==========================================================================
+           --- 7. 📱 GIAO DIỆN CHO ĐIỆN THOẠI (DƯỚI 768px) ---
+           ========================================================================== */
+        @media screen and (max-width: 768px) {
+            .parcel-panel {
+                width: 95% !important; 
+                max-width: none !important; 
+                bottom: 10px !important; 
+                padding: 6px 8px !important; 
+                max-height: 48vh !important; 
+                overflow-y: auto !important; 
+            }
+
+            .panel-header {
+                font-size: 12px !important; 
+                padding-bottom: 3px !important;
+                margin-bottom: 4px !important; 
+            }
+
+            .panel-body {
+                display: grid !important; 
+                grid-template-columns: 1fr 1fr !important; 
+                flex-direction: unset !important; 
+                gap: 4px 8px !important; 
+            }
+
+            .panel-body div {
+                width: 100% !important; 
+                font-size: 11px !important; 
+                white-space: nowrap !important;
+                text-overflow: ellipsis !important; 
+                overflow: hidden !important; 
+            }
+
+            .map-control {
+                top: 4px !important; 
+                left: 4px !important; 
+                width: calc(100% - 38px) !important; 
+                max-width: 320px !important; 
+                padding: 3px !important; 
+            }
+
+            .filter-row {
+                gap: 3px !important; 
+            }
+
+            .map-control select, 
+            #searchThuaDatInput, 
+            #searchThuaDatBtn {
+                font-size: 11px !important; 
+                height: 24px !important; 
+                padding: 2px 5px !important; 
+            }
+
+            #searchThuaDatBtn {
+                padding: 0 8px !important; 
+            }
+
+            #opacity-control-panel {
+                top: 4px !important; 
+                right: 4px !important; 
+                width: 26px !important; 
+                padding: 3px 2px !important; 
+            }
+
+            #opacity-control-panel input[type="range"] {
+                height: 50px !important; 
+                width: 10px !important; 
+            }
+
+            .maplibregl-ctrl-top-right {
+                top: 60px !important; 
+                right: 4px !important; 
+            }
+
+            .maplibregl-ctrl-top-right .maplibregl-ctrl {
+                width: 26px !important; 
+            }
+
+            .maplibregl-popup-anchor-top .maplibregl-popup-tip,
+            .maplibregl-popup-anchor-bottom .maplibregl-popup-tip,
+            .maplibregl-popup-anchor-left .maplibregl-popup-tip,
+            .maplibregl-popup-anchor-right .maplibregl-popup-tip,
+            .maplibregl-popup-tip {
+                display: none !important;
+            }
+
+            .maplibregl-popup {
+                position: fixed !important;
+                bottom: 130px !important; 
+                left: 50% !important;
+                transform: translateX(-50%) !important;
+                top: auto !important;
+                right: auto !important;
+                max-width: 92% !important;
+                width: 92% !important;
+                z-index: 10000 !important;
+                transition: bottom 0.2s ease !important;
+            }
+
+            .maplibregl-popup-content {
+                width: 100% !important;
+                box-sizing: border-box !important;
+                padding: 8px 12px !important;
+                background: rgba(255, 255, 255, 0.95) !important;
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border-radius: 12px !important;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important;
+            }
+        }
+    </style>
 </head>
 <body>
 
     <!-- Khung chứa cụm tìm kiếm cách mép trên 10px -->
     <div class="map-control" style="
-        width: 320px;                             /* Chiều rộng cố định ban đầu của khung tổng */
-        max-width: 100%;                          /* Giới hạn chiều rộng tối đa không vượt quá màn hình */
-        box-sizing: border-box;                   /* Tính toán kích thước bao gồm cả viền và khoảng đệm padding */
+        width: 320px; 
+        max-width: 100%; 
+        box-sizing: border-box; 
     ">
         <div class="filter-row" style="
-            display: flex;                        /* Sử dụng mô hình sắp xếp linh hoạt Flexbox */
-            flex-direction: column;               /* Sắp xếp các thành phần con theo chiều dọc (từ trên xuống) */
-            gap: 6px;                             /* Khoảng cách khoảng hở giữa các dòng phần tử con */
-            width: 100%;                          /* Chiếm toàn bộ 100% chiều rộng khung chứa */
+            display: flex; 
+            flex-direction: column; 
+            gap: 6px; 
+            width: 100%; 
         ">
             
             <!-- DÒNG 1: Ô tìm kiếm thửa đất toàn cục và nút bấm Tìm -->
             <div style="
-                display: flex;                    /* Sắp xếp các phần tử con theo hàng ngang */
-                gap: 6px;                         /* Khoảng hở giữa ô nhập văn bản và nút tìm */
-                width: 100%;                      /* Chiếm trọn chiều rộng hàng */
+                display: flex; 
+                gap: 6px; 
+                width: 100%; 
             ">
                 <input type="text" id="searchThuaDatInput" placeholder="Tìm theo tên, mã ĐD, tờ/thửa (VD: 7/29)..." style="
-                    width: 0;                     /* Thiết lập về 0 để kết hợp cùng flex co giãn linh hoạt */
-                    flex: 1;                      /* Tự động lấp đầy khoảng trống còn lại trên hàng ngang */
-                    padding: 8px;                 /* Khoảng đệm bên trong ô nhập liệu */
-                    border: 1px solid #ccc;       /* Đường viền nét mảnh màu xám nhạt */
-                    border-radius: 4px;           /* Bo tròn các góc khung nhập liệu */
-                    box-sizing: border-box;       /* Bao gồm viền và padding vào tổng kích thước */
+                    width: 0; 
+                    flex: 1; 
+                    padding: 8px; 
+                    border: 1px solid #ccc; 
+                    border-radius: 4px; 
+                    box-sizing: border-box; 
                 " />
                 <button id="searchThuaDatBtn" style="
-                    padding: 8px 16px;            /* Khoảng đệm bên trong nút bấm (trên/dưới và trái/phải) */
-                    background-color: #1a73e8;    /* Màu nền xanh đặc trưng của nút bấm hành động chính */
-                    color: white;                 /* Màu chữ hiển thị bên trong nút */
-                    border: none;                 /* Không hiển thị đường viền mặc định */
-                    border-radius: 4px;           /* Bo tròn góc nút bấm */
-                    cursor: pointer;              /* Đổi con trỏ chuột thành hình bàn tay khi di chuyển vào */
-                    font-weight: bold;            /* Định dạng chữ in đậm */
-                    white-space: nowrap;          /* Ngăn không cho văn bản bên trong nút bị xuống dòng */
+                    padding: 8px 16px; 
+                    background-color: #1a73e8; 
+                    color: white; 
+                    border: none; 
+                    border-radius: 4px; 
+                    cursor: pointer; 
+                    font-weight: bold; 
+                    white-space: nowrap; 
                 ">Tìm</button>
             </div>
 
             <!-- DÒNG 2: Dropdown Tỉnh/TP và Phường/Xã chia đều không gian -->
             <div style="
-                display: flex;                    /* Sắp xếp các thành phần con theo hàng ngang */
-                gap: 6px;                         /* Khoảng hở giữa hai ô lựa chọn select */
-                width: 100%;                      /* Chiếm trọn chiều rộng hàng */
+                display: flex; 
+                gap: 6px; 
+                width: 100%; 
             ">
                 <select id="tinhFilter" style="
-                    width: 0;                     /* Thiết lập về 0 để chia đều không gian theo flex */
-                    flex: 1;                      /* Tỷ lệ chia đều không gian bằng nhau (50% - 50%) */
-                    padding: 8px;                 /* Khoảng đệm bên trong khung chọn */
-                    border: 1px solid #ccc;       /* Đường viền nét mảnh màu xám */
-                    border-radius: 4px;           /* Bo tròn góc khung chọn */
-                    box-sizing: border-box;       /* Đảm bảo kích thước tính chuẩn xác bao gồm cả viền */
+                    width: 0; 
+                    flex: 1; 
+                    padding: 8px; 
+                    border: 1px solid #ccc; 
+                    border-radius: 4px; 
+                    box-sizing: border-box; 
                 ">
                     <option value="">-- Tỉnh / TP --</option>
                 </select>
                 <select id="phuongFilter" disabled style="
-                    width: 0;                     /* Thiết lập về 0 để chia đều không gian theo flex */
-                    flex: 1;                      /* Tỷ lệ chia đều không gian bằng nhau (50% - 50%) */
-                    padding: 8px;                 /* Khoảng đệm bên trong khung chọn */
-                    border: 1px solid #ccc;       /* Đường viền nét mảnh màu xám */
-                    border-radius: 4px;           /* Bo tròn góc khung chọn */
-                    box-sizing: border-box;       /* Đảm bảo kích thước tính chuẩn xác bao gồm cả viền */
+                    width: 0; 
+                    flex: 1; 
+                    padding: 8px; 
+                    border: 1px solid #ccc; 
+                    border-radius: 4px; 
+                    box-sizing: border-box; 
                 ">
                     <option value="">-- Phường / Xã --</option>
                 </select>
@@ -93,171 +511,148 @@
 
             <!-- DÒNG 3: Ô nhập tên đường tra cứu giá đất -->
             <div style="
-                position: relative;               /* Tạo mốc định vị tọa độ tương đối cho khung popup kết quả bên trong */
-                width: 100%;                      /* Chiếm trọn chiều rộng hàng */
+                position: relative; 
+                width: 100%; 
             ">
                 <div style="
-                    display: flex;                /* Sắp xếp ô nhập và nút kính lúp thành hàng ngang */
-                    gap: 4px;                     /* Khoảng hở nhỏ giữa ô nhập đường và nút bấm */
-                    width: 100%;                  /* Chiếm trọn chiều rộng */
+                    display: flex; 
+                    gap: 4px; 
+                    width: 100%; 
                 ">
                     <input type="text" id="duongFilter" placeholder="Nhập tên đường tra cứu giá đất..." disabled style="
-                        width: 0;                 /* Thiết lập về 0 kết hợp flex để co giãn tự động */
-                        flex: 1;                  /* Tự động chiếm phần lớn không gian chiều ngang */
-                        padding: 8px;             /* Khoảng đệm bên trong ô nhập */
-                        border: 1px solid #ccc;   /* Đường viền xám nhạt */
-                        border-radius: 4px;       /* Bo tròn góc */
-                        box-sizing: border-box;   /* Đồng bộ kích thước tính cả viền */
+                        width: 0; 
+                        flex: 1; 
+                        padding: 8px; 
+                        border: 1px solid #ccc; 
+                        border-radius: 4px; 
+                        box-sizing: border-box; 
                     " />
                     <button id="searchDuongBtn" disabled style="
-                        padding: 8px 12px;        /* Khoảng đệm căn chỉnh cho nút biểu tượng kính lúp */
-                        background-color: #1a73e8;/* Màu nền xanh chủ đạo */
-                        color: white;             /* Màu biểu tượng trắng */
-                        border: none;             /* Bỏ viền */
-                        border-radius: 4px;       /* Bo tròn góc */
-                        cursor: pointer;          /* Đổi dạng con trỏ chuột khi hover */
-                        font-weight: bold;        /* In đậm ký tự */
-                        white-space: nowrap;      /* Giữ nguyên trên một dòng */
+                        padding: 8px 12px; 
+                        background-color: #1a73e8;
+                        color: white; 
+                        border: none; 
+                        border-radius: 4px; 
+                        cursor: pointer; 
+                        font-weight: bold; 
+                        white-space: nowrap; 
                     ">🔍</button>
                 </div>
-    
+                
                 <!-- Popup nổi liệt kê kết quả tìm kiếm tuyến đường -->
                 <div id="duongPopupList" style="
-                    display: none;                /* Mặc định ẩn danh sách gợi ý khi chưa tìm kiếm */
-                    position: absolute;           /* Định vị tuyệt đối bám sát vào khung nhập đường bên trên */
-                    top: 100%;                    /* Đặt vị trí xuất hiện ngay sát phía dưới mép ô nhập */
-                    left: 0;                      /* Canh lề trái đồng bộ với ô nhập */
-                    right: 0;                     /* Trải dài đúng bằng chiều rộng khung chứa */
-                    background: #ffffff;          /* Màu nền trắng hiển thị nổi bật */
-                    border: 1px solid #ccc;       /* Đường viền khung popup màu xám */
-                    border-radius: 4px;           /* Bo tròn góc khung */
-                    max-height: 200px;            /* Giới hạn chiều cao tối đa tránh che khuất bản đồ */
-                    overflow-y: auto;             /* Tự động hiện thanh cuộn dọc khi dữ liệu vượt quá chiều cao */
-                    z-index: 1000;                /* Đẩy lớp hiển thị lên trên cùng, đè lên các thành phần khác */
-                    box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Hiệu ứng đổ bóng nổi khối nhẹ */
-                    margin-top: 2px;              /* Khoảng cách hở nhỏ phía dưới ô nhập */
+                    display: none; 
+                    position: absolute; 
+                    top: 100%; 
+                    left: 0; 
+                    right: 0; 
+                    background: #ffffff; 
+                    border: 1px solid #ccc; 
+                    border-radius: 4px; 
+                    max-height: 200px; 
+                    overflow-y: auto; 
+                    z-index: 1000; 
+                    box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+                    margin-top: 2px; 
                 ">
                 </div>
             </div>
 
-        </div> <!-- Kết thúc thẻ .filter-row -->
+        </div>
 
         <!-- Khung panel nhỏ hiển thị kết quả giá đất -->
         <div id="giaDatResultPanel" style="
-            display: none;                        /* Mặc định ẩn khi chưa có kết quả tính toán giá */
-            margin-top: 8px;                      /* Khoảng cách cách đều với cụm bộ lọc phía trên */
-            padding: 8px 10px;                    /* Khoảng đệm bên trong panel kết quả */
-            background: #ffffff;                  /* Màu nền trắng */
-            border: 1px solid #ccc;               /* Viền xám nhạt */
-            border-radius: 4px;                   /* Bo tròn góc khung */
-            font-size: 13px;                      /* Kích thước chữ vừa phải, gọn gàng */
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);/* Đổ bóng nhẹ tạo chiều sâu */
-            box-sizing: border-box;               /* Đồng bộ quy chuẩn kích thước */
+            display: none; 
+            margin-top: 8px; 
+            padding: 8px 10px; 
+            background: #ffffff; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            font-size: 13px; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-sizing: border-box; 
         ">
         </div>
     </div>
 
-    <!-- ================================================================= -->
-    <!-- KHUNG HIỂN THỊ CHÍNH BẢN ĐỒ ĐỊA LÝ TƯƠNG TÁC                      -->
-    <!-- ================================================================= -->
+    <!-- KHUNG HIỂN THỊ CHÍNH BẢN ĐỒ ĐỊA LÝ TƯƠNG TÁC -->
     <div id="map"></div>
 
-    <!-- ================================================================= -->
     <!-- KHUNG BẢNG PANEL NỔI HIỂN THỊ THÔNG TIN THỬA ĐẤT KHI CLICK -->
-    <!-- ================================================================= -->
     <div id="parcel-info-panel" class="parcel-panel" style="display: none;">
-        <!-- Phần tiêu đề của bảng thông tin thửa đất -->
         <div class="panel-header">
             <span><b>THÔNG TIN THỬA ĐẤT</b></span>
-            
-            <!-- Nút bấm dấu nhân (X) để đóng bảng thông tin, gọi trực tiếp hàm closeParcelPanel() trong JS -->
             <button onclick="closeParcelPanel()" class="close-btn">&times;</button>
         </div>
-        
-        <!-- Phần thân bảng: Chứa nội dung chi tiết các thông số thuộc tính của thửa đất được chọn -->
         <div id="panel-content" class="panel-body">
         </div>
     </div>
 
-    <!-- ================================================================= -->
-    <!-- CỤM CÔNG CỤ ĐỔI LỚP NỀN BẢN ĐỒ VÀ ĐO KHOẢNG CÁCH      -->
-    <!-- ================================================================= -->
+    <!-- CỤM CÔNG CỤ ĐỔI LỚP NỀN BẢN ĐỒ VÀ ĐO KHOẢNG CÁCH -->
     <div class="map-layer-control" style="
-        display: flex;                            /* Sắp xếp nội dung theo hàng ngang */
-        gap: 8px;                                 /* Khoảng cách giữa nút đổi lớp và nút đo khoảng cách */
-        align-items: center;                      /* Căn chỉnh các nút thẳng hàng theo chiều dọc */
+        display: flex; 
+        gap: 8px; 
+        align-items: center; 
     ">
-        
-        <!-- Nút bấm chuyển đổi qua lại giữa lớp bản đồ Vệ tinh ảnh chụp và lớp bản đồ đường nét OSM -->
         <button id="toggleLayerBtn" style="
-            padding: 3px 3px;                     /* Khoảng đệm bên trong nút */
-            height: 25px;                         /* Chiều cao cố định chuẩn giao diện */
-            background-color: #ffffff;            /* Màu nền trắng */
-            color: #333;                          /* Màu chữ tối dễ nhìn */
-            border: 1px solid #ccc;               /* Đường viền xám */
-            border-radius: 4px;                   /* Bo tròn góc */
-            cursor: pointer;                      /* Đổi con trỏ chuột thành dạng tương tác */
-            font-size: 13px;                      /* Kích thước chữ */
-            box-shadow: 0 1px 4px rgba(0,0,0,0.3);/* Đổ bóng nổi rõ trên bản đồ */
-            box-sizing: border-box;               /* Quy chuẩn kích thước hộp */
-            white-space: nowrap;                  /* Ngăn chữ bị ngắt dòng */
+            padding: 3px 3px; 
+            height: 25px; 
+            background-color: #ffffff; 
+            color: #333; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: 13px; 
+            box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+            box-sizing: border-box; 
+            white-space: nowrap; 
         ">
             Chuyển sang Bản đồ OSM
         </button>
         
-        <!-- Nút bấm kích hoạt tính năng đo khoảng cách đường thẳng và diện tích vùng khép kín trên bản đồ -->
         <button id="measureDistBtn" style="
-            padding: 3px 3px;                     /* Khoảng đệm bên trong nút */
-            height: 25px;                         /* Chiều cao cố định chuẩn */
-            background-color: #ffffff;            /* Màu nền trắng */
-            color: #333;                          /* Màu chữ tối */
-            border: 1px solid #ccc;               /* Đường viền xám */
-            border-radius: 4px;                   /* Bo tròn góc */
-            cursor: pointer;                      /* Biểu tượng con trỏ tương tác */
-            font-size: 13px;                      /* Cỡ chữ */
-            box-shadow: 0 1px 4px rgba(0,0,0,0.3);/* Đổ bóng tạo khối nổi */
-            box-sizing: border-box;               /* Quy chuẩn khung */
-            white-space: nowrap;                  /* Giữ chữ trên một dòng */
-            display: flex;                        /* Sắp xếp icon và chữ theo hàng ngang */
-            align-items: center;                  /* Căn giữa theo chiều dọc */
-            gap: 4px;                             /* Khoảng cách nhỏ giữa icon thước kẻ và chữ */
+            padding: 3px 3px; 
+            height: 25px; 
+            background-color: #ffffff; 
+            color: #333; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: 13px; 
+            box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+            box-sizing: border-box; 
+            white-space: nowrap; 
+            display: flex; 
+            align-items: center; 
+            gap: 4px; 
         ">
             📏 Đo khoảng cách
         </button>
     </div>
 
-    <!-- ================================================================= -->
-    <!-- THANH TRƯỢT ĐIỀU CHỈNH ĐỘ MỜ (OPACITY) CỦA LỚP BẢN ĐỒ NỀN         -->
-    <!-- ================================================================= -->
+    <!-- THANH TRƯỢT ĐIỀU CHỈNH ĐỘ MỜ (OPACITY) -->
     <div id="opacity-control-panel">
         <label for="opacitySlider">Mờ: <span id="opacityValue">0.6</span></label>
         <input type="range" id="opacitySlider" min="0" max="1" step="0.05" value="0.6">
     </div>
 
-    <!-- ================================================================= -->
-    <!-- CÁC TỆP MÃ NGUỒN JS MÔ-ĐUN ĐƯỢC TẢI THEO ĐÚNG THỨ TỰ LOGIC THỰC THI -->
-    <!-- ================================================================= -->
-    <script src="js/config.js"></script>     <!-- Tệp cấu hình thông số hệ thống, token, URL API -->
-    <script src="js/api.js"></script>         <!-- Tệp xử lý các yêu cầu gọi dữ liệu API bên ngoài -->
-    <script src="js/sheet.js"></script>       <!-- Tệp xử lý kết nối và đồng bộ dữ liệu Google Sheet -->
-    <script src="js/province.js"></script>    <!-- Tệp xử lý dữ liệu hành chính Tỉnh/Thành phố, Phường/Xã -->
-    <script src="js/giaDatFilter.js"></script><!-- Tệp xử lý logic tra cứu giá đất theo tên đường, popup gợi ý -->
-    <script src="js/searchThuaDat.js"></script><!-- Tệp xử lý logic tìm kiếm thông tin thửa đất -->
-    <script src="js/note.js"></script>        <!-- Tệp xử lý Ghi chú / Cập nhật dữ liệu) -->
-    <script src="js/measure.js"></script>     <!-- Tệp xử lý hình học và nhãn đo đạc thửa đất -->
-    <script src="js/mark.js"></script>        <!-- Tệp Đánh dấu vị trí -->
-    <script src="js/map.js"></script>         <!-- Tệp khởi tạo bản đồ MapLibre, quản lý lớp nền và sự kiện click -->
-   
+    <!-- CÁC TỆP MÃ NGUỒN JS MÔ-ĐUN -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/sheet.js"></script>
+    <script src="js/province.js"></script>
+    <script src="js/giaDatFilter.js"></script>
+    <script src="js/searchThuaDat.js"></script>
+    <script src="js/note.js"></script>
+    <script src="js/measure.js"></script>
+    <script src="js/mark.js"></script>
+    <script src="js/map.js"></script>
 
-    <!-- ================================================================= -->
-    <!-- MODAL POPUP GHI CHÚ                                               -->
-    <!-- ================================================================= -->
+    <!-- MODAL POPUP GHI CHÚ -->
     <div id="noteModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center;">
         <div style="background: white; padding: 20px; border-radius: 8px; width: 400px; max-width: 90%; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
             <h3 id="noteModalTitle" style="margin-top: 0; font-size: 16px; color: #333;">Ghi chú thửa đất</h3>
-            <div id="noteModalBody" style="margin-bottom: 15px;">
-                <!-- Nội dung xem hoặc form nhập liệu sẽ tự động điền vào đây -->
-            </div>
+            <div id="noteModalBody" style="margin-bottom: 15px;"></div>
             <div style="text-align: right; display: flex; gap: 8px; justify-content: flex-end;">
                 <button id="noteModalSaveBtn" style="display: none; padding: 6px 14px; background: #1a73e8; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Lưu</button>
                 <button onclick="closeNoteModal()" style="padding: 6px 14px; background: #ccc; border: none; border-radius: 4px; cursor: pointer;">Đóng</button>
