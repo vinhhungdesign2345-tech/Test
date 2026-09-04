@@ -68,220 +68,122 @@
         }
         
         /* ==========================================================================
-           --- 3. CỤM ĐIỀU KHIỂN DROPDOWN & BỘ LỌC ---
+           --- 3. CỤM ĐIỀU KHIỂN DROPDOWN & BỘ LỌC (HỆ THỐNG TỰ ĐỘNG CO GIÃN) ---
            ========================================================================== */
+        
         /* 1. KHUNG BẢNG ĐIỀU KHIỂN TỔNG THỂ */
         .map-control {
-            position: absolute;          /* Vị trí bảng điều khiển góc trên bên trái bản đồ */
-            top: 12px;                   /* Cách mép trên của bản đồ là 12 pixel */
-            left: 12px;                  /* Cách mép trái của bản đồ là 12 pixel */
-            z-index: 100;                /* Tầng hiển thị mức 100 */
-            background: rgba(255, 255, 255, 0.92); /* Màu nền trắng với độ trong suốt 92% */
-            padding: 3px;                /* Khoảng đệm đều ở bên trong bảng điều khiển là 3 pixel */
-            border-radius: 5px;          /* Bo góc bên ngoài bảng điều khiển bán kính 5 pixel */
-            max-width: 300px;            /* Chiều rộng tối đa của cả bảng điều khiển 300 pixel */
-            width: calc(100% - 20px);    /* Chiều rộng tự động co giãn trừ đi lề 20 pixel (10px mỗi bên) */
-            box-sizing: border-box;      /* Đảm bảo kích thước padding và border tính gộp chung vào tổng chiều rộng */
+            position: absolute;          /* Vị trí bảng điều khiển ghim cố định ở góc trên bên trái bản đồ */
+            top: 12px;                   /* Cách mép trên bản đồ 12 pixel */
+            left: 12px;                  /* Cách mép trái bản đồ 12 pixel */
+            z-index: 100;                /* Tầng hiển thị ưu tiên mức 100 */
+            background: rgba(255, 255, 255, 0.92); /* Màu nền trắng trong suốt 92% */
+            padding: 4px;                /* Khoảng đệm viền bên ngoài bảng điều khiển */
+            border-radius: 6px;          /* Bo góc toàn bộ bảng điều khiển bán kính 6 pixel */
+            max-width: 300px;            /* Chiều rộng tối đa của bảng điều khiển là 300 pixel */
+            width: calc(100% - 20px);    /* Chiều rộng tự động co giãn theo màn hình, trừ lề 20px */
+            box-sizing: border-box;      /* Tính gộp padding và border vào kích thước tổng */
         }
 
         /* 2. CẤU TRÚC HÀNG VÀ CÁC THÀNH PHẦN CON BÊN TRONG */
         .filter-row {
-            display: flex;               /* Bật mô hình sắp xếp linh hoạt Flexbox cho các phần tử con */
-            flex-wrap: wrap;             /* Cho phép các phần tử tự động rớt xuống dòng nếu không đủ chỗ */
-            gap: 3px;                    /* Thiết lập khoảng cách hở đều giữa các phần tử con là 3 pixel */
-            width: 100%;                 /* Chiều rộng các thành phần con chiếm 100% không gian khung chứa */
-            align-items: center;         /* Canh chỉnh các phần tử con nằm căn giữa theo chiều dọc */
-        }
-        .filter-item {
-            min-width: 0;                /* Ngăn chặn tình trạng lỗi tràn kích thước trong Flexbox */
-        }
-        .filter-row > .filter-item:first-child {
-            width: 100%;                 /* Ép ô tìm kiếm chiếm trọn 100% chiều rộng dòng trên */
-            display: flex;               /* Bật chế độ Flexbox riêng cho cụm ô nhập và nút bấm bên trong */
-            gap: 3px;                    /* Thiết lập khoảng cách hở giữa ô nhập và nút tìm kiếm là 3 pixel */
-        }
-        .filter-row > .filter-item:not(:first-child) {
-            flex: 1;                     /* Các thẻ dropdown còn lại tự động chia đều không gian ngang */
-        }
-        
-        /* ==========================================================================
-           --- 3A. Ô TÌM KIẾM THỬA ĐẤT VÀ NÚT TÌM (CHUẨN FLEXBOX) ---
-           ========================================================================== */
-        .filter-row > .filter-item:first-child {
-            width: 100%;                 
-            display: flex;               
-            gap: 3px;                    
-            align-items: stretch;        /* Ép các phần tử con tự động giãn nở cao bằng nhau tuyệt đối */
+            display: flex;               /* Bật mô hình sắp xếp linh hoạt Flexbox */
+            flex-wrap: nowrap;           /* Buộc các phần tử nằm gọn trên một hàng, không bị rớt dòng lung tung */
+            gap: 3px;                    /* Khoảng cách hở theo chiều ngang giữa các cột là 3 pixel */
+            width: 100%;                 /* Chiếm trọn 100% chiều rộng khung chứa */
+            margin-bottom: 4px;          /* Khoảng cách lề dưới giữa các hàng (tạo độ thoáng vừa phải) */
+            box-sizing: border-box;
         }
 
-        #searchThuaDatInput {
+        /* Dòng cuối cùng không cần chừa lề dưới để ôm khít bảng */
+        .filter-row:last-child {
+            margin-bottom: 0;            
+        }
+
+        .filter-item {
+            min-width: 0;                /* Ngăn chặn triệt để lỗi tràn kích thước chữ trong Flexbox */
+            box-sizing: border-box;
+        }
+
+        /* Hàng 1: Ô nhập tìm thửa đất (chiếm không gian chính) */
+        .filter-row > .filter-item:first-child {
+            flex: 1;                     /* Tự động giãn nở linh hoạt chiếm không gian hàng trên */
+            display: flex;               
+            gap: 3px;                    /* Khoảng cách giữa ô input và nút Tìm */
+            align-items: stretch;        /* Ép chiều cao ô input và nút bấm luôn bằng nhau tuyệt đối */
+        }
+
+        /* Các hàng dropdown bên dưới (chia đều không gian nếu có nhiều cột trên 1 hàng) */
+        .filter-row > .filter-item:not(:first-child) {
             flex: 1;                     
-            padding: 0 6px;              
-            border-radius: 5px;          
-            font-size: 11px;             
-            font-weight: normal !important; 
-            /* Bỏ hẳn height cố định để nó tự co giãn khớp hoàn toàn theo hàng */
+        }
+
+        /* ==========================================================================
+           --- 3A. Ô NHẬP TÌM KIẾM & NÚT TÌM KIẾM (HÀNG 1) ---
+           ========================================================================== */
+        #searchThuaDatInput {
+            width: 100%;
+            flex: 1;                     /* Tự động lấp đầy phần trống */
+            padding: 0 6px;              /* Khoảng đệm trái/phải 6px */
+            border-radius: 4px;          /* Bo góc 4 pixel */
+            font-size: 11px;             /* Kích thước chữ bên trong là 11 pixel */
+            font-weight: normal !important; /* Kiểu chữ bình thường, không in đậm */
+            height: 26px;                /* Chiều cao chuẩn linh hoạt của cả hàng */
             box-sizing: border-box;      
             outline: none;               
             background-color: #fff;      
             color: #222;                 
-            border: 1px solid #d0d0d0;   
+            border: 1px solid #d0d0d0;   /* Viền xám nhạt */
         }
 
         #searchThuaDatBtn {
-            padding: 0 12px;             
-            background-color: #1a73e8;   
-            color: white;                
-            border: none;                
-            border-radius: 6px;          
-            font-size: 11px;             
+            padding: 0 10px;             /* Khoảng đệm ngang bên trong nút tìm */
+            background-color: #1a73e8;   /* Màu nền xanh đặc trưng của nút */
+            color: white;                /* Chữ màu trắng */
+            border: none;                /* Không viền */
+            border-radius: 4px;          /* Bo góc 4 pixel */
+            font-size: 11px;             /* Kích thước chữ 11 pixel khớp ô input */
             font-weight: normal !important; 
-            /* Bỏ hẳn height cố định ở nút luôn */
+            height: 26px;                /* Chiều cao bằng khít ô input (26px) */
             box-sizing: border-box;      
             cursor: default !important;  
-            white-space: nowrap;         
+            white-space: nowrap;         /* Không cho rớt dòng chữ */
             display: flex;               
-            align-items: center;         
-            justify-content: center;     
+            align-items: center;         /* Canh giữa chữ theo chiều dọc */
+            justify-content: center;     /* Canh giữa chữ theo chiều ngang */
             transition: background-color 0.2s; 
-        }
-
-        #searchThuaDatBtn:hover {
-            background-color: #1557b0;   
         }
        
         /* ==========================================================================
-           --- 3B. DROPDOWN CHỌN TỈNH / THÀNH PHỐ ---
+           --- 3B, 3C, 3D, 3E. CÁC THẺ DROPDOWN VÀ Ô NHẬP LIỆU CHUNG ---
            ========================================================================== */
-        /* (Giả sử ID của thẻ select Tỉnh/Thành là #tinhThanhSelect - bạn có thể thay lại ID cho khớp code HTML của bạn) */
-        #tinhThanhSelect {
-            width: 100%;                 
-            padding: 6px 8px;            
-            border-radius: 6px;          
-            border: 1px solid #d0d0d0;   
-            font-size: 12px;             
-            font-weight: normal !important;
+        .map-control select,
+        .map-control input[type="text"] {
+            width: 100%;                 /* Chiếm trọn 100% chiều rộng ô chứa */
+            padding: 0 6px;              /* Khoảng đệm ngang bên trong (trên/dưới bằng 0 để tận dụng chiều cao) */
+            border-radius: 4px;          /* Bo góc 4 pixel đồng bộ */
+            border: 1px solid #d0d0d0;   /* Viền xám nhạt */
+            font-size: 11px;             /* Kích thước chữ đồng nhất 11 pixel */
+            font-weight: normal !important; /* Không in đậm */
             outline: none;               
-            background-color: #fff;      
-            color: #222;                 
-            height: 34px;                
-            box-sizing: border-box;      
-            text-overflow: ellipsis;     
-            white-space: nowrap;         
-            overflow: hidden;            
+            background-color: #fff;      /* Nền trắng */
+            color: #222;                 /* Màu chữ xám đen */
+            height: 26px;                /* CHIỀU CAO CHUẨN CỦA TỪNG PHẦN TỬ CON (Bạn chỉ cần đổi số này là tất cả tự thay đổi theo) */
+            line-height: 24px;           /* Canh dòng chữ nằm giữa chiều cao khung */
+            box-sizing: border-box;      /* Tính gộp padding và border vào kích thước */
+            text-overflow: ellipsis;     /* Cắt bớt văn bản dài bằng dấu ba chấm (...) */
+            white-space: nowrap;         /* Giữ văn bản trên một dòng duy nhất */
+            overflow: hidden;            /* Ẩn phần chữ bị tràn khung */
         }
-        
+
         /* ==========================================================================
-           --- 3C. DROPDOWN CHỌN QUẬN / HUYỆN ---
-           ========================================================================== */
-        /* (Giả sử ID của thẻ select Quận/Huyện là #quanHuyenSelect) */
-        #quanHuyenSelect {
-            width: 100%;                 
-            padding: 6px 8px;            
-            border-radius: 6px;          
-            border: 1px solid #d0d0d0;   
-            font-size: 12px;             
-            font-weight: normal !important;
-            outline: none;               
-            background-color: #fff;      
-            color: #222;                 
-            height: 34px;                
-            box-sizing: border-box;      
-            text-overflow: ellipsis;     
-            white-space: nowrap;         
-            overflow: hidden;            
-        }
-        
-        /* ==========================================================================
-           --- 3D. DROPDOWN CHỌN PHƯỜNG / XÃ ---
-           ========================================================================== */
-        /* (Giả sử ID của thẻ select Phường/Xã là #phuongXaSelect) */
-        #phuongXaSelect {
-            width: 100%;                 
-            padding: 6px 8px;            
-            border-radius: 6px;          
-            border: 1px solid #d0d0d0;   
-            font-size: 12px;             
-            font-weight: normal !important;
-            outline: none;               
-            background-color: #fff;      
-            color: #222;                 
-            height: 34px;                
-            box-sizing: border-box;      
-            text-overflow: ellipsis;     
-            white-space: nowrap;         
-            overflow: hidden;            
-        }
-        
-        /* ==========================================================================
-           --- 3E. Ô NHẬP TÊN ĐƯỜNG (HOẶC DROPDOWN TÊN ĐƯỜNG) ---
-           ========================================================================== */
-        /* (Giả sử ID ô nhập tên đường là #tenDuongInput) */
-        #tenDuongInput {
-            width: 100%;                 
-            padding: 6px 8px;            
-            border-radius: 6px;          
-            border: 1px solid #d0d0d0;   
-            font-size: 12px;             
-            font-weight: normal !important;
-            outline: none;               
-            background-color: #fff;      
-            color: #222;                 
-            height: 34px;                
-            box-sizing: border-box;      
-            text-overflow: ellipsis;     
-            white-space: nowrap;         
-            overflow: hidden;            
-        }
-        
-        /* ==========================================================================
-           --- 3F. TRẠNG THÁI CHUNG KHI CÁC THÀNH PHẦN BỊ VÔ HIỆU HÓA (DISABLED) ---
+           --- 3F. TRẠNG THÁI VÔ HIỆU HÓA (DISABLED) CHUNG ---
            ========================================================================== */
         .map-control select:disabled,
         .map-control input:disabled {
-            background-color: #f0f0f0;   /* Đổi màu nền sang xám nhạt */
-            color: #888;                 /* Đổi màu chữ sang xám tối */
-            cursor: not-allowed;         /* Biểu tượng cấm khi di chuột vào */
-        }
-        /* 4. NÚT BẤM TÌM KIẾM VÀ HIỆU ỨNG RÊ CHUỘT */
-        #searchThuaDatBtn {
-            padding: 0 14px;             /* Khoảng đệm ngang bên trong nút: trên/dưới 0, trái/phải 14px */
-            background-color: #1a73e8;   /* Màu nền chủ đạo cho nút tìm kiếm là màu xanh dương đặc trưng */
-            color: white;                /* Thiết lập màu sắc chữ hiển thị trên nút là màu trắng */
-            border: none;                /* Loại bỏ hoàn toàn đường viền mặc định của nút */
-            border-radius: 6px;          /* Bo tròn các góc của nút tìm kiếm với bán kính 6 pixel */
-            font-size: 12px;             /* Thiết lập kích thước chữ trên nút là 12 pixel */
-            font-weight: normal !important; /* Buộc kiểu chữ hiển thị bình thường, không in đậm */
-            height: 34px;                /* Cố định chiều cao của nút là 34 pixel */
-            cursor: default !important;  /* Buộc con trỏ chuột giữ nguyên dạng mặc định */
-            white-space: nowrap;         /* Ngăn chặn tuyệt đối không cho văn bản bên trong rớt dòng */
-            transition: background-color 0.2s; /* Hiệu ứng đổi màu nền mượt mà trong 0.2 giây */
-        }
-        #searchThuaDatBtn:hover {
-            background-color: #1557b0;   /* Chuyển màu nền nút sang tông xanh dương đậm hơn khi rê chuột */
-        }
-
-        /* 5. CÁC THẺ LỰA CHỌN DROPDOWN VÀ TRẠNG THÁI VÔ HIỆU HÓA */
-        .map-control select {
-            width: 100%;                 /* Thiết lập thẻ lựa chọn chiếm trọn 100% chiều rộng khung chứa */
-            padding: 6px 8px;            /* Khoảng đệm bên trong thẻ chọn: trên/dưới 6px, trái/phải 8px */
-            border-radius: 6px;          /* Bo tròn các góc thẻ chọn với bán kính 6 pixel */
-            border: 1px solid #d0d0d0;   /* Tạo đường viền khung thẻ chọn màu xám nhạt */
-            font-size: 12px;             /* Thiết lập kích thước chữ trong danh sách lựa chọn là 12 pixel */
-            font-weight: normal !important; /* Buộc kiểu chữ hiển thị bình thường, không in đậm */
-            outline: none;               /* Loại bỏ đường viền sáng mặc định khi click */
-            background-color: #fff;      /* Thiết lập màu nền của thẻ chọn là màu trắng */
-            color: #222;                 /* Thiết lập màu sắc chữ tùy chọn bên trong là màu xám đen */
-            height: 34px;                /* Cố định chiều cao của thẻ chọn là 34 pixel */
-            box-sizing: border-box;      /* Đảm bảo padding và border tính gộp chuẩn xác vào width */
-            text-overflow: ellipsis;     /* Tự động cắt bớt phần văn bản quá dài bằng dấu ba chấm (...) */
-            white-space: nowrap;         /* Buộc nội dung văn bản lựa chọn nằm gọn trên một dòng duy nhất */
-            overflow: hidden;            /* Ẩn đi phần nội dung văn bản bị tràn ra khỏi khung */
-        }
-       .map-control select:disabled {
-            background-color: #f0f0f0;   /* Đổi màu nền sang xám nhạt khi thẻ chọn bị vô hiệu hóa (disabled) */
-            color: #888;                 /* Đổi màu chữ sang xám tối biểu thị trạng thái mờ */
-            cursor: not-allowed;         /* Đổi kiểu con trỏ chuột thành hình biểu tượng cấm khi di chuyển vào */
+            background-color: #f0f0f0;   /* Đổi màu nền sang xám nhạt khi bị khóa */
+            color: #888;                 /* Màu chữ xám tối mờ */
+            cursor: not-allowed;         /* Con trỏ chuột hình biểu tượng cấm */
         }
 
         /* ==========================================================================
