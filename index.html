@@ -24,96 +24,58 @@
            --- 1. CÀI ĐẶT CHUNG CHO TOÀN BỘ TRANG WEB ---
            ========================================================================== */
         body { 
-            /* Loại bỏ hoàn toàn khoảng cách lề ngoài mặc định của trình duyệt */
-            margin: 0; 
-            
-            /* Loại bỏ khoảng cách đệm bên trong mặc định của trình duyệt */
-            padding: 0; 
-            
-            /* Thiết lập kiểu phông chữ mặc định là Arial, dự phòng sang sans-serif */
-            font-family: Arial, sans-serif;
+            margin: 0;                   /* Loại bỏ hoàn toàn khoảng cách lề ngoài mặc định của trình duyệt */
+            padding: 0;                  /* Loại bỏ khoảng cách đệm bên trong mặc định của trình duyệt */
+            font-family: Arial, sans-serif; /* Thiết lập kiểu phông chữ mặc định là Arial, dự phòng sang sans-serif */
         }
 
         #map { 
-            /* Đặt kiểu định vị tuyệt đối để khung bản đồ phủ toàn bộ không gian */
-            position: absolute; 
-            
-            /* Neo sát mép trên cùng của màn hình (khoảng cách bằng 0) */
-            top: 0; 
-            
-            /* Kéo giãn khung bản đồ xuống tận mép dưới cùng của màn hình */
-            bottom: 0; 
-            
-            /* Thiết lập chiều rộng bao phủ trọn vẹn 100% màn hình ngang */
-            width: 100%; 
+            position: absolute;          /* Đặt kiểu định vị tuyệt đối để khung bản đồ phủ toàn bộ không gian */
+            top: 0;                      /* Neo sát mép trên cùng của màn hình (khoảng cách bằng 0) */
+            bottom: 0;                   /* Kéo giãn khung bản đồ xuống tận mép dưới cùng của màn hình */
+            width: 100%;                 /* Thiết lập chiều rộng bao phủ trọn vẹn 100% màn hình ngang */
         }
 
         .maplibregl-canvas-container .maplibregl-canvas {
-            /* Tối ưu hóa độ tương phản và nét chữ trên các trình duyệt sử dụng nhân WebKit/Safari */
-            image-rendering: -webkit-optimize-contrast; 
-            
-            /* Giữ cho các đường nét đồ họa, ký tự, số đo trên bản đồ hiển thị sắc nét, không bị mờ */
-            image-rendering: crisp-edges; 
+            image-rendering: -webkit-optimize-contrast; /* Tối ưu hóa độ tương phản và nét chữ trên các trình duyệt sử dụng nhân WebKit/Safari */
+            image-rendering: crisp-edges;               /* Giữ cho các đường nét đồ họa, ký tự, số đo trên bản đồ hiển thị sắc nét, không bị mờ */
         }
 
         .maplibregl-marker, 
         .maplibregl-popup {
-            /* Thiết lập tầng hiển thị ưu tiên (z-index) ở mức 50 để đè lên các lớp nền thông thường */
-            z-index: 50; 
+            z-index: 50;                 /* Thiết lập tầng hiển thị ưu tiên (z-index) ở mức 50 để đè lên các lớp nền thông thường */
         }
 
         /* ==========================================================================
            --- 2. CỤM NÚT CHUYỂN ĐỔI LỚP BẢN ĐỒ VÀ ĐO KHOẢNG CÁCH ---
            ========================================================================== */
         .map-layer-control {
-            /* Đặt kiểu định vị tuyệt đối để nhóm nút nổi lên trên bề mặt bản đồ */
-            position: absolute; 
-            
-            /* Đặt khoảng cách cách mép dưới của khung bản đồ là 5 pixel */
-            bottom: 5px; 
-            
-            /* Đặt khoảng cách cách mép trái của khung bản đồ là 10 pixel */
-            left: 10px; 
-            
-            /* Thiết lập tầng hiển thị ưu tiên ở mức 100 để nằm đè lên lớp bản đồ */
-            z-index: 100; 
+            position: absolute;          /* Đặt kiểu định vị tuyệt đối để nhóm nút nổi lên trên bề mặt bản đồ */
+            bottom: 5px;                 /* Đặt khoảng cách cách mép dưới của khung bản đồ là 5 pixel */
+            left: 10px;                  /* Đặt khoảng cách cách mép trái của khung bản đồ là 10 pixel */
+            z-index: 100;                /* Thiết lập tầng hiển thị ưu tiên ở mức 100 để nằm đè lên lớp bản đồ */
         }
 
         #toggleLayerBtn {
-            /* Khoảng đệm phía trong: trên/dưới là 2px, trái/phải là 4px */
-            padding: 2px 4px; 
-            
-            /* Thiết lập màu nền mặc định cho nút là màu trắng */
-            background: white; 
-            
-            /* Tạo đường viền xung quanh nút có độ dày 1px, nét liền và màu xám nhạt */
-            border: 1px solid #ccc; 
-            
-            /* Buộc con trỏ chuột giữ nguyên dạng mặc định (không đổi thành hình bàn tay) */
-            cursor: default !important; 
-            
-            /* Bo tròn các góc của nút với bán kính cong là 6 pixel */
-            border-radius: 6px; 
-            
-            /* Thiết lập kích thước chữ hiển thị trong nút nhỏ gọn ở mức 9 pixel */
-            font-size: 9px; 
-            
-            /* Buộc kiểu chữ hiển thị bình thường, tuyệt đối không bị in đậm */
-            font-weight: normal !important;
-            
-            /* Thiết lập màu sắc chữ bên trong nút là màu xám đậm (#333) */
-            color: #333; 
-            
-            /* Thiết lập hiệu ứng chuyển đổi mượt mà khi thay đổi màu nền và màu viền trong 0.2 giây */
-            transition: background-color 0.2s ease, border-color 0.2s ease; 
-            
-            /* Tạo hiệu ứng đổ bóng nhẹ phía dưới nút (độ dịch chuyển ngang 0, dọc 2px, bán kính mờ 5px, màu đen trong suốt 10%) */
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+            padding: 2px 4px;            /* Khoảng đệm phía trong: trên/dưới là 2px, trái/phải là 4px */
+            background: white;           /* Thiết lập màu nền mặc định cho nút là màu trắng */
+            border: 1px solid #ccc;      /* Tạo đường viền xung quanh nút có độ dày 1px, nét liền và màu xám nhạt */
+            cursor: default !important;  /* Buộc con trỏ chuột giữ nguyên dạng mặc định (không đổi thành hình bàn tay) */
+            border-radius: 6px;          /* Bo tròn các góc của nút với bán kính cong là 6 pixel */
+            font-size: 9px;              /* Thiết lập kích thước chữ hiển thị trong nút nhỏ gọn ở mức 9 pixel */
+            font-weight: normal !important; /* Buộc kiểu chữ hiển thị bình thường, tuyệt đối không bị in đậm */
+            color: #333;                 /* Thiết lập màu sắc chữ bên trong nút là màu xám đậm (#333) */
+            transition: background-color 0.2s ease, border-color 0.2s ease; /* Thiết lập hiệu ứng chuyển đổi mượt mà khi thay đổi màu nền và màu viền trong 0.2 giây */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Tạo hiệu ứng đổ bóng nhẹ phía dưới nút (ngang 0, dọc 2px, mờ 5px, màu đen trong suốt 10%) */
+        }
+
+        #toggleLayerBtn:hover {
+            background-color: #d3e4ed;   /* Đổi màu nền của nút sang màu xanh nhạt khi người dùng di chuột vào */
+            border-color: #b0b0b0;       /* Đổi màu viền của nút đậm hơn một chút khi di chuột vào */
         }
 
         #measureDistBtn {
-            /* Buộc kiểu chữ của nút đo khoảng cách hiển thị bình thường, không in đậm */
-            font-weight: normal !important;
+            font-weight: normal !important; /* Buộc kiểu chữ của nút đo khoảng cách hiển thị bình thường, không in đậm */
         }
 
         /* ==========================================================================
@@ -122,7 +84,7 @@
 
         /* 1. KHUNG BẢNG ĐIỀU KHIỂN TỔNG THỂ */
         .map-control {
-            position: absolute;          /* Vị trí bảng điều khiển nổi lên trên góc trái bản đồ */
+            position: absolute;          /* Vị trí bảng điều khiển góc trên bên trái bản đồ */
             top: 12px;                   /* Cách mép trên của bản đồ là 12 pixel */
             left: 12px;                  /* Cách mép trái của bản đồ là 12 pixel */
             z-index: 100;                /* Tầng hiển thị mức 100 */
@@ -157,12 +119,15 @@
             flex: 1;                     /* Các thẻ dropdown còn lại tự động chia đều không gian ngang */
         }
 
-        /* 3. Ô NHẬP TÌM KIẾM */
+
+        /* ==========================================================================
+           --- 3A. Ô TÌM KIẾM THỬA ĐẤT / CHỦ ĐẤT (HÀNG TRÊN CÙNG) ---
+           ========================================================================== */
         #searchThuaDatInput {
             flex: 1;                     /* Thiết lập ô nhập liệu tự động giãn nở chiếm không gian trống */
             padding: 3px 4px;            /* Khoảng đệm bên trong ô nhập: trên/dưới 3px, trái/phải 4px */
             border-radius: 5px;          /* Bo tròn các góc của ô nhập với bán kính 5 pixel */
-            font-size: 10px;             /* Thiết lập kích thước chữ gõ vào bên trong là 10 pixel */
+            font-size: 12px;             /* Thiết lập kích thước chữ gõ vào bên trong là 12 pixel */
             font-weight: normal !important; /* Buộc kiểu chữ hiển thị bình thường, không in đậm */
             height: 30px;                /* Cố định chiều cao tổng thể của ô nhập là 30 pixel */
             box-sizing: border-box;      /* Đảm bảo padding và border tính gộp vào kích thước width */
@@ -170,6 +135,123 @@
             background-color: #fff;      /* Thiết lập màu nền bên trong ô nhập là màu trắng */
             color: #222;                 /* Thiết lập màu sắc chữ khi người dùng gõ vào là màu xám đen */
             border: 1px solid #d0d0d0;   /* Tạo đường viền khung màu xám nhạt */
+        }
+
+        #searchThuaDatBtn {
+            padding: 0 14px;             /* Khoảng đệm ngang bên trong nút: trên/dưới 0, trái/phải 14px */
+            background-color: #1a73e8;   /* Màu nền chủ đạo cho nút tìm kiếm là màu xanh dương đặc trưng */
+            color: white;                /* Thiết lập màu sắc chữ hiển thị trên nút là màu trắng */
+            border: none;                /* Loại bỏ hoàn toàn đường viền mặc định của nút */
+            border-radius: 6px;          /* Bo tròn các góc của nút tìm kiếm với bán kính 6 pixel */
+            font-size: 12px;             /* Thiết lập kích thước chữ trên nút là 12 pixel */
+            font-weight: normal !important; /* Buộc kiểu chữ hiển thị bình thường, không bị in đậm */
+            height: 34px;                /* Cố định chiều cao của nút là 34 pixel */
+            cursor: default !important;  /* Buộc con trỏ chuột giữ nguyên dạng mặc định */
+            white-space: nowrap;         /* Ngăn chặn tuyệt đối không cho văn bản bên trong rớt dòng */
+            transition: background-color 0.2s; /* Hiệu ứng đổi màu nền mượt mà trong 0.2 giây */
+        }
+
+        #searchThuaDatBtn:hover {
+            background-color: #1557b0;   /* Chuyển màu nền nút sang tông xanh dương đậm hơn khi rê chuột */
+        }
+
+
+        /* ==========================================================================
+           --- 3B. DROPDOWN CHỌN TỈNH / THÀNH PHỐ ---
+           ========================================================================== */
+        /* (Giả sử ID của thẻ select Tỉnh/Thành là #tinhThanhSelect - bạn có thể thay lại ID cho khớp code HTML của bạn) */
+        #tinhThanhSelect {
+            width: 100%;                 
+            padding: 6px 8px;            
+            border-radius: 6px;          
+            border: 1px solid #d0d0d0;   
+            font-size: 12px;             
+            font-weight: normal !important;
+            outline: none;               
+            background-color: #fff;      
+            color: #222;                 
+            height: 34px;                
+            box-sizing: border-box;      
+            text-overflow: ellipsis;     
+            white-space: nowrap;         
+            overflow: hidden;            
+        }
+
+
+        /* ==========================================================================
+           --- 3C. DROPDOWN CHỌN QUẬN / HUYỆN ---
+           ========================================================================== */
+        /* (Giả sử ID của thẻ select Quận/Huyện là #quanHuyenSelect) */
+        #quanHuyenSelect {
+            width: 100%;                 
+            padding: 6px 8px;            
+            border-radius: 6px;          
+            border: 1px solid #d0d0d0;   
+            font-size: 12px;             
+            font-weight: normal !important;
+            outline: none;               
+            background-color: #fff;      
+            color: #222;                 
+            height: 34px;                
+            box-sizing: border-box;      
+            text-overflow: ellipsis;     
+            white-space: nowrap;         
+            overflow: hidden;            
+        }
+
+
+        /* ==========================================================================
+           --- 3D. DROPDOWN CHỌN PHƯỜNG / XÃ ---
+           ========================================================================== */
+        /* (Giả sử ID của thẻ select Phường/Xã là #phuongXaSelect) */
+        #phuongXaSelect {
+            width: 100%;                 
+            padding: 6px 8px;            
+            border-radius: 6px;          
+            border: 1px solid #d0d0d0;   
+            font-size: 12px;             
+            font-weight: normal !important;
+            outline: none;               
+            background-color: #fff;      
+            color: #222;                 
+            height: 34px;                
+            box-sizing: border-box;      
+            text-overflow: ellipsis;     
+            white-space: nowrap;         
+            overflow: hidden;            
+        }
+
+
+        /* ==========================================================================
+           --- 3E. Ô NHẬP TÊN ĐƯỜNG (HOẶC DROPDOWN TÊN ĐƯỜNG) ---
+           ========================================================================== */
+        /* (Giả sử ID ô nhập tên đường là #tenDuongInput) */
+        #tenDuongInput {
+            width: 100%;                 
+            padding: 6px 8px;            
+            border-radius: 6px;          
+            border: 1px solid #d0d0d0;   
+            font-size: 12px;             
+            font-weight: normal !important;
+            outline: none;               
+            background-color: #fff;      
+            color: #222;                 
+            height: 34px;                
+            box-sizing: border-box;      
+            text-overflow: ellipsis;     
+            white-space: nowrap;         
+            overflow: hidden;            
+        }
+
+
+        /* ==========================================================================
+           --- 3F. TRẠNG THÁI CHUNG KHI CÁC THÀNH PHẦN BỊ VÔ HIỆU HÓA (DISABLED) ---
+           ========================================================================== */
+        .map-control select:disabled,
+        .map-control input:disabled {
+            background-color: #f0f0f0;   /* Đổi màu nền sang xám nhạt */
+            color: #888;                 /* Đổi màu chữ sang xám tối */
+            cursor: not-allowed;         /* Biểu tượng cấm khi di chuột vào */
         }
 
         /* 4. NÚT BẤM TÌM KIẾM VÀ HIỆU ỨNG RÊ CHUỘT */
