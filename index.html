@@ -63,7 +63,7 @@
         }
 
         /* ==========================================================================
-           --- 2. CỤM NÚT CHUYỂN ĐỔI LỚP BẢN ĐỒ VÀ ĐO KHOẢNG CÁCH (PC) ---
+           --- 2. CỤM NÚT CHUYỂN ĐỔI LỚP BẢN ĐỒ VÀ ĐO KHOẢNG CÁCH ---
            ========================================================================== */
         .map-layer-control {
             /* Đặt kiểu định vị tuyệt đối để nhóm nút nổi lên trên bề mặt bản đồ */
@@ -117,7 +117,7 @@
         }
 
         /* ==========================================================================
-           --- 3. BẢNG ĐIỀU KHIỂN DROPDOWN & BỘ LỌC (PC) ---
+           --- 3. CỤM ĐIỀU KHIỂN DROPDOWN & BỘ LỌC---
            ========================================================================== */
         .map-control {
             /* Đặt kiểu định vị tuyệt đối để bảng điều khiển nổi lên trên góc trái bản đồ */
@@ -135,14 +135,14 @@
             /* Màu nền trắng với độ trong suốt 92% (mã màu dạng RGBA) */
             background: rgba(255, 255, 255, 0.92); 
             
-            /* Tạo hiệu ứng làm mờ các chi tiết hiển thị phía sau bảng điều khiển với độ mờ 10px */
+            /* Hiệu ứng làm mờ các chi tiết hiển thị phía sau bảng điều khiển với độ mờ 10px */
             backdrop-filter: blur(10px); 
             
             /* HHiệu ứng làm mờ tương tự dành riêng cho trình duyệt sử dụng nhân WebKit/Safari */
             -webkit-backdrop-filter: blur(10px); 
             
-            /* Khoảng đệm đều ở bên trong bảng điều khiển là 6 pixel */
-            padding: 6px; 
+            /* Khoảng đệm đều ở bên trong bảng điều khiển là 3 pixel */
+            padding: 3px; 
             
             /* Bo góc bên ngoài bảng điều khiển bán kính 10 pixel */
             border-radius: 10px; 
@@ -150,11 +150,11 @@
             /* Hiệu ứng đổ bóng sâu và rõ nét xung quanh bảng điều khiển */
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.18); 
             
-            /* Chiều rộng tối đa của bảng điều khiển 350 pixel */
-            max-width: 350px; 
+            /* Chiều rộng tối đa của bảng điều khiển 300 pixel */
+            max-width: 300px; 
             
-            /* Chiều rộng tự động co giãn theo màn hình nhưng trừ đi lề 24 pixel (12px mỗi bên) */
-            width: calc(100% - 24px); 
+            /* Chiều rộng tự động co giãn theo màn hình nhưng trừ đi lề 20 pixel (10px mỗi bên) */
+            width: calc(100% - 20px); 
             
             /* Đảm bảo kích thước padding và border được tính gộp chung vào tổng chiều rộng */
             box-sizing: border-box; 
@@ -167,8 +167,8 @@
             /* Cho phép các phần tử con tự động rớt xuống dòng tiếp theo nếu không đủ chỗ hiển thị */
             flex-wrap: wrap; 
             
-            /* Thiết lập khoảng cách hở đều giữa các phần tử con là 6 pixel */
-            gap: 6px; 
+            /* Thiết lập khoảng cách hở đều giữa các phần tử con là 3 pixel */
+            gap: 3px; 
             
             /* Thiết lập chiều rộng chiếm trọn 100% không gian khung chứa */
             width: 100%; 
@@ -189,16 +189,16 @@
             /* Bật chế độ Flexbox riêng cho cụm ô nhập và nút bấm tìm kiếm bên trong */
             display: flex; 
             
-            /* Thiết lập khoảng cách hở giữa ô nhập văn bản và nút tìm kiếm là 6 pixel */
-            gap: 6px; 
+            /* Thiết lập khoảng cách hở giữa ô nhập văn bản và nút tìm kiếm là 3 pixel */
+            gap: 3px; 
         }
 
         #searchThuaDatInput {
             /* Thiết lập ô nhập liệu tự động giãn nở để chiếm phần không gian trống còn lại */
             flex: 1; 
             
-            /* Khoảng đệm bên trong ô nhập: trên/dưới 6px, trái/phải 8px */
-            padding: 6px 8px; 
+            /* Khoảng đệm bên trong ô nhập: trên/dưới 3px, trái/phải 4px */
+            padding: 3px 4x; 
             
             /* Tạo đường viền mảnh xung quanh ô nhập màu xám nhạt (#d0d0d0) */
             border: 1px solid #d0d0d0; 
