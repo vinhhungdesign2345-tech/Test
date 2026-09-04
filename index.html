@@ -101,7 +101,7 @@
             display: flex;               /* Bật mô hình sắp xếp linh hoạt Flexbox cho các phần tử con */
             flex-wrap: wrap;             /* Cho phép các phần tử tự động rớt xuống dòng nếu không đủ chỗ */
             gap: 3px;                    /* Thiết lập khoảng cách hở đều giữa các phần tử con là 3 pixel */
-            width: 100%;                 /* Thiết lập chiều rộng chiếm trọn 100% không gian khung chứa */
+            width: 100%;                 /* Chiều rộng các thành phần con chiếm 100% không gian khung chứa */
             align-items: center;         /* Canh chỉnh các phần tử con nằm căn giữa theo chiều dọc */
         }
 
@@ -121,7 +121,7 @@
 
 
         /* ==========================================================================
-           --- 3A. Ô TÌM KIẾM THỬA ĐẤT / CHỦ ĐẤT (HÀNG TRÊN CÙNG) ---
+           --- 3A. Ô TÌM KIẾM THỬA ĐẤT---
            ========================================================================== */
         #searchThuaDatInput {
             flex: 1;                     /* Thiết lập ô nhập liệu tự động giãn nở chiếm không gian trống */
@@ -145,16 +145,11 @@
             border-radius: 6px;          /* Bo tròn các góc của nút tìm kiếm với bán kính 6 pixel */
             font-size: 12px;             /* Thiết lập kích thước chữ trên nút là 12 pixel */
             font-weight: normal !important; /* Buộc kiểu chữ hiển thị bình thường, không bị in đậm */
-            height: 34px;                /* Cố định chiều cao của nút là 34 pixel */
+            height: 30px;                /* Cố định chiều cao của nút là 30 pixel */
             cursor: default !important;  /* Buộc con trỏ chuột giữ nguyên dạng mặc định */
             white-space: nowrap;         /* Ngăn chặn tuyệt đối không cho văn bản bên trong rớt dòng */
             transition: background-color 0.2s; /* Hiệu ứng đổi màu nền mượt mà trong 0.2 giây */
         }
-
-        #searchThuaDatBtn:hover {
-            background-color: #1557b0;   /* Chuyển màu nền nút sang tông xanh dương đậm hơn khi rê chuột */
-        }
-
 
         /* ==========================================================================
            --- 3B. DROPDOWN CHỌN TỈNH / THÀNH PHỐ ---
