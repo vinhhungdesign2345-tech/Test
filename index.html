@@ -19,9 +19,9 @@
            --- 1. CÀI ĐẶT CHUNG CHO TOÀN BỘ TRANG WEB ---
            ========================================================================== */
     body { 
-            margin: 0;                   /* Loại bỏ hoàn toàn khoảng cách lề ngoài mặc định của trình duyệt */
-            padding: 0;                  /* Loại bỏ khoảng cách đệm bên trong mặc định của trình duyệt */
-            font-family: Arial, sans-serif; /* Thiết lập kiểu phông chữ mặc định là Arial, dự phòng sang sans-serif */
+            margin: 0;                   /* Loại bỏ khoảng cách ngoài của trình duyệt */
+            padding: 0;                  /* Loại bỏ khoảng cách đệm bên trong của trình duyệt */
+            font-family: Arial, sans-serif; /* Kiểu phông chữ Arial, dự phòng sang sans-serif */
         }
         #map { 
             position: absolute;          /* Đặt kiểu định vị tuyệt đối để khung bản đồ phủ toàn bộ không gian */
@@ -30,48 +30,48 @@
             width: 100%;                 /* Thiết lập chiều rộng bao phủ trọn vẹn 100% màn hình ngang */
         }
         .maplibregl-canvas-container .maplibregl-canvas {
-            image-rendering: -webkit-optimize-contrast; /* Tối ưu hóa độ tương phản và nét chữ trên các trình duyệt sử dụng nhân WebKit/Safari */
-            image-rendering: crisp-edges;               /* Giữ cho các đường nét đồ họa, ký tự, số đo trên bản đồ hiển thị sắc nét, không bị mờ */
+            image-rendering: -webkit-optimize-contrast; /* Độ tương phản và nét chữ trên các trình duyệt sử dụng nhân WebKit/Safari */
+            image-rendering: crisp-edges;               /* Các đường nét đồ họa, ký tự, số đo trên bản đồ hiển thị sắc nét, không bị mờ */
         }
         .maplibregl-marker, 
         .maplibregl-popup {
-            z-index: 50;                 /* Thiết lập tầng hiển thị ưu tiên (z-index) ở mức 50 để đè lên các lớp nền thông thường */
+            z-index: 50;                 /* Tầng hiển thị ưu tiên (z-index) ở mức 50 */
         }
         
         /* ==========================================================================
            --- 2. CỤM NÚT CHUYỂN ĐỔI LỚP BẢN ĐỒ VÀ ĐO KHOẢNG CÁCH ---
            ========================================================================== */
         .map-layer-control {
-            position: absolute;          /* Đặt kiểu định vị tuyệt đối để nhóm nút nổi lên trên bề mặt bản đồ */
+            position: absolute;          /* Nhóm nút nổi lên trên bề mặt bản đồ */
             bottom: 5px;                 /* Đặt khoảng cách cách mép dưới của khung bản đồ là 5 pixel */
             left: 10px;                  /* Đặt khoảng cách cách mép trái của khung bản đồ là 10 pixel */
-            z-index: 100;                /* Thiết lập tầng hiển thị ưu tiên ở mức 100 để nằm đè lên lớp bản đồ */
+            z-index: 100;                /* Tầng hiển thị mức 100 đè lên lớp bản đồ */
         }
         #toggleLayerBtn {
-            padding: 2px 4px;            /* Khoảng đệm phía trong: trên/dưới là 2px, trái/phải là 4px */
-            background: white;           /* Thiết lập màu nền mặc định cho nút là màu trắng */
-            border: 1px solid #ccc;      /* Tạo đường viền xung quanh nút có độ dày 1px, nét liền và màu xám nhạt */
+            padding: 2px 4px;            /* Khoảng đệm trong: trên/dưới là 2px, trái/phải là 4px */
+            background: white;           /* Nút màu trắng */
+            border: 1px solid #ccc;      /* Viền 1px, nét liền, màu xám nhạt */
             cursor: default !important;  /* Buộc con trỏ chuột giữ nguyên dạng mặc định (không đổi thành hình bàn tay) */
-            border-radius: 6px;          /* Bo tròn các góc của nút với bán kính cong là 6 pixel */
-            font-size: 9px;              /* Thiết lập kích thước chữ hiển thị trong nút nhỏ gọn ở mức 9 pixel */
-            font-weight: normal !important; /* Buộc kiểu chữ hiển thị bình thường, tuyệt đối không bị in đậm */
-            color: #333;                 /* Thiết lập màu sắc chữ bên trong nút là màu xám đậm (#333) */
-            transition: background-color 0.2s ease, border-color 0.2s ease; /* Thiết lập hiệu ứng chuyển đổi mượt mà khi thay đổi màu nền và màu viền trong 0.2 giây */
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Tạo hiệu ứng đổ bóng nhẹ phía dưới nút (ngang 0, dọc 2px, mờ 5px, màu đen trong suốt 10%) */
+            border-radius: 6px;          /* Bo góc các nút bán kính 6 px */
+            font-size: 9px;              /* Cỡ chữ trong nút 9 px */
+            font-weight: normal !important; /* Chữ hiển thị không in đậm */
+            color: #333;                 /* Màu sắc chữ trong nút màu xám đậm */
+            transition: background-color 0.2s ease, border-color 0.2s ease; /* Hiệu ứng chuyển đổi khi thay đổi màu nền và màu viền trong 0.2 giây */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Đổ bóng nhẹ phía dưới nút (ngang 0, dọc 2px, mờ 5px, màu đen trong suốt 10%) */
         }
         #toggleLayerBtn:hover {
-            background-color: #d3e4ed;   /* Đổi màu nền của nút sang màu xanh nhạt khi người dùng di chuột vào */
-            border-color: #b0b0b0;       /* Đổi màu viền của nút đậm hơn một chút khi di chuột vào */
+            background-color: #d3e4ed;   /* Đổi màu nút sang xanh nhạt khi rê chuột vào */
+            border-color: #b0b0b0;       /* Đổi màu viền nút đậm hơn khi rê chuột vào */
         }
         #measureDistBtn {
-            font-weight: normal !important; /* Buộc kiểu chữ của nút đo khoảng cách hiển thị bình thường, không in đậm */
+            font-weight: normal !important; /* Chữ thường, không in đậm */
         }
         
         /* ===============================================
            --- 3. CỤM ĐIỀU KHIỂN DROPDOWN & BỘ LỌC ---
            =============================================== */
         
-        /* 1. KHUNG BẢNG ĐIỀU KHIỂN TỔNG THỂ */
+        /* 3.1. KHUNG BẢNG ĐIỀU KHIỂN TỔNG THỂ */
     .map-control {
     position: absolute !important;          
     top: 12px !important;                   
@@ -93,7 +93,7 @@
     margin: 0 !important;
     }
 
-        /* 2. CẤU TRÚC HÀNG VÀ CÁC THÀNH PHẦN CON BÊN TRONG */
+        /* 3.2. CẤU TRÚC HÀNG VÀ CÁC THÀNH PHẦN CON BÊN TRONG */
         .filter-row {
             display: flex;               /* Hiển thị dạng Flexbox */
             flex-wrap: nowrap;           /* Ép tất cả các ô trên hàng nằm gọn trên 1 dòng, không bị rớt xuống */
