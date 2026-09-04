@@ -10,29 +10,32 @@ const MARK_API_URL = 'https://script.google.com/macros/s/AKfycbz87dcUkndM5w5BeFq
 // HÀM KHỞI TẠO TÍNH NĂNG ĐÁNH DẤU
 // ==========================================
 function initMarkFeature(map) {
-  // 1. Tạo nút đánh dấu nằm chung cụm góc trên bên phải (dưới nút định vị)
-  const topRightContainer = document.querySelector('.maplibregl-ctrl-top-right');
+  // 1. Gắn nút đánh dấu trực tiếp vào container #mark-control-container đã định nghĩa sẵn trong HTML
+  const markContainer = document.getElementById('mark-control-container');
   
-  if (topRightContainer) {
-    const markControlDiv = document.createElement('div');
-    markControlDiv.className = 'maplibregl-ctrl maplibregl-ctrl-group';
-    markControlDiv.innerHTML = `
-      <button id="toggleMarkBtn" type="button" title="Bật/Tắt chế độ đánh dấu địa điểm" style="background: white; border: none; cursor: pointer; width: 29px; height: 29px; display: flex; align-items: center; justify-content: center; font-size: 16px;">
+  if (markContainer) {
+    markContainer.innerHTML = `
+      <button id="toggleMarkBtn" type="button" title="Bật/Tắt chế độ đánh dấu địa điểm" style="background: transparent; border: none; cursor: pointer; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 16px; padding: 0;">
         📍
       </button>
     `;
-    topRightContainer.appendChild(markControlDiv);
 
     // Sự kiện click bật/tắt chế độ đánh dấu
     document.getElementById('toggleMarkBtn').onclick = function() {
       isMarkingMode = !isMarkingMode;
+      const parentWrapper = document.getElementById('mark-control-container');
+      
       if (isMarkingMode) {
-        this.style.background = '#e0f0ff';
-        this.style.border = '2px solid #007bff';
+        if (parentWrapper) {
+          parentWrapper.style.background = '#e0f0ff';
+          parentWrapper.style.border = '2px solid #007bff';
+        }
         map.getCanvas().style.cursor = 'crosshair';
       } else {
-        this.style.background = 'white';
-        this.style.border = 'none';
+        if (parentWrapper) {
+          parentWrapper.style.background = 'white';
+          parentWrapper.style.border = '1px solid rgba(0,0,0,0.2)';
+        }
         map.getCanvas().style.cursor = '';
         
         // TẮT CHẾ ĐỘ GHIM: Tự động xóa hộp thoại nhập tên và ghim tạm nếu đang hiển thị
