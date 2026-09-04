@@ -406,7 +406,12 @@ function initMap() {
         container: 'map', 
         style: CONFIG.MAP_STYLE, 
         center: CONFIG.MAP_CENTER, 
-        zoom: CONFIG.MAP_ZOOM 
+        zoom: CONFIG.MAP_ZOOM,
+        
+        // Khóa xoay và xem 3D:
+        dragRotate: false,        
+        pitchWithRotate: false,   
+        touchZoomRotate: false    
     });
 
     window.currentMapInstance = map;
