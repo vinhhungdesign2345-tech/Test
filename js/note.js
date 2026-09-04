@@ -1,5 +1,5 @@
 // ==========================================
-// TRÌNH QUẢN LÝ CHẾ ĐỘ GHI CHÚ
+// note.js - QUẢN LÝ CHẾ ĐỘ GHI CHÚ
 // ==========================================
 function openColumnNPopup(parcelId, mode, currentData = '') {
     
