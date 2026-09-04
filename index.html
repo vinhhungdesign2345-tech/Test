@@ -117,215 +117,102 @@
         }
 
         /* ==========================================================================
-           --- 3. CỤM ĐIỀU KHIỂN DROPDOWN & BỘ LỌC---
+           --- 3. CỤM ĐIỀU KHIỂN DROPDOWN & BỘ LỌC ---
            ========================================================================== */
+
+        /* 1. KHUNG BẢNG ĐIỀU KHIỂN TỔNG THỂ */
         .map-control {
-            /* Đặt kiểu định vị tuyệt đối để bảng điều khiển nổi lên trên góc trái bản đồ */
-            position: absolute; 
-            
-            /* Cách mép trên của bản đồ là 12 pixel */
-            top: 12px; 
-            
-            /* Cách mép trái của bản đồ là 12 pixel */
-            left: 12px; 
-            
-            /* Tầng hiển thị mức 100 */
-            z-index: 100; 
-            
-            /* Màu nền trắng với độ trong suốt 92% (mã màu dạng RGBA) */
-            background: rgba(255, 255, 255, 0.92); 
-            
-            /* Hiệu ứng làm mờ các chi tiết hiển thị phía sau bảng điều khiển với độ mờ 10px */
-            backdrop-filter: blur(10px); 
-            
-            /* HHiệu ứng làm mờ tương tự dành riêng cho trình duyệt sử dụng nhân WebKit/Safari */
-            -webkit-backdrop-filter: blur(10px); 
-            
-            /* Khoảng đệm đều ở bên trong bảng điều khiển là 3 pixel */
-            padding: 3px; 
-            
-            /* Bo góc bên ngoài bảng điều khiển bán kính 10 pixel */
-            border-radius: 10px; 
-            
-            /* Hiệu ứng đổ bóng sâu và rõ nét xung quanh bảng điều khiển */
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.18); 
-            
-            /* Chiều rộng tối đa của bảng điều khiển 300 pixel */
-            max-width: 300px; 
-            
-            /* Chiều rộng tự động co giãn theo màn hình nhưng trừ đi lề 20 pixel (10px mỗi bên) */
-            width: calc(100% - 20px); 
-            
-            /* Đảm bảo kích thước padding và border được tính gộp chung vào tổng chiều rộng */
-            box-sizing: border-box; 
+            position: absolute;          /* Vị trí bảng điều khiển nổi lên trên góc trái bản đồ */
+            top: 12px;                   /* Cách mép trên của bản đồ là 12 pixel */
+            left: 12px;                  /* Cách mép trái của bản đồ là 12 pixel */
+            z-index: 100;                /* Tầng hiển thị mức 100 */
+            background: rgba(255, 255, 255, 0.92); /* Màu nền trắng với độ trong suốt 92% */
+            padding: 3px;                /* Khoảng đệm đều ở bên trong bảng điều khiển là 3 pixel */
+            border-radius: 5px;          /* Bo góc bên ngoài bảng điều khiển bán kính 5 pixel */
+            max-width: 300px;            /* Chiều rộng tối đa của cả bảng điều khiển 300 pixel */
+            width: calc(100% - 20px);    /* Chiều rộng tự động co giãn trừ đi lề 20 pixel (10px mỗi bên) */
+            box-sizing: border-box;      /* Đảm bảo kích thước padding và border tính gộp chung vào tổng chiều rộng */
         }
 
+        /* 2. CẤU TRÚC HÀNG VÀ CÁC THÀNH PHẦN CON BÊN TRONG */
         .filter-row {
-            /* Bật mô hình sắp xếp linh hoạt Flexbox cho các phần tử con */
-            display: flex; 
-            
-            /* Cho phép các phần tử con tự động rớt xuống dòng tiếp theo nếu không đủ chỗ hiển thị */
-            flex-wrap: wrap; 
-            
-            /* Thiết lập khoảng cách hở đều giữa các phần tử con là 3 pixel */
-            gap: 3px; 
-            
-            /* Thiết lập chiều rộng chiếm trọn 100% không gian khung chứa */
-            width: 100%; 
-            
-            /* Canh chỉnh các phần tử con nằm căn giữa theo chiều dọc */
-            align-items: center; 
+            display: flex;               /* Bật mô hình sắp xếp linh hoạt Flexbox cho các phần tử con */
+            flex-wrap: wrap;             /* Cho phép các phần tử tự động rớt xuống dòng nếu không đủ chỗ */
+            gap: 3px;                    /* Thiết lập khoảng cách hở đều giữa các phần tử con là 3 pixel */
+            width: 100%;                 /* Thiết lập chiều rộng chiếm trọn 100% không gian khung chứa */
+            align-items: center;         /* Canh chỉnh các phần tử con nằm căn giữa theo chiều dọc */
         }
 
         .filter-item {
-            /* Ngăn chặn tình trạng lỗi tràn kích thước của các phần tử con trong mô hình Flexbox */
-            min-width: 0; 
+            min-width: 0;                /* Ngăn chặn tình trạng lỗi tràn kích thước trong Flexbox */
         }
 
         .filter-row > .filter-item:first-child {
-            /* Ép phần tử con đầu tiên (ô tìm kiếm) chiếm trọn 100% chiều rộng dòng trên */
-            width: 100%; 
-            
-            /* Bật chế độ Flexbox riêng cho cụm ô nhập và nút bấm tìm kiếm bên trong */
-            display: flex; 
-            
-            /* Thiết lập khoảng cách hở giữa ô nhập văn bản và nút tìm kiếm là 3 pixel */
-            gap: 3px; 
-        }
-
-        #searchThuaDatInput {
-            /* Thiết lập ô nhập liệu tự động giãn nở để chiếm phần không gian trống còn lại */
-            flex: 1; 
-            
-            /* Khoảng đệm bên trong ô nhập: trên/dưới 3px, trái/phải 4px */
-            padding: 3px 4x; 
-            
-            /* Tạo đường viền mảnh xung quanh ô nhập màu xám nhạt (#d0d0d0) */
-            border: 1px solid #d0d0d0; 
-            
-            /* Bo tròn các góc của ô nhập với bán kính 6 pixel */
-            border-radius: 6px; 
-            
-            /* Thiết lập kích thước chữ gõ vào bên trong là 12 pixel */
-            font-size: 12px; 
-            
-            /* Buộc kiểu chữ hiển thị bình thường, không bị in đậm */
-            font-weight: normal !important;
-            
-            /* Cố định chiều cao tổng thể của ô nhập là 34 pixel */
-            height: 34px; 
-            
-            /* Đảm bảo padding và border được tính gộp vào kích thước width */
-            box-sizing: border-box; 
-            
-            /* Loại bỏ đường viền sáng mặc định của trình duyệt khi người dùng bấm vào ô */
-            outline: none; 
-            
-            /* Thiết lập màu nền bên trong ô nhập là màu trắng */
-            background-color: #fff; 
-            
-            /* Thiết lập màu sắc chữ khi người dùng gõ vào là màu xám đen (#222) */
-            color: #222; 
-        }
-
-        #searchThuaDatBtn {
-            /* Khoảng đệm ngang bên trong nút: trên/dưới 0, trái/phải 14px */
-            padding: 0 14px; 
-            
-            /* Thiết lập màu nền chủ đạo cho nút tìm kiếm là màu xanh dương đặc trưng (#1a73e8) */
-            background-color: #1a73e8; 
-            
-            /* Thiết lập màu sắc chữ hiển thị trên nút là màu trắng */
-            color: white; 
-            
-            /* Loại bỏ hoàn toàn đường viền mặc định của nút */
-            border: none; 
-            
-            /* Bo tròn các góc của nút tìm kiếm với bán kính 6 pixel */
-            border-radius: 6px; 
-            
-            /* Thiết lập kích thước chữ trên nút là 12 pixel */
-            font-size: 12px; 
-            
-            /* Buộc kiểu chữ trên nút hiển thị bình thường, không bị in đậm */
-            font-weight: normal !important;
-            
-            /* Cố định chiều cao của nút khớp hoàn hảo với ô nhập liệu (34 pixel) */
-            height: 34px; 
-            
-            /* Buộc con trỏ chuột giữ nguyên dạng mặc định khi di chuyển vào nút */
-            cursor: default !important; 
-            
-            /* Ngăn chặn tuyệt đối không cho văn bản bên trong nút bị rớt xuống dòng */
-            white-space: nowrap; 
-            
-            /* Thiết lập hiệu ứng đổi màu nền mượt mà trong thời gian 0.2 giây */
-            transition: background-color 0.2s; 
-        }
-
-        #searchThuaDatBtn:hover {
-            /* Chuyển màu nền nút sang tông màu xanh dương đậm hơn khi người dùng di chuột vào */
-            background-color: #1557b0; 
+            width: 100%;                 /* Ép ô tìm kiếm chiếm trọn 100% chiều rộng dòng trên */
+            display: flex;               /* Bật chế độ Flexbox riêng cho cụm ô nhập và nút bấm bên trong */
+            gap: 3px;                    /* Thiết lập khoảng cách hở giữa ô nhập và nút tìm kiếm là 3 pixel */
         }
 
         .filter-row > .filter-item:not(:first-child) {
-            /* Các thẻ lựa chọn (dropdown) còn lại tự động chia đều không gian ngang bằng nhau */
-            flex: 1; 
+            flex: 1;                     /* Các thẻ dropdown còn lại tự động chia đều không gian ngang */
         }
 
+        /* 3. Ô NHẬP TÌM KIẾM */
+        #searchThuaDatInput {
+            flex: 1;                     /* Thiết lập ô nhập liệu tự động giãn nở chiếm không gian trống */
+            padding: 3px 4px;            /* Khoảng đệm bên trong ô nhập: trên/dưới 3px, trái/phải 4px */
+            border-radius: 5px;          /* Bo tròn các góc của ô nhập với bán kính 5 pixel */
+            font-size: 10px;             /* Thiết lập kích thước chữ gõ vào bên trong là 10 pixel */
+            font-weight: normal !important; /* Buộc kiểu chữ hiển thị bình thường, không in đậm */
+            height: 30px;                /* Cố định chiều cao tổng thể của ô nhập là 30 pixel */
+            box-sizing: border-box;      /* Đảm bảo padding và border tính gộp vào kích thước width */
+            outline: none;               /* Loại bỏ đường viền sáng mặc định khi click vào ô */
+            background-color: #fff;      /* Thiết lập màu nền bên trong ô nhập là màu trắng */
+            color: #222;                 /* Thiết lập màu sắc chữ khi người dùng gõ vào là màu xám đen */
+            border: 1px solid #d0d0d0;   /* Tạo đường viền khung màu xám nhạt */
+        }
+
+        /* 4. NÚT BẤM TÌM KIẾM VÀ HIỆU ỨNG RÊ CHUỘT */
+        #searchThuaDatBtn {
+            padding: 0 14px;             /* Khoảng đệm ngang bên trong nút: trên/dưới 0, trái/phải 14px */
+            background-color: #1a73e8;   /* Màu nền chủ đạo cho nút tìm kiếm là màu xanh dương đặc trưng */
+            color: white;                /* Thiết lập màu sắc chữ hiển thị trên nút là màu trắng */
+            border: none;                /* Loại bỏ hoàn toàn đường viền mặc định của nút */
+            border-radius: 6px;          /* Bo tròn các góc của nút tìm kiếm với bán kính 6 pixel */
+            font-size: 12px;             /* Thiết lập kích thước chữ trên nút là 12 pixel */
+            font-weight: normal !important; /* Buộc kiểu chữ hiển thị bình thường, không in đậm */
+            height: 34px;                /* Cố định chiều cao của nút là 34 pixel */
+            cursor: default !important;  /* Buộc con trỏ chuột giữ nguyên dạng mặc định */
+            white-space: nowrap;         /* Ngăn chặn tuyệt đối không cho văn bản bên trong rớt dòng */
+            transition: background-color 0.2s; /* Hiệu ứng đổi màu nền mượt mà trong 0.2 giây */
+        }
+
+        #searchThuaDatBtn:hover {
+            background-color: #1557b0;   /* Chuyển màu nền nút sang tông xanh dương đậm hơn khi rê chuột */
+        }
+
+        /* 5. CÁC THẺ LỰA CHỌN DROPDOWN VÀ TRẠNG THÁI VÔ HIỆU HÓA */
         .map-control select {
-            /* Thiết lập thẻ lựa chọn (dropdown) chiếm trọn 100% chiều rộng khung chứa */
-            width: 100%; 
-            
-            /* Khoảng đệm bên trong thẻ chọn: trên/dưới 6px, trái/phải 8px */
-            padding: 6px 8px; 
-            
-            /* Bo tròn các góc thẻ chọn với bán kính 6 pixel */
-            border-radius: 6px; 
-            
-            /* Tạo đường viền khung thẻ chọn màu xám nhạt (#d0d0d0) */
-            border: 1px solid #d0d0d0; 
-            
-            /* Thiết lập kích thước chữ trong danh sách lựa chọn là 12 pixel */
-            font-size: 12px; 
-            
-            /* Buộc kiểu chữ hiển thị bình thường, không bị in đậm */
-            font-weight: normal !important;
-            
-            /* Loại bỏ đường viền sáng mặc định của trình duyệt khi click vào thẻ chọn */
-            outline: none; 
-            
-            /* Thiết lập màu nền của thẻ chọn là màu trắng */
-            background-color: #fff; 
-            
-            /* Thiết lập màu sắc chữ tùy chọn bên trong là màu xám đen (#222) */
-            color: #222; 
-            
-            /* Cố định chiều cao của thẻ chọn là 34 pixel */
-            height: 34px; 
-            
-            /* Đảm bảo padding và border được tính gộp chuẩn xác vào kích thước width */
-            box-sizing: border-box; 
-            
-            /* Tự động cắt bớt phần văn bản quá dài bằng ký tự dấu ba chấm (...) */
-            text-overflow: ellipsis; 
-            
-            /* Buộc toàn bộ nội dung văn bản lựa chọn nằm gọn trên một dòng duy nhất */
-            white-space: nowrap; 
-            
-            /* Ẩn đi phần nội dung văn bản bị tràn ra khỏi kích thước khung */
-            overflow: hidden; 
+            width: 100%;                 /* Thiết lập thẻ lựa chọn chiếm trọn 100% chiều rộng khung chứa */
+            padding: 6px 8px;            /* Khoảng đệm bên trong thẻ chọn: trên/dưới 6px, trái/phải 8px */
+            border-radius: 6px;          /* Bo tròn các góc thẻ chọn với bán kính 6 pixel */
+            border: 1px solid #d0d0d0;   /* Tạo đường viền khung thẻ chọn màu xám nhạt */
+            font-size: 12px;             /* Thiết lập kích thước chữ trong danh sách lựa chọn là 12 pixel */
+            font-weight: normal !important; /* Buộc kiểu chữ hiển thị bình thường, không in đậm */
+            outline: none;               /* Loại bỏ đường viền sáng mặc định khi click */
+            background-color: #fff;      /* Thiết lập màu nền của thẻ chọn là màu trắng */
+            color: #222;                 /* Thiết lập màu sắc chữ tùy chọn bên trong là màu xám đen */
+            height: 34px;                /* Cố định chiều cao của thẻ chọn là 34 pixel */
+            box-sizing: border-box;      /* Đảm bảo padding và border tính gộp chuẩn xác vào width */
+            text-overflow: ellipsis;     /* Tự động cắt bớt phần văn bản quá dài bằng dấu ba chấm (...) */
+            white-space: nowrap;         /* Buộc nội dung văn bản lựa chọn nằm gọn trên một dòng duy nhất */
+            overflow: hidden;            /* Ẩn đi phần nội dung văn bản bị tràn ra khỏi khung */
         }
 
         .map-control select:disabled {
-            /* Đổi màu nền sang xám nhạt khi thẻ chọn bị vô hiệu hóa (disabled) */
-            background-color: #f0f0f0; 
-            
-            /* Đổi màu chữ sang xám tối để biểu thị trạng thái mờ, không hoạt động */
-            color: #888; 
-            
-            /* Đổi kiểu con trỏ chuột thành hình biểu tượng cấm khi di chuyển vào */
-            cursor: not-allowed; 
+            background-color: #f0f0f0;   /* Đổi màu nền sang xám nhạt khi thẻ chọn bị vô hiệu hóa (disabled) */
+            color: #888;                 /* Đổi màu chữ sang xám tối biểu thị trạng thái mờ */
+            cursor: not-allowed;         /* Đổi kiểu con trỏ chuột thành hình biểu tượng cấm khi di chuyển vào */
         }
 
         /* ==========================================================================
