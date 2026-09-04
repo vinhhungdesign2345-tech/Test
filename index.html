@@ -155,12 +155,12 @@
         }
        
         /* ==========================================================================
-           --- CÁC THẺ DROPDOWN & Ô NHẬP ---
+           --- 3B, 3C, 3D, 3E. CÁC THẺ DROPDOWN VÀ Ô NHẬP LIỆU CHUNG ---
            ========================================================================== */
         .map-control select,
         .map-control input[type="text"] {
             width: 100%;                 /* Chiếm trọn 100% chiều rộng ô chứa */
-            padding: 3px 6px;            /* Khôi phục khoảng đệm trên/dưới (3px) để chữ không bị sát mép */
+            padding: 0 6px;              /* Khoảng đệm ngang bên trong */
             border-radius: 4px;          /* Bo góc 4 pixel đồng bộ */
             border: 1px solid #d0d0d0;   /* Viền xám nhạt */
             font-size: 11px;             /* Kích thước chữ đồng nhất 11 pixel */
@@ -168,7 +168,8 @@
             outline: none;               
             background-color: #fff;      /* Nền trắng */
             color: #222;                 /* Màu chữ xám đen */
-            height: 28px;                /* Tăng nhẹ chiều cao lên 28px để chứa vừa vặn khoảng đệm mới */
+            height: 26px;                /* Đặt chiều cao tổng thể vừa vặn (26px) */
+            line-height: 26px;           /* Khớp tuyệt đối chiều cao để chữ canh giữa hoàn hảo */
             box-sizing: border-box;      /* Tính gộp padding và border vào kích thước */
             text-overflow: ellipsis;     /* Cắt bớt văn bản dài bằng dấu ba chấm (...) */
             white-space: nowrap;         /* Giữ văn bản trên một dòng duy nhất */
