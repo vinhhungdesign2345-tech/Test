@@ -73,24 +73,24 @@
         
         /* 1. KHUNG BẢNG ĐIỀU KHIỂN TỔNG THỂ */
 .map-control {
-    position: absolute;          
-    top: 12px;                   
-    left: 12px;                  
-    z-index: 100;                
-    background: rgba(255, 255, 255, 0.92); 
-    padding: 4px;                
-    border-radius: 6px;          
-    max-width: 300px;            
-    width: calc(100% - 20px);    
-    box-sizing: border-box;      
-    display: flex;               
-    flex-direction: column;      
-    gap: 4px;                    
+    position: absolute !important;          
+    top: 12px !important;                   
+    left: 12px !important;                  
+    z-index: 100 !important;                
+    background: rgba(255, 255, 255, 0.92) !important; 
+    padding: 3px 4px 2px 4px !important;    /* Thu hẹp tối đa padding trên và đáy (đáy chỉ còn 2px) */
+    border-radius: 6px !important;          
+    max-width: 300px !important;            
+    width: calc(100% - 20px) !important;    
+    box-sizing: border-box !important;      
+    display: flex !important;               
+    flex-direction: column !important;      
+    gap: 2px !important;                    /* Giảm khoảng cách giữa các hàng bên trong xuống 2px */
 }
 
-/* Ép mọi thành phần nằm trong khung tổng thể không được có margin bottom thừa */
+/* Triệt tiêu toàn bộ margin/padding thừa của các thành phần con bên trong */
 .map-control * {
-    margin-bottom: 0;
+    margin: 0 !important;
 }
 
         /* 2. CẤU TRÚC HÀNG VÀ CÁC THÀNH PHẦN CON BÊN TRONG */
