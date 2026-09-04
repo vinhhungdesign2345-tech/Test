@@ -1,5 +1,6 @@
 // ==========================================
-// 1. CẤU HÌNH HỆ THỐNG VÀ BẢN ĐỒ (CONFIG)
+// config.js//
+1. CẤU HÌNH HỆ THỐNG VÀ BẢN ĐỒ
 // ==========================================
 const CONFIG = {
  // --- DANH SÁCH CÁC TỈNH/THÀNH PHỐ VÀ ĐƯỜNG DẪN TỆP TÀI NGUYÊN GEOJSON ---
