@@ -511,7 +511,19 @@
                 ">Tìm</button>
             </div>
 
-            DÒNG 2
+            <!-- DÒNG 2: Dropdown Tỉnh/TP và Phường/Xã chia đều không gian -->
+             <div style="
+             display: flex; 
+                gap: 6px; 
+                width: 100%; 
+                ">
+                 <select id="tinhFilter">
+                     <option value="">-- Tỉnh / TP --</option>
+                 </select>
+                 <select id="phuongFilter" disabled>
+                     <option value="">-- Phường / Xã --</option>
+                 </select>
+             </div>
 
             <!-- DÒNG 3: Ô nhập tên đường tra cứu giá đất -->
             <div style="
