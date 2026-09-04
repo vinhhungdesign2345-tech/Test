@@ -45,7 +45,6 @@
         .maplibregl-popup {
             z-index: 50;                 /* Thiết lập tầng hiển thị ưu tiên (z-index) ở mức 50 để đè lên các lớp nền thông thường */
         }
-
         /* ==========================================================================
            --- 2. CỤM NÚT CHUYỂN ĐỔI LỚP BẢN ĐỒ VÀ ĐO KHOẢNG CÁCH ---
            ========================================================================== */
@@ -77,11 +76,9 @@
         #measureDistBtn {
             font-weight: normal !important; /* Buộc kiểu chữ của nút đo khoảng cách hiển thị bình thường, không in đậm */
         }
-
         /* ==========================================================================
            --- 3. CỤM ĐIỀU KHIỂN DROPDOWN & BỘ LỌC ---
            ========================================================================== */
-
         /* 1. KHUNG BẢNG ĐIỀU KHIỂN TỔNG THỂ */
         .map-control {
             position: absolute;          /* Vị trí bảng điều khiển góc trên bên trái bản đồ */
@@ -104,22 +101,17 @@
             width: 100%;                 /* Chiều rộng các thành phần con chiếm 100% không gian khung chứa */
             align-items: center;         /* Canh chỉnh các phần tử con nằm căn giữa theo chiều dọc */
         }
-
         .filter-item {
             min-width: 0;                /* Ngăn chặn tình trạng lỗi tràn kích thước trong Flexbox */
         }
-
         .filter-row > .filter-item:first-child {
             width: 100%;                 /* Ép ô tìm kiếm chiếm trọn 100% chiều rộng dòng trên */
             display: flex;               /* Bật chế độ Flexbox riêng cho cụm ô nhập và nút bấm bên trong */
             gap: 3px;                    /* Thiết lập khoảng cách hở giữa ô nhập và nút tìm kiếm là 3 pixel */
         }
-
         .filter-row > .filter-item:not(:first-child) {
             flex: 1;                     /* Các thẻ dropdown còn lại tự động chia đều không gian ngang */
         }
-
-
         /* ==========================================================================
            --- 3A. Ô TÌM KIẾM THỬA ĐẤT---
            ========================================================================== */
@@ -136,7 +128,6 @@
             color: #222;                 /* Thiết lập màu sắc chữ khi người dùng gõ vào là màu xám đen */
             border: 1px solid #d0d0d0;   /* Tạo đường viền khung màu xám nhạt */
         }
-
         #searchThuaDatBtn {
             padding: 0 14px;             /* Khoảng đệm ngang bên trong nút: trên/dưới 0, trái/phải 14px */
             background-color: #1a73e8;   /* Màu nền chủ đạo cho nút tìm kiếm là màu xanh dương đặc trưng */
@@ -150,7 +141,6 @@
             white-space: nowrap;         /* Ngăn chặn tuyệt đối không cho văn bản bên trong rớt dòng */
             transition: background-color 0.2s; /* Hiệu ứng đổi màu nền mượt mà trong 0.2 giây */
         }
-
         /* ==========================================================================
            --- 3B. DROPDOWN CHỌN TỈNH / THÀNH PHỐ ---
            ========================================================================== */
@@ -171,8 +161,6 @@
             white-space: nowrap;         
             overflow: hidden;            
         }
-
-
         /* ==========================================================================
            --- 3C. DROPDOWN CHỌN QUẬN / HUYỆN ---
            ========================================================================== */
@@ -193,8 +181,6 @@
             white-space: nowrap;         
             overflow: hidden;            
         }
-
-
         /* ==========================================================================
            --- 3D. DROPDOWN CHỌN PHƯỜNG / XÃ ---
            ========================================================================== */
@@ -215,8 +201,6 @@
             white-space: nowrap;         
             overflow: hidden;            
         }
-
-
         /* ==========================================================================
            --- 3E. Ô NHẬP TÊN ĐƯỜNG (HOẶC DROPDOWN TÊN ĐƯỜNG) ---
            ========================================================================== */
@@ -237,8 +221,6 @@
             white-space: nowrap;         
             overflow: hidden;            
         }
-
-
         /* ==========================================================================
            --- 3F. TRẠNG THÁI CHUNG KHI CÁC THÀNH PHẦN BỊ VÔ HIỆU HÓA (DISABLED) ---
            ========================================================================== */
@@ -248,7 +230,6 @@
             color: #888;                 /* Đổi màu chữ sang xám tối */
             cursor: not-allowed;         /* Biểu tượng cấm khi di chuột vào */
         }
-
         /* 4. NÚT BẤM TÌM KIẾM VÀ HIỆU ỨNG RÊ CHUỘT */
         #searchThuaDatBtn {
             padding: 0 14px;             /* Khoảng đệm ngang bên trong nút: trên/dưới 0, trái/phải 14px */
@@ -263,7 +244,6 @@
             white-space: nowrap;         /* Ngăn chặn tuyệt đối không cho văn bản bên trong rớt dòng */
             transition: background-color 0.2s; /* Hiệu ứng đổi màu nền mượt mà trong 0.2 giây */
         }
-
         #searchThuaDatBtn:hover {
             background-color: #1557b0;   /* Chuyển màu nền nút sang tông xanh dương đậm hơn khi rê chuột */
         }
