@@ -37,9 +37,96 @@
         .maplibregl-popup {
             z-index: 50;                 /* Thiết lập tầng hiển thị ưu tiên (z-index) ở mức 50 để đè lên các lớp nền thông thường */
         }
-        
+
         /* ==========================================================================
-           --- 2. CỤM NÚT CHUYỂN ĐỔI LỚP BẢN ĐỒ VÀ ĐO KHOẢNG CÁCH ---
+   --- GOM CHUNG CỤM GÓC TRÊN BÊN PHẢI THÀNH MỘT KHỐI ĐỒNG BỘ DUY NHẤT ---
+   ========================================================================== */
+
+/* Khung tổng bọc toàn bộ các thành phần ở góc trên bên phải */
+#map-right-controls-wrapper {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 6px; /* Khoảng cách đều giữa các cục là 6px */
+    align-items: center;
+}
+
+/* 1. Khung thanh trượt độ mờ */
+#opacity-control-panel {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 6px 4px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.18);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 34px;
+    box-sizing: border-box;
+}
+
+#opacity-control-panel label {
+    display: none !important;
+}
+
+#opacity-control-panel input[type="range"] {
+    writing-mode: vertical-lr;
+    direction: rtl;
+    width: 16px;
+    height: 70px;
+    cursor: default !important;
+    margin: 0;
+}
+
+/* 2. Gom cụm MapLibre (Định vị, Zoom) nằm ở giữa, ghi đè vị trí tuyệt đối mặc định */
+.maplibregl-ctrl-top-right {
+    position: static !important; /* Hủy vị trí mặc định để xếp flex chung */
+    margin: 0 !important;
+}
+
+.maplibregl-ctrl-top-right .maplibregl-ctrl {
+    margin: 0 !important;
+    width: 34px !important;
+    box-sizing: border-box !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.18) !important;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.92) !important;
+}
+
+/* 3. Khung nút ghim ở dưới cùng */
+#mark-control-container {
+    width: 34px;
+    box-sizing: border-box;
+}
+
+#mark-control-container #toggleMarkBtn {
+    width: 34px !important;
+    height: 34px !important;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(10px);
+    border: none;
+    border-radius: 8px;
+    cursor: default !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.18);
+    box-sizing: border-box;
+    padding: 0;
+    transition: background-color 0.2s ease;
+}
+
+#mark-control-container #toggleMarkBtn:hover {
+    background-color: #e0f0ff;
+}
+        /* ==========================================================================
+           CỤM NÚT CHUYỂN ĐỔI LỚP BẢN ĐỒ VÀ ĐO KHOẢNG CÁCH ---
            ========================================================================== */
         .map-layer-control {
             position: absolute;          /* Đặt kiểu định vị tuyệt đối để nhóm nút nổi lên trên bề mặt bản đồ */
@@ -688,15 +775,21 @@
         </button>
     </div>
 
-    <!-- THANH TRƯỢT ĐỘ MỜ (NẰM TRÊN CÙNG) -->
-<div id="opacity-control-panel">
-    <label for="opacitySlider">Mờ: <span id="opacityValue">0.6</span></label>
-    <input type="range" id="opacitySlider" min="0" max="1" step="0.05" value="0.6">
-</div>
+    <!-- CỤM ĐIỀU KHIỂN GÓC TRÊN BÊN PHẢI (GOM CHUNG THANH TRƯỢT, MAPLIBRE VÀ NÚT GHIM) -->
+<div id="map-right-controls-wrapper">
+    <!-- 1. Thanh trượt độ mờ ở trên cùng -->
+    <div id="opacity-control-panel">
+        <label for="opacitySlider">Mờ: <span id="opacityValue">0.6</span></label>
+        <input type="range" id="opacitySlider" min="0" max="1" step="0.05" value="0.6">
+    </div>
 
-<!-- NÚT GHIM (NẰM Ở DƯỚI CÙNG, DƯỚI CỤM NÚT ĐỊNH VỊ) -->
-<div id="mark-control-container">
-    <button id="toggleMarkBtn" type="button" title="Bật/Tắt chế độ đánh dấu địa điểm">📍</button>
+    <!-- 2. Cụm điều khiển MapLibre (Zoom, Định vị...) ở giữa -->
+    <!-- (Phần này MapLibre tự sinh ra trong .maplibregl-ctrl-top-right, ta sẽ dùng CSS gom chung lại) -->
+
+    <!-- 3. Nút ghim ở dưới cùng -->
+    <div id="mark-control-container">
+        <button id="toggleMarkBtn" type="button" title="Bật/Tắt chế độ đánh dấu địa điểm">📍</button>
+    </div>
 </div>
 
     <!-- CÁC TỆP MÃ NGUỒN JS MÔ-ĐUN -->
