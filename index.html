@@ -169,7 +169,7 @@
            ========================================================================== */
         .map-control select {
             width: 100%;                 /* Chiếm trọn 100% chiều rộng ô chứa */
-            padding: 0 4px;              /* Đệm ngang 4px (chừa chỗ vừa đủ cho icon mũi tên hệ thống) */
+            padding: 0 4px;              /* Đệm ngang 4px chừa chỗ cho icon mũi tên hệ thống */
             border-radius: 4px;          /* Bo góc 4 pixel đồng bộ */
             border: 1px solid #d0d0d0;   /* Viền xám nhạt */
             font-size: 11px;             /* Cỡ chữ 11 pixel */
@@ -177,9 +177,10 @@
             outline: none;               
             background-color: #fff;      /* Nền trắng */
             color: #222;                 /* Màu chữ xám đen */
-            height: 30px;                /* Chiều cao cố định 30 pixel */
+            height: 30px;                /* Tăng chiều cao tổng thể của ô lên 30 pixel */
+            line-height: 27px;           /* Đẩy dòng chữ dịch lên cao một chút (giúp chữ nằm đẹp và cân đối hơn trong ô 30px) */
             box-sizing: border-box;      
-            text-overflow: ellipsis;     /* Tự động cắt văn bản quá dài bằng dấu ba chấm (...) */
+            text-overflow: ellipsis;     /* Cắt bớt văn bản quá dài bằng dấu ba chấm (...) */
             white-space: nowrap;         /* Giữ toàn bộ chữ nằm trên một dòng */
             overflow: hidden;            /* Ẩn phần chữ bị tràn khung thừa ra ngoài */
         }
