@@ -10,75 +10,64 @@ const MARK_API_URL = 'https://script.google.com/macros/s/AKfycbz87dcUkndM5w5BeFq
 // HÀM KHỞI TẠO TÍNH NĂNG ĐÁNH DẤU
 // ==========================================
 function initMarkFeature(map) {
-  // 1. Tạo nút đánh dấu nằm chung cụm góc trên bên phải (dưới nút định vị)
-  const topRightContainer = document.querySelector('.maplibregl-ctrl-top-right');
-  
-  if (topRightContainer) {
-    const markControlDiv = document.createElement('div');
-    markControlDiv.className = 'maplibregl-ctrl maplibregl-ctrl-group';
-    markControlDiv.innerHTML = `
-      <button id="toggleMarkBtn" type="button" title="Bật/Tắt chế độ đánh dấu địa điểm" style="background: white; border: none; cursor: pointer; width: 29px; height: 29px; display: flex; align-items: center; justify-content: center; font-size: 16px;">
-        📍
-      </button>
-    `;
-    topRightContainer.appendChild(markControlDiv);
+ // 1. Lắng nghe sự kiện click vào nút ghim đã có sẵn trên giao diện HTML
+ const toggleMarkBtn = document.getElementById('toggleMarkBtn');
+ if (toggleMarkBtn) {
+ toggleMarkBtn.onclick = function() {
+ isMarkingMode = !isMarkingMode;
+ if (isMarkingMode) {
+ this.style.background = '#e0f0ff';
+ this.style.border = '2px solid #007bff';
+ map.getCanvas().style.cursor = 'crosshair';
+ } else {
+ this.style.background = 'white';
+ this.style.border = 'none';
+ map.getCanvas().style.cursor = '';
+ 
+// TẮT CHẾ ĐỘ GHIM: Tự động xóa hộp thoại nhập tên và ghim tạm nếu đang hiển thị
+ const oldPopup = document.getElementById('mark-input-popup');
+ if (oldPopup) oldPopup.remove();
+ if (tempMarker) {
+ tempMarker.remove();
+ tempMarker = null;
+ }
+ }
+ };
+ }
 
-    // Sự kiện click bật/tắt chế độ đánh dấu
-    document.getElementById('toggleMarkBtn').onclick = function() {
-      isMarkingMode = !isMarkingMode;
-      if (isMarkingMode) {
-        this.style.background = '#e0f0ff';
-        this.style.border = '2px solid #007bff';
-        map.getCanvas().style.cursor = 'crosshair';
-      } else {
-        this.style.background = 'white';
-        this.style.border = 'none';
-        map.getCanvas().style.cursor = '';
-        
-        // TẮT CHẾ ĐỘ GHIM: Tự động xóa hộp thoại nhập tên và ghim tạm nếu đang hiển thị
-        const oldPopup = document.getElementById('mark-input-popup');
-        if (oldPopup) oldPopup.remove();
-        if (tempMarker) {
-          tempMarker.remove();
-          tempMarker = null;
-        }
-      }
-    };
-  }
+ // 2. Lắng nghe sự kiện click trên bản đồ khi đang bật chế độ đánh dấu
+ map.on('click', (e) => {
+ if (!isMarkingMode) return;
 
-  // 2. Lắng nghe sự kiện click trên bản đồ khi đang bật chế độ đánh dấu
-  map.on('click', (e) => {
-    if (!isMarkingMode) return;
+ const lng = e.lngLat.lng.toFixed(6);
+ const lat = e.lngLat.lat.toFixed(6);
+ const coordinatesStr = `${lat}, ${lng}`;
 
-    const lng = e.lngLat.lng.toFixed(6);
-    const lat = e.lngLat.lat.toFixed(6);
-    const coordinatesStr = `${lat}, ${lng}`;
+ // Xóa ghim tạm cũ nếu có trước khi tạo ghim tạm mới
+ if (tempMarker) {
+ tempMarker.remove();
+ tempMarker = null;
+ }
 
-    // Xóa ghim tạm cũ nếu có trước khi tạo ghim tạm mới
-    if (tempMarker) {
-      tempMarker.remove();
-      tempMarker = null;
-    }
+ // Tạo icon ghim tạm thời ngay vị trí vừa click chuột
+ const tempEl = document.createElement('div');
+ tempEl.innerHTML = '📍';
+ tempEl.style.fontSize = '20px';
+ tempEl.style.cursor = 'pointer';
 
-    // Tạo icon ghim tạm thời ngay vị trí vừa click chuột
-    const tempEl = document.createElement('div');
-    tempEl.innerHTML = '📍';
-    tempEl.style.fontSize = '20px';
-    tempEl.style.cursor = 'pointer';
+ tempMarker = new maplibregl.Marker({ 
+ element: tempEl,
+ anchor: 'bottom' // Neo chuẩn ngay chân đáy icon 📍
+ })
+ .setLngLat([e.lngLat.lng, e.lngLat.lat])
+ .addTo(map);
 
-    tempMarker = new maplibregl.Marker({ 
-      element: tempEl,
-      anchor: 'bottom' // Neo chuẩn ngay chân đáy icon 📍
-    })
-    .setLngLat([e.lngLat.lng, e.lngLat.lat])
-    .addTo(map);
+ // Hiển thị hộp thoại nhỏ cho phép người dùng nhập tên địa điểm
+ openMarkPrompt(coordinatesStr, map, { lng: e.lngLat.lng, lat: e.lngLat.lat });
+ });
 
-    // Hiển thị hộp thoại nhỏ cho phép người dùng nhập tên địa điểm
-    openMarkPrompt(coordinatesStr, map, { lng: e.lngLat.lng, lat: e.lngLat.lat });
-  });
-
-  // 3. Tải và hiển thị các điểm đánh dấu đã lưu từ tab "Đánh dấu" trên Google Sheet lên bản đồ
-  loadSavedMarkers(map);
+ // 3. Tải và hiển thị các điểm đánh dấu đã lưu từ tab "Đánh dấu" trên Google Sheet lên bản đồ
+ loadSavedMarkers(map);
 }
 
 // ==========================================
