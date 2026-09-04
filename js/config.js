@@ -44,89 +44,109 @@ const CONFIG = {
  SHEET_DATA_URL: 'https://script.google.com/macros/s/AKfycbz87dcUkndM5w5BeFqUFYJt8JDEcPu98IH5mbzNdov_6eXTNUEhIiknFQ9P7H2c0ZQE/exec',
 
  // --- CẤU HÌNH GIAO DIỆN VÀ LỚP BẢN ĐỒ (MAP STYLE) ---
- MAP_STYLE: {
- 'version': 8,
- 'sources': {
- 'google-satellite': {
- 'type': 'raster',
- 'tiles': ['https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}'],
- 'tileSize': 256
- },
- 'osm-map': { 
- 'type': 'raster',
- 'tiles': ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
- 'tileSize': 256,
- 'attribution': '&copy; OpenStreetMap contributors'
- },
- 'ha-tang-dien-source': {
- 'type': 'geojson',
- 'data': './geojson/Ca-Mau-ha-tang-dien.json'
- }
- },
- 'layers': [
- {
- 'id': 'google-satellite-layer',
- 'type': 'raster',
- 'source': 'google-satellite',
- 'minzoom': 0, 'maxzoom': 22
- },
- {
- 'id': 'osm-layer', 
- 'type': 'raster',
- 'source': 'osm-map',
- 'layout': { 'visibility': 'none' },
- 'minzoom': 0, 'maxzoom': 22
- },
- {
- 'id': 'ha-tang-dien-line',
- 'type': 'line',
- 'source': 'ha-tang-dien-source',
- 'filter': ['==', '$type', 'LineString'],
- 'minzoom': 0, 'maxzoom': 22,
- 'paint': {
- 'line-color': '#ffcc00',
- 'line-width': 1,
- 'line-opacity': 0.5
- }
- },
- {
- 'id': 'ha-tang-dien-points',
- 'type': 'circle',
- 'source': 'ha-tang-dien-source',
- 'filter': ['==', '$type', 'Point'],
- 'minzoom': 14,
- 'maxzoom': 22,
- 'paint': {
- 'circle-radius': 4,
- 'circle-color': '#ff0000',
- 'circle-stroke-width': 1,
- 'circle-stroke-color': '#ffffff'
- }
- }
- ]
- },
+MAP_STYLE: {
+    'version': 8, // Phiên bản chuẩn của MapLibre/Mapbox Style Specification (phiên bản 8)
+    
+ // --- KHAI BÁO CÁC NGUỒN DỮ LIỆU (SOURCES) CHO BẢN ĐỒ ---
+    'sources': {
+        // 1. Nguồn ảnh vệ tinh kết hợp nhãn giao thông từ Google Maps
+        'google-satellite': {
+            'type': 'raster', // Định dạng dữ liệu dạng ảnh lưới (raster tiles)
+            'tiles': ['https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}'], // Đường dẫn mẫu lấy mảnh ảnh bản đồ vệ tinh của Google
+            'tileSize': 256 // Kích thước tiêu chuẩn của mỗi mảnh ảnh (tile) là 256x256 pixel
+        },
+        
+        // 2. Nguồn ảnh bản đồ đường phố thông thường từ OpenStreetMap (OSM)
+        'osm-map': { 
+            'type': 'raster', // Định dạng dữ liệu dạng ảnh lưới (raster tiles)
+            'tiles': ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'], // Đường dẫn lấy mảnh bản đồ từ máy chủ OpenStreetMap
+            'tileSize': 256, // Kích thước tiêu chuẩn của mỗi mảnh ảnh là 256x256 pixel
+            'attribution': '&copy; OpenStreetMap contributors' // Dòng thông báo bản quyền tác giả dữ liệu theo quy định của OSM
+        },
+        
+        // 3. Nguồn dữ liệu không gian chứa hạ tầng mạng lưới điện (tỉnh Cà Mau)
+        'ha-tang-dien-source': {
+            'type': 'geojson', // Kiểu dữ liệu không gian định dạng chuẩn GeoJSON
+            'data': './geojson/Ca-Mau-ha-tang-dien.json' // Đường dẫn tệp chứa tọa độ các đối tượng hạ tầng điện
+        }
+    },
 
- MAP_CENTER: [105.15, 9.18],
- MAP_ZOOM: 12,
- FILL_COLOR: '#00ffcc',
- FILL_OPACITY: 0.3,
- OUTLINE_COLOR: '#ffffff'
-};
+ // --- KHAI BÁO CÁC LỚP HIỂN THỊ (LAYERS) XẾP THEO THỨ TỪ TỪ DƯỚI LÊN TRÊN ---
+    'layers': [
+        // Lớp 1: Hiển thị bản đồ nền ảnh vệ tinh Google (đặt ở dưới cùng)
+        {
+            'id': 'google-satellite-layer',
+            'type': 'raster',
+            'source': 'google-satellite', // Gắn với nguồn 'google-satellite' đã định nghĩa ở trên
+            'minzoom': 0, // Cấp độ phóng to tối thiểu hiển thị lớp này (từ cấp 0)
+            'maxzoom': 22  // Cấp độ phóng to tối đa hiển thị lớp này (đến cấp 22)
+        },
+        
+        // Lớp 2: Hiển thị bản đồ đường phố OpenStreetMap (mặc định cấu hình ẩn)
+        {
+            'id': 'osm-layer', 
+            'type': 'raster',
+            'source': 'osm-map', // Gắn với nguồn 'osm-map'
+            'layout': { 'visibility': 'none' }, // Thuộc tính hiển thị mặc định là ẩn ('none'), bật lên khi cần dùng nền bản đồ đường phố
+            'minzoom': 0, 
+            'maxzoom': 22
+        },
+        
+        // Lớp 3: Hiển thị các đối tượng dạng đường thẳng/đường gấp khúc (LineString) của hệ thống điện
+        {
+            'id': 'ha-tang-dien-line',
+            'type': 'line', // Kiểu hiển thị đối tượng dạng đường (Line)
+            'source': 'ha-tang-dien-source', // Lấy dữ liệu từ nguồn hạ tầng điện Cà Mau
+            'filter': ['==', '$type', 'LineString'], // Bộ lọc chỉ chọn các đối tượng hình học có kiểu là đường (đường dây điện)
+            'minzoom': 0, 
+            'maxzoom': 22,
+            'paint': {
+                'line-color': '#ffcc00', // Màu sắc đường dây điện là màu vàng cam (#ffcc00)
+                'line-width': 1,         // Độ dày nét vẽ đường dây là 1 pixel
+                'line-opacity': 0.5      // Độ trong suốt của đường dây là 50% (0.5) cho đỡ rối mắt
+            }
+        },
+        
+        // Lớp 4: Hiển thị các đối tượng dạng điểm chấm tròn (Point) như trạm điện, cột điện
+        {
+            'id': 'ha-tang-dien-points',
+            'type': 'circle', // Kiểu hiển thị đối tượng hình học dạng điểm chấm tròn (Circle)
+            'source': 'ha-tang-dien-source', // Lấy dữ liệu từ nguồn hạ tầng điện Cà Mau
+            'filter': ['==', '$type', 'Point'], // Bộ lọc chỉ chọn các đối tượng hình học có kiểu là điểm (cột điện/trạm)
+            'minzoom': 14, // Giới hạn chỉ bắt đầu hiện các điểm cột điện khi người dùng phóng to bản đồ từ cấp độ 14 trở lên
+            'maxzoom': 22,
+            'paint': {
+                'circle-radius': 4,            // Bán kính chấm tròn điểm điện là 4 pixel
+                'circle-color': '#ff0000',     // Màu sắc tô bên trong chấm tròn là màu đỏ (#ff0000)
+                'circle-stroke-width': 1,      // Độ dày đường viền ngoài chấm tròn là 1 pixel
+                'circle-stroke-color': '#ffffff' // Màu viền ngoài chấm tròn là màu trắng (#ffffff) để nổi bật
+            }
+            }
+            ]
+            },
+
+// --- CÁC THÔNG SỐ KHỞI TẠO VÀ GIAO DIỆN BỔ SUNG ---
+           MAP_CENTER: [105.15, 9.18], // Tọa độ trung tâm khởi tạo ban đầu của bản đồ theo định dạng [Kinh độ, Vĩ độ] tại Cà Mau
+           MAP_ZOOM: 12,               // Mức độ phóng to (zoom level) khởi tạo mặc định ban đầu là cấp 12
+           FILL_COLOR: '#00ffcc',      // Màu sắc tô nền mặc định cho đối tượng thửa đất khi được chọn (xanh ngọc sáng)
+           FILL_OPACITY: 0.3,          // Độ trong suốt của lớp màu nền thửa đất là 30% (0.3)
+           OUTLINE_COLOR: '#ffffff'    // Màu sắc đường viền ranh giới thửa đất mặc định là màu trắng
+           };
 
 // --- BIỂU THỨC QUY ĐỊNH MÀU SẮC PHÂN LOẠI LOẠI ĐẤT ---
-const COLOR_MATCH_EXPRESSION = [
- 'match',
- ['get', 'Loại Đất'],
- 'Đất ở tại đô thị', '#e063ce',
- 'Đất ở tại nông thôn', '#cf99c7',
- 'Đất nuôi trồng thuỷ sản', '#00b4d8',
- 'Đất nuôi trồng thủy sản', '#00b4d8',
- 'Đất trồng cây lâu năm', '#519e05',
- 'Đất trồng cây hàng năm khác', '#519e05',
- 'Đất trồng lúa', '#f5e753',
- 'Đất chuyên trồng lúa nước', '#ffea00',
- '#c2b9ab'
-];
+           const COLOR_MATCH_EXPRESSION = [
+           'match',
+           ['get', 'Loại Đất'],
+           'Đất ở tại đô thị', '#e063ce',
+           'Đất ở tại nông thôn', '#cf99c7',
+           'Đất nuôi trồng thuỷ sản', '#00b4d8',
+           'Đất nuôi trồng thủy sản', '#00b4d8',
+           'Đất trồng cây lâu năm', '#519e05',
+           'Đất trồng cây hàng năm khác', '#519e05',
+           'Đất trồng lúa', '#f5e753',
+           'Đất chuyên trồng lúa nước', '#ffea00',
+           '#c2b9ab'
+            ];
 
 
 // ==========================================
