@@ -2,7 +2,6 @@
 // 1. CẤU HÌNH HỆ THỐNG VÀ BẢN ĐỒ (CONFIG)
 // ==========================================
 const CONFIG = {
-    // --- DANH SÁCH CÁC TỈNH/THÀNH PHỐ VÀ ĐƯỜNG DẪN TỆP TÀI NGUYÊN GEOJSON ---
     PROVINCES: [
         { id: "CaMau", name: "1. Tỉnh Cà Mau", file: "./geojson/Ca-Mau.json" },
         { id: "AnGiang", name: "2. Tỉnh An Giang", file: "./geojson/An-Giang.json" },
@@ -40,10 +39,8 @@ const CONFIG = {
         { id: "LangSon", name: "34. Tỉnh Lạng Sơn", file: "./geojson/Lang-Son.json" }, 
     ],
 
-    // --- URL GOOGLE APPS SCRIPT TRUY XUẤT DỮ LIỆU THỬA ĐẤT ---
     SHEET_DATA_URL: 'https://script.google.com/macros/s/AKfycbz87dcUkndM5w5BeFqUFYJt8JDEcPu98IH5mbzNdov_6eXTNUEhIiknFQ9P7H2c0ZQE/exec',
 
-    // --- CẤU HÌNH GIAO DIỆN VÀ LỚP BẢN ĐỒ (MAP STYLE) ---
     MAP_STYLE: {
         'version': 8,
         'sources': {
@@ -113,7 +110,6 @@ const CONFIG = {
     OUTLINE_COLOR: '#ffffff'
 };
 
-// --- BIỂU THỨC QUY ĐỊNH MÀU SẮC PHÂN LOẠI LOẠI ĐẤT ---
 const COLOR_MATCH_EXPRESSION = [
     'match',
     ['get', 'Loại Đất'],
@@ -127,6 +123,21 @@ const COLOR_MATCH_EXPRESSION = [
     'Đất chuyên trồng lúa nước', '#ffea00',
     '#c2b9ab'
 ];
+
+
+// ==========================================
+// 1.5. HÀM PHỤ TRỢ TẢI FILE GEOJSON AN TOÀN
+// ==========================================
+async function fetchGeoDataByUrl(url) {
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`Không thể tải file: ${url}`);
+        return await response.json();
+    } catch (error) {
+        console.error("Lỗi tải GeoJSON:", error);
+        return null;
+    }
+}
 
 
 // ==========================================
@@ -352,7 +363,7 @@ function initFilter(map) {
 
 
 // ==========================================
-// 3. QUẢN LÝ BẢN ĐỒ MAPLIBRE VÀ TƯƠNG TÁC (MAP)[cite: 3]
+// 3. QUẢN LÝ BẢN ĐỒ MAPLIBRE VÀ TƯƠNG TÁC (MAP)
 // ==========================================
 let activeMarkers = []; 
 window.selectedThuaDatId = null; 
