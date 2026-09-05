@@ -401,19 +401,61 @@ function closeParcelPanel() {
     }
 }
 
+// ==========================================
+// HÀM KHỞI TẠO VÀ CẤU HÌNH TOÀN BỘ BẢN ĐỒ
+// ==========================================
 function initMap() {
+    // Khởi tạo đối tượng bản đồ MapLibre GL bên trong thẻ div có id là 'map'
     const map = new maplibregl.Map({
         container: 'map', 
-        style: CONFIG.MAP_STYLE, 
-        center: CONFIG.MAP_CENTER, 
-        zoom: CONFIG.MAP_ZOOM,
-        
-        // Khóa xoay và xem 3D:
+        style: {
+            version: 8,
+            sources: {
+                // Nền Google Satellite HD siêu nét (kết hợp nhãn + scale=2 chống vỡ hình)
+                'google-satellite-hd': {
+                    type: 'raster',
+                    tiles: [
+                        'https://mt0.google.com/vt/lyrs=y&scale=2&x={x}&y={y}&z={z}',
+                        'https://mt1.google.com/vt/lyrs=y&scale=2&x={x}&y={y}&z={z}',
+                        'https://mt2.google.com/vt/lyrs=y&scale=2&x={x}&y={y}&z={z}'
+                    ],
+                    tileSize: 256
+                },
+                // Nền phụ OpenStreetMap để chuyển đổi qua lại
+                'osm-tiles': {
+                    type: 'raster',
+                    tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+                    tileSize: 256
+                }
+            },
+            layers: [
+                {
+                    id: 'google-satellite-layer',
+                    type: 'raster',
+                    source: 'google-satellite-hd',
+                    minzoom: 0,
+                    maxzoom: 24
+                },
+                {
+                    id: 'osm-layer',
+                    type: 'raster',
+                    source: 'osm-tiles',
+                    minzoom: 0,
+                    maxzoom: 19,
+                    layout: { visibility: 'none' } // Mặc định ẩn OSM, bật vệ tinh trước
+                }
+            ]
+        },
+        center: CONFIG.MAP_CENTER, // Tọa độ trung tâm mặc định từ file config
+        zoom: CONFIG.MAP_ZOOM,     // Mức phóng to mặc định
+        maxZoom: 24,
+        // Khóa xoay và xem 3D đặt đúng vị trí bên trong cấu hình Map
         dragRotate: false,        
         pitchWithRotate: false,   
         touchZoomRotate: false    
     });
 
+    // Lưu lại instance của bản đồ vào biến toàn cục để các hàm khác gọi chung
     window.currentMapInstance = map;
 
     const geolocate = new maplibregl.GeolocateControl({
