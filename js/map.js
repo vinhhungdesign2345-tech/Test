@@ -407,12 +407,16 @@ function initMap() {
         style: CONFIG.MAP_STYLE, 
         center: CONFIG.MAP_CENTER, 
         zoom: CONFIG.MAP_ZOOM,
+        maxTileCacheSize: 50,
         
-        // Khóa xoay và xem 3D:
-        dragRotate: false,        
-        pitchWithRotate: false,   
-        touchZoomRotate: false    
+        // Khóa hoàn toàn tính năng xoay và 3D
+        dragRotate: false, 
+        pitchWithRotate: false, 
+        touchZoomRotate: true // Cho phép thu phóng
     });
+
+    // Vô hiệu hóa tính năng xoay
+    map.touchZoomRotate.disableRotation();
 
     window.currentMapInstance = map;
 
