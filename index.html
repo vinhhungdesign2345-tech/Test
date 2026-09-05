@@ -201,64 +201,91 @@
            --- 4. THANH TRƯỢT ĐỘ MỜ & NÚT ĐỊNH VỊ (PC) ---
            ========================================================================== */
         
-        /* 4.1. KHUNG CHỨA THANH TRƯỢT ĐỘ MỜ (GHIM Ở GÓC TRÊN BÊN PHẢI) */
+        /* ==========================================================================
+   4.1. KHUNG CHỨA THANH TRƯỢT ĐỘ MỜ (GHIM CỐ ĐỊNH Ở GÓC TRÊN BÊN PHẢI BẢN ĐỒ)
+   ========================================================================== */
 #opacity-control-panel {
-    position: absolute;          /* Ghim vị trí tuyệt đối trên bản đồ */
-    top: 10px;                   /* Cách mép trên 10 pixel */
-    right: 10px;                 /* Cách mép phải 10 pixel */
-    z-index: 100;                /* Tầng hiển thị ưu tiên mức 100 (nằm trên bản đồ) */
-    background: rgba(255, 255, 255, 0.92); /* Màu nền trắng trong suốt 92% */
-    backdrop-filter: blur(10px); /* Hiệu ứng làm mờ lớp nền phía sau (kính mờ) */
-    -webkit-backdrop-filter: blur(10px); /* Hỗ trợ hiệu ứng kính mờ cho Safari/Chrome cũ */
-    padding: 6px 2px;            /* Khoảng đệm bên trong khung (thu gọn lại cho cân đối) */
-    border-radius: 8px;          /* Bo góc khung bán kính 8 pixel */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.18); /* Tạo hiệu ứng đổ bóng nổi cho khung */
-    display: flex;               /* Bật mô hình sắp xếp linh hoạt Flexbox */
-    flex-direction: column;      /* Xếp các phần tử con theo chiều dọc (từ trên xuống dưới) */
-    align-items: center;         /* Canh giữa các phần tử con theo chiều ngang */
-    width: 28px;                 /* Cố định chiều rộng khung là 28px (Cân đối với cụm nút dưới) */
-    box-sizing: border-box;      /* Tính gộp padding và border vào kích thước tổng */
+    position: absolute;          /* Ghim vị trí tuyệt đối so với khung chứa bản đồ */
+    top: 10px;                   /* Cách mép trên bản đồ một khoảng 10 pixel */
+    right: 10px;                 /* Cách mép phải bản đồ một khoảng 10 pixel */
+    z-index: 100;                /* Độ ưu tiên hiển thị tầng 100 (nằm nổi lên trên lớp bản đồ) */
+    background: rgba(255, 255, 255, 0.92); /* Màu nền trắng tinh khiết với độ trong suốt 92% */
+    backdrop-filter: blur(10px); /* Tạo hiệu ứng kính mờ (làm mờ không gian phía sau khung) */
+    -webkit-backdrop-filter: blur(10px); /* Hỗ trợ hiệu ứng kính mờ cho các trình duyệt WebKit cũ */
+    padding: 6px 2px;            /* Khoảng đệm bên trong: trên/dưới 6px, trái/phải 2px */
+    border-radius: 8px;          /* Bo tròn 4 góc của khung với bán kính 8 pixel */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.18); /* Tạo hiệu ứng đổ bóng nổi cho toàn bộ khung */
+    display: flex;               /* Kích hoạt mô hình sắp xếp linh hoạt Flexbox */
+    flex-direction: column;      /* Xếp các thành phần con bên trong theo chiều dọc (từ trên xuống) */
+    align-items: center;         /* Canh chỉnh các thành phần con nằm căn giữa theo chiều ngang */
+    width: 20px !important;      /* Cố định chiều rộng tổng thể của khung đúng 20 pixel */
+    box-sizing: border-box;      /* Tính gộp phần padding và border vào trong kích thước width/height */
 }
 
-/* 4.2. ẨN NHÃN (LABEL) CỦA THANH TRƯỢT NẾU CÓ */
+/* ==========================================================================
+   4.2. ẨN NHÃN CHỮ (LABEL) CỦA THANH TRƯỢT
+   ========================================================================== */
 #opacity-control-panel label {
-    display: none !important;    /* Buộc ẩn hoàn toàn nhãn chữ đi để giao diện gọn gàng */
+    display: none !important;    /* Buộc ẩn hoàn toàn thẻ nhãn chữ đi để giao diện gọn gàng tối đa */
 }
 
-/* 4.3. TÙY CHỈNH THANH TRƯỢT (RANGE SLIDER) DẠNG DỌC */
+/* ==========================================================================
+   4.3. TÙY CHỈNH THANH TRƯỢT ĐỘ MỜ (RANGE SLIDER) DẠNG DỌC & MÀU SẮC
+   ========================================================================== */
 #opacity-control-panel input[type="range"] {
-    writing-mode: vertical-lr;   /* Chuyển hướng hiển thị thanh trượt từ ngang sang dọc */
-    direction: rtl;              /* Đảo chiều thanh trượt (kéo lên trên là tăng, kéo xuống dưới là giảm) */
-    width: 14px;                 /* Chiều rộng của thanh trượt dọc (thu nhỏ cho vừa khung 28px) */
-    height: 70px;                /* Chiều cao của thanh trượt dọc là 70 pixel */
-    cursor: default !important;  /* Giữ nguyên con trỏ chuột mặc định khi rê vào */
-    margin: 0;                   /* Loại bỏ khoảng cách lề thừa xung quanh */
+    writing-mode: vertical-lr;   /* Chuyển đổi hướng hiển thị thanh trượt từ dạng ngang sang dạng dọc */
+    direction: rtl;              /* Đảo chiều thanh trượt: kéo lên trên là giá trị tăng, kéo xuống dưới là giảm */
+    width: 12px;                 /* Chiều rộng của đường thanh trượt dọc là 12 pixel */
+    height: 70px;                /* Chiều cao tổng cộng của thanh trượt dọc là 70 pixel */
+    cursor: default !important;  /* Cố định hình dạng con trỏ chuột mặc định khi rê vào */
+    margin: 0;                   /* Triệt tiêu toàn bộ khoảng cách lề xung quanh thanh trượt */
 }
 
-/* 4.4. KHU VỰC CHỨA CÁC ĐIỀU KHIỂN MẶC ĐỊNH CỦA BẢN ĐỒ (GÓC TRÊN BÊN PHẢI) */
+/* Định dạng phần cục nắm trượt (thumb) trên trình duyệt Chrome/Safari/Edge */
+#opacity-control-panel input[type="range"]::-webkit-slider-thumb {
+    background-color: #1a73e8 !important; /* Tô màu nút trượt thành màu xanh dương đồng bộ với nút Tìm kiếm */
+    border-radius: 50%;                    /* Bo tròn tuyệt đối nút trượt thành hình tròn */
+}
+
+/* Định dạng phần cục nắm trượt (thumb) trên trình duyệt Firefox */
+#opacity-control-panel input[type="range"]::-moz-range-thumb {
+    background-color: #1a73e8 !important; /* Tô màu nút trượt thành màu xanh dương đồng bộ */
+    border-radius: 50%;                    /* Bo tròn tuyệt đối thành hình tròn */
+}
+
+/* ==========================================================================
+   4.4. KHU VỰC CHỨA CÁC ĐIỀU KHIỂN MẶC ĐỊNH CỦA BẢN ĐỒ NÚT GHIM
+   ========================================================================== */
 .maplibregl-ctrl-top-right {
-    top: 85px !important;        /* Đẩy dịch xuống phía dưới 85 pixel để không bị đè lên khung thanh trượt độ mờ ở trên */
-    right: 10px !important;      /* Cách lề phải bản đồ cố định 10 pixel */
+    top: 80px !important;        /* Đẩy dịch cụm điều khiển xuống dưới 80 pixel để tạo khoảng cách thoáng với panel độ mờ */
+    right: 10px !important;      /* Cố định cách mép phải bản đồ một khoảng 10 pixel */
 }
 
-/* 4.5. TÙY CHỈNH TỪNG NÚT ĐIỀU KHIỂN BÊN TRONG CỤM MAPLIBRE */
+/* ==========================================================================
+   4.5. TÙY CHỈNH KÍCH THƯỚC VÀ KIỂU DÁNG CHO CỤM NÚT BẢN ĐỒ
+   ========================================================================== */
 .maplibregl-ctrl-top-right .maplibregl-ctrl {
-    margin-right: 0 !important;  /* Xóa bỏ khoảng lề phải mặc định */
-    width: 28px !important;      /* Đồng bộ chiều rộng 28 pixel khớp hoàn toàn với khung phía trên */
-    box-sizing: border-box !important;
-    border-radius: 8px !important; /* Bo góc 8 pixel đồng bộ giao diện */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.18) !important; /* Đổ bóng nổi đồng bộ */
-    overflow: visible !important; /* Khắc phục triệt để lỗi vát cạnh bên phải */
+    margin-right: 0 !important;  /* Xóa bỏ khoảng cách lề phải mặc định của hệ thống bản đồ */
+    width: 20px !important;      /* Đồng bộ chiều rộng chính xác 20 pixel khớp với khung bên trên */
+    box-sizing: border-box !important; /* Đảm bảo kích thước tính chuẩn bao gồm cả đường viền */
+    border-radius: 8px !important; /* Bo góc khung chứa các nút bấm với bán kính 8 pixel */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.18) !important; /* Đổ bóng nổi đồng bộ với các thành phần khác */
+    overflow: visible !important; /* Cho phép hiển thị nội dung tràn viền, khắc phục triệt để lỗi bị vát cạnh phải */
 }
 
+/* Tùy chỉnh chi tiết từng nút bấm nhỏ nằm bên trong cụm điều khiển bản đồ */
 .maplibregl-ctrl-top-right .maplibregl-ctrl button {
-    width: 100% !important;      /* Đảm bảo nút bấm vừa khít bề ngang 28px */
-    height: 28px !important;     /* Chiều cao vuông vắn cho từng nút */
-    box-sizing: border-box !important;
+    width: 100% !important;      /* Ép chiều rộng nút phủ kín 100% bề ngang khung chứa (20px) */
+    height: 20px !important;     /* Cố định chiều cao nút là 20 pixel để tạo thành các ô vuông vắn */
+    box-sizing: border-box !important; /* Tính gộp lề và viền vào chuẩn kích thước */
+    border-radius: 4px !important; /* Bo góc riêng cho từng nút bấm bên trong với bán kính 4 pixel */
 }
 
-/* 3. Ẩn nút định vị trên máy tính (Desktop), giữ lại trên điện thoại (Mobile) */
+/* ==========================================================================
+   3. CƠ CHẾ HIỂN THỊ ĐÁP ỨNG THEO THIẾT BỊ (RESPONSIVE)
+   ========================================================================== */
 @media screen and (min-width: 769px) {
+    /* Giữ nút định vị trên điện thoại  - Ẩn trên máy tính (Desktop màn hình từ 769px trở lên) */
     .maplibregl-ctrl-geolocate {
         display: none !important;
     }
