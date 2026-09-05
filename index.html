@@ -374,23 +374,23 @@
             /* Tùy chỉnh bảng hiển thị thông tin thửa đất trên mobile */
             .parcel-panel {
                 width: 95% !important; /* Chiếm 95% chiều ngang màn hình */
-                max-width: none !important; /* Hủy giới hạn chiều rộng tối đa */
-                bottom: 10px !important; /* Cách đáy màn hình 10px */
+                max-width: none !important; /* Không giới hạn chiều rộng tối đa */
+                bottom: 10px !important;    /* Cách đáy màn hình 10px */
                 padding: 6px 8px !important; /* Khoảng đệm bên trong panel */
                 max-height: 48vh !important; /* Chiều cao tối đa bằng 48% chiều cao màn hình */
                 overflow-y: auto !important; /* Cho phép cuộn dọc nếu nội dung dài */
             }
 
-            /* Tiêu đề của panel thông tin thửa đất */
+            /* Tiêu đề "THÔNG TIN THỬA ĐẤT" */
             .panel-header {
-                font-size: 12px !important; /* Thu nhỏ cỡ chữ tiêu đề */
-                padding-bottom: 3px !important; /* Khoảng cách dưới chữ tới đường kẻ */
-                margin-bottom: 4px !important; /* Khoảng cách lề dưới */
+                font-size: 12px !important;     /* Cỡ chữ 12px */
+                padding-bottom: 3px !important; /* Khoảng cách dưới của chữ tới đường kẻ 3px*/
+                margin-bottom: 4px !important; /* Khoảng cách lề dưới 4px*/
             }
 
-            /* Phần nội dung chi tiết thông tin thửa đất dạng lưới 2 cột */
+            /* Nội dung thông tin thửa đất */
             .panel-body {
-                display: grid !important; /* Dùng kiểu hiển thị dạng lưới (Grid) */
+                display: grid !important; /* Kiểu hiển thị dạng lưới */
                 grid-template-columns: 1fr 1fr !important; /* Chia đều thành 2 cột bằng nhau */
                 flex-direction: unset !important; /* Hủy thuộc tính flex cũ nếu có */
                 gap: 4px 8px !important; /* Khoảng cách giữa các ô: hàng 4px, cột 8px */
@@ -398,8 +398,8 @@
 
             /* Các mục dữ liệu con bên trong panel-body */
             .panel-body div {
-                width: 100% !important; /* Chiếm toàn bộ chiều rộng ô lưới */
-                font-size: 11px !important; /* Cỡ chữ nhỏ gọn phù hợp di động */
+                width: 100% !important; /* Chiếm toàn bộ chiều rộng ô */
+                font-size: 11px !important; /* Cỡ chữ 11px */
                 white-space: nowrap !important; /* Không xuống dòng chữ */
                 text-overflow: ellipsis !important; /* Thêm dấu ba chấm (...) nếu chữ quá dài */
                 overflow: hidden !important; /* Ẩn phần chữ bị tràn khung */
@@ -410,8 +410,8 @@
                 top: 4px !important; /* Cách mép trên 4px */
                 left: 4px !important; /* Cách mép trái 4px */
                 width: calc(100% - 38px) !important; /* Chiều rộng co giãn theo màn hình trừ lề */
-                max-width: 320px !important; /* Giới hạn chiều rộng tối đa là 320px */
-                padding: 3px !important; /* Khoảng đệm gọn gàng bên trong khung */
+                max-width: 320px !important; /* Chiều rộng tối đa 320px */
+                padding: 3px !important; /* Khoảng đệm bên trong khung 3px*/
             }
 
             /* Khoảng cách giữa các hàng bộ lọc */
