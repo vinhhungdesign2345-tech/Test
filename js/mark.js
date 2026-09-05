@@ -199,7 +199,7 @@ function openMarkPrompt(coordinatesStr, map, lngLatObj) {
         body: JSON.stringify(payload)
       });
 
-      alert('Đã lưu địa điểm về Google Sheet thành công!');
+      alert('Đã lưu địa điểm thành công!');
       popupDiv.remove();
       
       if (tempMarker) {
