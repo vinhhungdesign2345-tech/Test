@@ -239,6 +239,11 @@ async function loadSavedMarkers(map) {
 
       if (isNaN(lat) || isNaN(lng)) return;
 
+      // Xử lý rút gọn tọa độ còn 4 chữ số thập phân để hiển thị cho gọn popup
+      const shortLat = lat.toFixed(4);
+      const shortLng = lng.toFixed(4);
+      const displayCoords = `${shortLat}, ${shortLng}`;
+
       // Tạo icon ghim trên bản đồ
       const el = document.createElement('div');
       el.innerHTML = '📍';             
@@ -279,12 +284,11 @@ async function loadSavedMarkers(map) {
 
         // ==========================================
         // TRẠNG THÁI 1: XEM (Chưa bấm sửa -> Hiện tên tĩnh + Nút Sửa / Xóa / Đóng)
-        // Tránh bị bật bàn phím ảo ngay khi click vào ghim trên điện thoại.
         // ==========================================
         const renderViewMode = () => {
           controlDiv.innerHTML = `
             <span style="font-weight: bold; font-size: 11px; padding: 2px 4px; max-width: 120px; overflow: hidden; text-overflow: ellipsis;">${item.tenDiaDiem || 'Trụ điện'}</span>
-            <span style="font-size: 11px; color: #666; font-family: monospace;" title="Tọa độ">${item.toaDo}</span>
+            <span style="font-size: 11px; color: #666; font-family: monospace;" title="Tọa độ đầy đủ: ${item.toaDo}">${displayCoords}</span>
             <button id="switchToEditBtn" style="
               padding: 2px 6px; 
               background: #1a73e8; 
@@ -352,7 +356,6 @@ async function loadSavedMarkers(map) {
 
         // ==========================================
         // TRẠNG THÁI 2: CHỈNH SỬA (Sau khi bấm nút Sửa -> Hiện ô Input nhập liệu + Nút Lưu / Xóa / Đóng)
-        // Lúc này mới gọi focus() để kích hoạt bàn phím ảo trên điện thoại.
         // ==========================================
         const renderEditMode = () => {
           controlDiv.innerHTML = `
@@ -364,7 +367,7 @@ async function loadSavedMarkers(map) {
               border-radius: 3px; 
               font-size: 11px;
             ">
-            <span style="font-size: 11px; color: #666; font-family: monospace;" title="Tọa độ">${item.toaDo}</span>
+            <span style="font-size: 11px; color: #666; font-family: monospace;" title="Tọa độ đầy đủ: ${item.toaDo}">${displayCoords}</span>
             <button id="saveEditMarkBtn" style="
               padding: 2px 6px; 
               background: #28a745; 
