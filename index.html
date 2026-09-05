@@ -200,9 +200,7 @@
         /* ==========================================================================
            --- 4. THANH TRƯỢT ĐỘ MỜ & NÚT ĐỊNH VỊ (PC) ---
            ========================================================================== */
-        
-        /* ==========================================================================
-   /* 4.1. THANH TRƯỢT ĐỘ MỜ */
+        /* 4.1. THANH TRƯỢT ĐỘ MỜ */
 #opacity-control-panel {
     position: absolute;          /* Ghim vị trí tuyệt đối trên bản đồ */
     top: 10px;                   /* Cách mép trên 10 pixel */
@@ -211,13 +209,13 @@
     background: rgba(255, 255, 255, 0.92); /* Màu nền trắng trong suốt 92% */
     backdrop-filter: blur(10px); /* Hiệu ứng làm mờ lớp nền phía sau (kính mờ) */
     -webkit-backdrop-filter: blur(10px); /* Hỗ trợ hiệu ứng kính mờ cho Safari/Chrome cũ */
-    padding: 6px 2px;            /* Khoảng đệm bên trong khung (thu gọn lại cho cân đối) */
+    padding: 2px;                /* Khoảng đệm bên trong khung đều 2px cho mọi phía */
     border-radius: 8px;          /* Bo góc khung bán kính 8 pixel */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.18); /* Tạo hiệu ứng đổ bóng nổi cho khung */
     display: flex;               /* Bật mô hình sắp xếp linh hoạt Flexbox */
     flex-direction: column;      /* Xếp các phần tử con theo chiều dọc (từ trên xuống dưới) */
     align-items: center;         /* Canh giữa các phần tử con theo chiều ngang */
-    width: 28px;                 /* Cố định chiều rộng khung là 28px (Cân đối với cụm nút dưới) */
+    width: 22px !important;      /* Cố định chiều rộng khung là 22px */
     box-sizing: border-box;      /* Tính gộp padding và border vào kích thước tổng */
 }
 
@@ -230,13 +228,13 @@
 #opacity-control-panel input[type="range"] {
     writing-mode: vertical-lr;   /* Chuyển hướng hiển thị thanh trượt từ ngang sang dọc */
     direction: rtl;              /* Đảo chiều thanh trượt (kéo lên trên là tăng, kéo xuống dưới là giảm) */
-    width: 14px;                 /* Chiều rộng của thanh trượt dọc (thu nhỏ cho vừa khung 28px) */
+    width: 12px;                 /* Chiều rộng của thanh trượt dọc (thu nhỏ cho vừa khung 22px) */
     height: 70px;                /* Chiều cao của thanh trượt dọc là 70 pixel */
     cursor: default !important;  /* Giữ nguyên con trỏ chuột mặc định khi rê vào */
     margin: 0;                   /* Loại bỏ khoảng cách lề thừa xung quanh */
 }
 
-/* 4.4. NÚT BẬT/TẮT GHIM */
+/* 4.4. KHU VỰC CHỨA CÁC ĐIỀU KHIỂN MẶC ĐỊNH CỦA BẢN ĐỒ (GÓC TRÊN BÊN PHẢI) */
 .maplibregl-ctrl-top-right {
     top: 85px !important;        /* Dịch xuống dưới 85 px để không đè thanh trượt ở trên */
     right: 10px !important;      /* Cách lề phải bản đồ cố định 10 pixel */
@@ -245,7 +243,7 @@
 /* 4.5. TÙY CHỈNH TỪNG NÚT ĐIỀU KHIỂN BÊN TRONG CỤM MAPLIBRE */
 .maplibregl-ctrl-top-right .maplibregl-ctrl {
     margin-right: 0 !important;  /* Xóa bỏ khoảng lề phải mặc định */
-    width: 28px !important;      /* Đồng bộ chiều rộng 28 pixel khớp hoàn toàn với khung phía trên */
+    width: 22px !important;      /* Đồng bộ chiều rộng 22 pixel khớp hoàn toàn với khung phía trên */
     box-sizing: border-box !important;
     border-radius: 8px !important; /* Bo góc 8 pixel đồng bộ giao diện */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.18) !important; /* Đổ bóng nổi đồng bộ */
@@ -253,24 +251,14 @@
 }
 
 .maplibregl-ctrl-top-right .maplibregl-ctrl button {
-    width: 100% !important;      /* Đảm bảo nút bấm vừa khít bề ngang 28px */
-    height: 28px !important;     /* Chiều cao vuông vắn cho từng nút */
+    width: 100% !important;      /* Đảm bảo nút bấm vừa khít bề ngang 22px */
+    height: 22px !important;     /* Chiều cao vuông vắn (22x22px) cho từng nút */
     box-sizing: border-box !important;
-    border-radius: 4px !important; /* Bo góc 4px nút bật ghim */
+    border-radius: 4px !important; /* Bo góc cho các nút bấm bên trong */
 }
 
 /* 3. Ẩn nút định vị trên máy tính (Desktop), giữ lại trên điện thoại (Mobile) */
 @media screen and (min-width: 769px) {
-    .maplibregl-ctrl-geolocate {
-        display: none !important;
-    }
-}
-
-/* ==========================================================================
-   3. CƠ CHẾ HIỂN THỊ ĐÁP ỨNG THEO THIẾT BỊ (RESPONSIVE)
-   ========================================================================== */
-@media screen and (min-width: 769px) {
-    /* Giữ nút định vị trên điện thoại  - Ẩn trên máy tính (Desktop màn hình từ 769px trở lên) */
     .maplibregl-ctrl-geolocate {
         display: none !important;
     }
