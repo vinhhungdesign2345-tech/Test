@@ -42,74 +42,66 @@ const CONFIG = {
     SHEET_DATA_URL: 'https://script.google.com/macros/s/AKfycbz87dcUkndM5w5BeFqUFYJt8JDEcPu98IH5mbzNdov_6eXTNUEhIiknFQ9P7H2c0ZQE/exec',
 
     MAP_STYLE: {
- 'version': 8,
- 'sources': {
- 'google-satellite': {
- 'type': 'raster',
- 'tiles': [
- 'https://mt0.google.com/vt/lyrs=s&hl=vi&x={x}&y={y}&z={z}&scale=2',
- 'https://mt1.google.com/vt/lyrs=s&hl=vi&x={x}&y={y}&z={z}&scale=2',
- 'https://mt2.google.com/vt/lyrs=s&hl=vi&x={x}&y={y}&z={z}&scale=2',
- 'https://mt3.google.com/vt/lyrs=s&hl=vi&x={x}&y={y}&z={z}&scale=2'
- ],
- 'tileSize': 512,
- 'maxzoom': 22
- },
- 'osm-map': { 
-'type': 'raster',
- 'tiles': ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
- 'tileSize': 256,
- 'attribution': '&copy; OpenStreetMap contributors'
- },
- 'ha-tang-dien-source': {
- 'type': 'geojson',
- 'data': './geojson/Ca-Mau-ha-tang-dien.json'
- }
- },
- 'layers': [
- {
- 'id': 'google-satellite-layer',
- 'type': 'raster',
- 'source': 'google-satellite',
- 'minzoom': 0, 
- 'maxzoom': 22
- },
- {
- 'id': 'osm-layer', 
- 'type': 'raster',
- 'source': 'osm-map',
- 'layout': { 'visibility': 'none' },
- 'minzoom': 0, 
- 'maxzoom': 22
- },
- {
- 'id': 'ha-tang-dien-line',
- 'type': 'line',
- 'source': 'ha-tang-dien-source',
- 'filter': ['==', '$type', 'LineString'],
- 'minzoom': 0, 'maxzoom': 22,
- 'paint': {
- 'line-color': '#ffcc00',
- 'line-width': 1,
- 'line-opacity': 0.5
- }
- },
- {
- 'id': 'ha-tang-dien-points',
- 'type': 'circle',
- 'source': 'ha-tang-dien-source',
- 'filter': ['==', '$type', 'Point'],
- 'minzoom': 14,
- 'maxzoom': 22,
- 'paint': {
- 'circle-radius': 4,
- 'circle-color': '#ff0000',
- 'circle-stroke-width': 1,
- 'circle-stroke-color': '#ffffff'
- }
- }
- ]
- },
+        'version': 8,
+        'sources': {
+            'google-satellite': {
+                'type': 'raster',
+                'tiles': ['https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}'],
+                'tileSize': 256
+            },
+            'osm-map': { 
+                'type': 'raster',
+                'tiles': ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+                'tileSize': 256,
+                'attribution': '&copy; OpenStreetMap contributors'
+            },
+            'ha-tang-dien-source': {
+                'type': 'geojson',
+                'data': './geojson/Ca-Mau-ha-tang-dien.json'
+            }
+        },
+        'layers': [
+            {
+                'id': 'google-satellite-layer',
+                'type': 'raster',
+                'source': 'google-satellite',
+                'minzoom': 0, 'maxzoom': 22
+            },
+            {
+                'id': 'osm-layer', 
+                'type': 'raster',
+                'source': 'osm-map',
+                'layout': { 'visibility': 'none' },
+                'minzoom': 0, 'maxzoom': 22
+            },
+            {
+                'id': 'ha-tang-dien-line',
+                'type': 'line',
+                'source': 'ha-tang-dien-source',
+                'filter': ['==', '$type', 'LineString'],
+                'minzoom': 0, 'maxzoom': 22,
+                'paint': {
+                    'line-color': '#ffcc00',
+                    'line-width': 1,
+                    'line-opacity': 0.5
+                }
+            },
+            {
+                'id': 'ha-tang-dien-points',
+                'type': 'circle',
+                'source': 'ha-tang-dien-source',
+                'filter': ['==', '$type', 'Point'],
+                'minzoom': 14,
+                'maxzoom': 22,
+                'paint': {
+                    'circle-radius': 4,
+                    'circle-color': '#ff0000',
+                    'circle-stroke-width': 1,
+                    'circle-stroke-color': '#ffffff'
+                }
+            }
+        ]
+    },
 
     MAP_CENTER: [105.15, 9.18],
     MAP_ZOOM: 12,
@@ -410,20 +402,17 @@ function closeParcelPanel() {
 }
 
 function initMap() {
- const map = new maplibregl.Map({
- container: 'map', 
- style: CONFIG.MAP_STYLE, 
- center: CONFIG.MAP_CENTER, 
- zoom: CONFIG.MAP_ZOOM,
- 
- // Thêm dòng này để xử lý chuẩn xác tile ảnh 512px sắc nét trên MapLibre:
- maxTileCacheSize: 50,
- 
- // Khóa xoay và xem 3D:
- dragRotate: false, 
- pitchWithRotate: false, 
- touchZoomRotate: false 
-});
+    const map = new maplibregl.Map({
+        container: 'map', 
+        style: CONFIG.MAP_STYLE, 
+        center: CONFIG.MAP_CENTER, 
+        zoom: CONFIG.MAP_ZOOM,
+        
+        // Khóa xoay và xem 3D:
+        dragRotate: false,        
+        pitchWithRotate: false,   
+        touchZoomRotate: false    
+    });
 
     window.currentMapInstance = map;
 
