@@ -17,7 +17,17 @@ function initMarkFeature(map) {
     const markControlDiv = document.createElement('div');
     markControlDiv.className = 'maplibregl-ctrl maplibregl-ctrl-group';
     markControlDiv.innerHTML = `
-      <button id="toggleMarkBtn" type="button" title="Bật/Tắt chế độ đánh dấu địa điểm" style="background: white; border: none; cursor: pointer; width: 29px; height: 29px; display: flex; align-items: center; justify-content: center; font-size: 16px;">
+      <button id="toggleMarkBtn" type="button" title="Bật/Tắt chế độ đánh dấu địa điểm" style="
+        background: white; 
+        border: none; 
+        cursor: pointer; 
+        width: 29px; 
+        height: 29px; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        font-size: 16px;
+      ">
         📍
       </button>
     `;
@@ -115,10 +125,32 @@ function openMarkPrompt(coordinatesStr, map, lngLatObj) {
   `;
   
   popupDiv.innerHTML = `
-    <input type="text" id="placeNameInput" placeholder="Tên địa điểm..." style="width: 110px; padding: 2px 4px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 3px; font-size: 11px;" autofocus>
+    <input type="text" id="placeNameInput" placeholder="Tên địa điểm..." style="
+      width: 110px; 
+      padding: 2px 4px; 
+      box-sizing: border-box; 
+      border: 1px solid #ccc; 
+      border-radius: 3px; 
+      font-size: 11px;
+    " autofocus>
     <span style="font-size: 11px; color: #666; font-family: monospace;" title="Tọa độ">${coordinatesStr}</span>
-    <button id="saveMarkBtn" style="padding: 2px 6px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 11px;">Lưu</button>
-    <button id="cancelMarkBtn" style="padding: 2px 6px; background: #ccc; border: none; border-radius: 3px; cursor: pointer; font-size: 11px;">Hủy</button>
+    <button id="saveMarkBtn" style="
+      padding: 2px 6px; 
+      background: #007bff; 
+      color: white; 
+      border: none; 
+      border-radius: 3px; 
+      cursor: pointer; 
+      font-size: 11px;
+    ">Lưu</button>
+    <button id="cancelMarkBtn" style="
+      padding: 2px 6px; 
+      background: #ccc; 
+      border: none; 
+      border-radius: 3px; 
+      cursor: pointer; 
+      font-size: 11px;
+    ">Hủy</button>
   `;
   document.body.appendChild(popupDiv);
 
@@ -209,16 +241,16 @@ async function loadSavedMarkers(map) {
 
       // Tạo icon ghim trên bản đồ
       const el = document.createElement('div');
-      el.innerHTML = '📍';              
-      el.style.fontSize = '20px';          
+      el.innerHTML = '📍';             
+      el.style.fontSize = '20px';         
       el.style.cursor = 'pointer';         
 
       let markerInstance = null;
 
       // ==========================================
-      // HÀM MỞ THANH ĐIỀU KHIỂN DƯỚI ĐÁY (ĐỒNG BỘ GIỐNG HÌNH 1)
+      // HÀM MỞ THANH ĐIỀU KHIỂN DƯỚI ĐÁY (2 TRẠNG THÁI: XEM & SỬA)
       // ==========================================
-      const openBottomControl = (isEditMode = false) => {
+      const openBottomControl = () => {
         // Xóa popup cũ nếu đang mở
         const oldPopup = document.getElementById('mark-input-popup');
         if (oldPopup) oldPopup.remove();
@@ -226,7 +258,7 @@ async function loadSavedMarkers(map) {
         const controlDiv = document.createElement('div');
         controlDiv.id = 'mark-input-popup';
         
-        // Kích thước và vị trí cố định ở đáy màn hình giống hệt hộp thoại tạo điểm mới
+        // Kích thước và vị trí cố định ở đáy màn hình
         controlDiv.style.cssText = `
           position: fixed;
           bottom: 35px;
@@ -245,27 +277,133 @@ async function loadSavedMarkers(map) {
           gap: 6px;
         `;
 
-        if (!isEditMode) {
-          // GIAO DIỆN XEM / SỬA / XÓA (Khi click vào ghim đã lưu)
+        // ==========================================
+        // TRẠNG THÁI 1: XEM (Chưa bấm sửa -> Hiện tên tĩnh + Nút Sửa / Xóa / Đóng)
+        // Tránh bị bật bàn phím ảo ngay khi click vào ghim trên điện thoại.
+        // ==========================================
+        const renderViewMode = () => {
           controlDiv.innerHTML = `
-            <input type="text" id="placeNameInput" value="${item.tenDiaDiem || ''}" placeholder="Tên địa điểm..." style="width: 110px; padding: 2px 4px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 3px; font-size: 11px;">
+            <span style="font-weight: bold; font-size: 11px; padding: 2px 4px; max-width: 120px; overflow: hidden; text-overflow: ellipsis;">${item.tenDiaDiem || 'Trụ điện'}</span>
             <span style="font-size: 11px; color: #666; font-family: monospace;" title="Tọa độ">${item.toaDo}</span>
-            <button id="saveEditMarkBtn" style="padding: 2px 6px; background: #28a745; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 11px;">Lưu</button>
-            <button id="deleteMarkBtn" style="padding: 2px 6px; background: #dc3545; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 11px;">Xóa</button>
-            <button id="cancelMarkBtn" style="padding: 2px 6px; background: #ccc; border: none; border-radius: 3px; cursor: pointer; font-size: 11px;">Đóng</button>
+            <button id="switchToEditBtn" style="
+              padding: 2px 6px; 
+              background: #1a73e8; 
+              color: white; 
+              border: none; 
+              border-radius: 3px; 
+              cursor: pointer; 
+              font-size: 11px;
+            ">Sửa</button>
+            <button id="deleteMarkBtn" style="
+              padding: 2px 6px; 
+              background: #dc3545; 
+              color: white; 
+              border: none; 
+              border-radius: 3px; 
+              cursor: pointer; 
+              font-size: 11px;
+            ">Xóa</button>
+            <button id="cancelMarkBtn" style="
+              padding: 2px 6px; 
+              background: #ccc; 
+              border: none; 
+              border-radius: 3px; 
+              cursor: pointer; 
+              font-size: 11px;
+            ">Đóng</button>
           `;
-          document.body.appendChild(controlDiv);
 
-          // Focus vào ô input tên
+          // Gắn sự kiện bấm nút Sửa -> Chuyển sang trạng thái chỉnh sửa
+          controlDiv.querySelector('#switchToEditBtn').onclick = () => {
+            renderEditMode();
+          };
+
+          // Gắn sự kiện nút Đóng
+          controlDiv.querySelector('#cancelMarkBtn').onclick = () => {
+            controlDiv.remove();
+          };
+
+          // Gắn sự kiện nút Xóa điểm đánh dấu
+          controlDiv.querySelector('#deleteMarkBtn').onclick = async () => {
+            if (!confirm(`Bạn có chắc muốn xóa địa điểm "${item.tenDiaDiem || item.toaDo}" này không?`)) return;
+
+            controlDiv.remove();
+            if (markerInstance) markerInstance.remove();
+
+            const payload = {
+              action: 'deleteMark', 
+              toaDo: item.toaDo
+            };
+
+            try {
+              await fetch(MARK_API_URL, {
+                method: 'POST',
+                mode: 'no-cors', 
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+              });
+
+              setTimeout(() => loadSavedMarkers(map), 1000);
+            } catch (err) {
+              console.error('Lỗi khi xóa điểm đánh dấu:', err);
+            }
+          };
+        };
+
+        // ==========================================
+        // TRẠNG THÁI 2: CHỈNH SỬA (Sau khi bấm nút Sửa -> Hiện ô Input nhập liệu + Nút Lưu / Xóa / Đóng)
+        // Lúc này mới gọi focus() để kích hoạt bàn phím ảo trên điện thoại.
+        // ==========================================
+        const renderEditMode = () => {
+          controlDiv.innerHTML = `
+            <input type="text" id="placeNameInput" value="${item.tenDiaDiem || ''}" placeholder="Tên địa điểm..." style="
+              width: 110px; 
+              padding: 2px 4px; 
+              box-sizing: border-box; 
+              border: 1px solid #ccc; 
+              border-radius: 3px; 
+              font-size: 11px;
+            ">
+            <span style="font-size: 11px; color: #666; font-family: monospace;" title="Tọa độ">${item.toaDo}</span>
+            <button id="saveEditMarkBtn" style="
+              padding: 2px 6px; 
+              background: #28a745; 
+              color: white; 
+              border: none; 
+              border-radius: 3px; 
+              cursor: pointer; 
+              font-size: 11px;
+            ">Lưu</button>
+            <button id="deleteMarkBtn" style="
+              padding: 2px 6px; 
+              background: #dc3545; 
+              color: white; 
+              border: none; 
+              border-radius: 3px; 
+              cursor: pointer; 
+              font-size: 11px;
+            ">Xóa</button>
+            <button id="cancelMarkBtn" style="
+              padding: 2px 6px; 
+              background: #ccc; 
+              border: none; 
+              border-radius: 3px; 
+              cursor: pointer; 
+              font-size: 11px;
+            ">Đóng</button>
+          `;
+
+          // Focus vào ô input và bôi đen chữ để tiện chỉnh sửa
           const inputEl = controlDiv.querySelector('#placeNameInput');
           inputEl.focus();
+          inputEl.select();
 
           // Nút Đóng
           controlDiv.querySelector('#cancelMarkBtn').onclick = () => {
             controlDiv.remove();
           };
 
-          // Nút Lưu (Cập nhật tên mới)
+          // Nút Lưu (Cập nhật tên mới lên Google Sheet)
           controlDiv.querySelector('#saveEditMarkBtn').onclick = async () => {
             const newName = inputEl.value.trim();
             const saveBtn = controlDiv.querySelector('#saveEditMarkBtn');
@@ -298,7 +436,7 @@ async function loadSavedMarkers(map) {
             }
           };
 
-          // Nút Xóa điểm đánh dấu
+          // Nút Xóa điểm đánh dấu trong chế độ sửa
           controlDiv.querySelector('#deleteMarkBtn').onclick = async () => {
             if (!confirm(`Bạn có chắc muốn xóa địa điểm "${item.tenDiaDiem || item.toaDo}" này không?`)) return;
 
@@ -323,10 +461,14 @@ async function loadSavedMarkers(map) {
               console.error('Lỗi khi xóa điểm đánh dấu:', err);
             }
           };
-        }
+        };
+
+        // Khởi tạo hiển thị ban đầu ở Trạng thái 1 (Xem)
+        renderViewMode();
+        document.body.appendChild(controlDiv);
       };
 
-      // Tạo đối tượng Marker và bắt sự kiện click trực tiếp để mở thanh điều khiển dưới đáy
+      // Tạo đối tượng Marker trên bản đồ
       markerInstance = new maplibregl.Marker({ 
         element: el,         
         anchor: 'bottom'     
@@ -337,7 +479,7 @@ async function loadSavedMarkers(map) {
       // Lắng nghe sự kiện click trên icon ghim đã lưu để mở popup dưới đáy
       el.addEventListener('click', (e) => {
         e.stopPropagation(); // Ngăn sự kiện click lan ra bản đồ
-        openBottomControl(false);
+        openBottomControl();
       });
     });
   } catch (err) {
