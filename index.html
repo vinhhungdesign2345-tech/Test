@@ -67,9 +67,9 @@
             font-weight: normal !important; /* Chữ thường, không in đậm */
         }
         
-        /* ===============================================
-   --- 3. CỤM ĐIỀU KHIỂN DROPDOWN & BỘ LỌC ---
-   =============================================== */
+       /* ===============================================
+       --- 3. CỤM ĐIỀU KHIỂN DROPDOWN & BỘ LỌC ---
+       =============================================== */
 
 /* 3.1. KHUNG TỔNG THỂ */
 .map-control {
@@ -257,13 +257,12 @@
     border-radius: 4px !important; /* Bo góc cho các nút bấm bên trong */
 }
 
-/* 3. Ẩn nút định vị trên máy tính (Desktop), giữ lại trên điện thoại (Mobile) */
+/* 3. Ẩn nút định vị trên máy tính , giữ lại trên điện thoại */
 @media screen and (min-width: 769px) {
     .maplibregl-ctrl-geolocate {
         display: none !important;
     }
 }
-
         /* ==========================================================================
            --- 5. KHUNG THÔNG TIN THỬA ĐẤT (PC) ---
            ========================================================================== */
@@ -498,215 +497,296 @@
 </head>
 <body>
 
-    <!-- Khung chứa cụm tìm kiếm tổng thể đặt ở góc trên bản đồ -->
-                <div class="map-control" style="
-                width: 320px; 
-                max-width: 100%; 
-                box-sizing: border-box; 
+    <!-- ==========================================================================
+         KHUNG CHỨA CỤM TÌM KIẾM TỔNG THỂ (Đặt ở góc trên bản đồ)
+         ========================================================================== -->
+    <div class="map-control" style="
+        width: 320px;               /* Cố định chiều rộng khung tổng thể là 320 pixel */
+        max-width: 100%;            /* Giới hạn chiều rộng tối đa không vượt quá 100% màn hình thiết bị */
+        box-sizing: border-box;     /* Tính gộp phần padding và border vào trong tổng kích thước width */
+        ">
+        
+        <!-- Khung định dạng bố cục nội dung bên trong cụm tìm kiếm theo dạng cột dọc -->
+        <div class="filter-row" style="
+            display: flex;          /* Kích hoạt mô hình sắp xếp linh hoạt Flexbox */
+            flex-direction: column; /* Xếp các hàng bên trong theo chiều dọc (từ trên xuống dưới) */
+            gap: 6px;               /* Khoảng trống giữa các hàng là 6 px */
+            width: 100%;            /* Chiếm trọn 100% chiều rộng của khung tổng */
                 ">
-                <div class="filter-row" style="
-                display: flex; 
-                flex-direction: column; 
-                gap: 6px; 
-                width: 100%; 
-                    ">
            
-    <!-- DÒNG 1: Ô tìm kiếm thửa đất toàn cục và nút bấm Tìm -->
+            <!-- ==========================================================================
+                 DÒNG 1: Ô NHẬP TỪ KHÓA TÌM KIẾM THỬA ĐẤT TOÀN CỤC & NÚT BẤM "TÌM"
+                 ========================================================================== -->
             <div style="
-                display: flex; 
-                gap: 6px; 
-                width: 100%; 
+                display: flex;      /* Ô nhập liệu và nút bấm nằm cùng hàng ngang */
+                gap: 6px;           /* Khoảng cách ô input và nút bấm là 6 pixel */
+                width: 100%;        /* Chiếm trọn 100% chiều rộng hàng */
                     ">
-                <!-- Ô nhập từ khóa tìm kiếm thửa đất (tên, mã định danh, tờ/thửa) -->
+                
+                <!-- Ô nhập từ khóa tìm kiếm thửa đất (hỗ trợ tìm theo tên, mã định danh, số tờ/thửa) -->
                 <input type="text" id="searchThuaDatInput" placeholder="Tìm theo tên, mã ĐD, tờ/thửa (VD: 7/29)..." style="
-                    width: 0; 
-                    flex: 1; 
-                    padding: 8px; 
-                    border: 1px solid #ccc; 
-                    border-radius: 4px; 
-                    box-sizing: border-box; 
+                    width: 0;               /* Đặt chiều rộng ban đầu bằng 0 để flex-grow tự động co giãn tối ưu */
+                    flex: 1;                /* Cho phép ô input tự động giãn nở chiếm toàn bộ không gian trống còn lại trên hàng */
+                    padding: 8px;           /* Khoảng đệm trong ô nhập liệu là 8 pixel */
+                    border: 1px solid #ccc; /* Viền màu xám nhạt (#ccc) */
+                    border-radius: 4px;     /* Bo góc ô nhập liệu 4 pixel */
+                    box-sizing: border-box; /* Tính gộp viền và khoảng đệm vào kích thước */
                   " />
-                <!-- Nút xác nhận thực hiện tìm kiếm thửa đất -->
+                  
+                <!-- Nút xác nhận bấm để thực hiện lệnh tìm kiếm thửa đất -->
                 <button id="searchThuaDatBtn" style="
-                    padding: 8px 16px; 
-                    background-color: #1a73e8; 
-                    color: white; 
-                    border: none; 
-                    border-radius: 4px; 
-                    cursor: pointer; 
-                    font-weight: bold; 
-                    white-space: nowrap; 
+                    padding: 8px 16px;      /* Khoảng đệm trong nút: trên/dưới 8px, trái/phải 16px */
+                    background-color: #1a73e8; /* Màu nền xanh dương đặc trưng của Google */
+                    color: white;           /* Màu chữ là trắng */
+                    border: none;           /* Loại bỏ hoàn toàn đường viền mặc định của nút */
+                    border-radius: 4px;     /* Bo góc 4 pixel */
+                    cursor: pointer;        /* Đổi kiểu con trỏ thành hình ngón tay khi rê vào */
+                    font-weight: bold;      /* Chữ in đậm */
+                    white-space: nowrap;    /* Cấm ngắt dòng văn bản trong nút */
                 ">Tìm</button>
-                </div>
+            </div>
 
-    <!-- DÒNG 2: Dropdown chọn Tỉnh/TP và Phường/Xã chia đều không gian -->
-                 <div style="
-                 display: flex; 
-                 gap: 6px; 
-                 width: 100%; 
-                 ">
-                 <!-- Danh sách lựa chọn Tỉnh / Thành phố -->
-                 <select id="tinhFilter">
-                     <option value="">-- Tỉnh / TP --</option>
-                 </select>
-                 <!-- Danh sách lựa chọn Phường / Xã (mặc định bị khóa chờ chọn Tỉnh) -->
-                 <select id="phuongFilter" disabled>
-                     <option value="">-- Phường / Xã --</option>
-                 </select>
-               </div>
-
-    <!-- DÒNG 3: Ô nhập tên đường tra cứu giá đất kèm nút tìm kiếm -->
+            <!-- ==========================================================================
+                 DÒNG 2: DROPDOWN CHỌN TỈNH/TP VÀ PHƯỜNG/XÃ (Chia đều không gian hiển thị)
+                 ========================================================================== -->
             <div style="
-                position: relative; 
-                width: 100%; 
+               display: flex;       /* Sắp xếp 2 dropdown nằm song song trên một hàng ngang */
+               gap: 6px;            /* Khoảng trống giữa hai ô 6 pixel */
+               width: 100%;         /* Chiếm trọn 100% bề ngang khung chứa */
+               ">
+               
+               <!-- Danh sách thả xuống (Dropdown) lựa chọn Tỉnh / Thành phố -->
+               <select id="tinhFilter">
+                   <option value="">-- Tỉnh / TP --</option>
+               </select>
+               
+               <!-- Danh sách thả xuống (Dropdown) lựa chọn Phường / Xã (mặc định bị khóa 'disabled' chờ người dùng chọn Tỉnh trước) -->
+               <select id="phuongFilter" disabled>
+                   <option value="">-- Phường / Xã --</option>
+               </select>
+            </div>
+
+            <!-- ==========================================================================
+                 DÒNG 3: Ô NHẬP TÊN ĐƯỜNG TRA CỨU GIÁ ĐẤT KÈM NÚT TÌM (🔍)
+                 ========================================================================== -->
+            <div style="
+                position: relative;     /* Vị trí tương đối */
+                width: 100%;            /* Chiếm 100% chiều rộng khung chứa */
             ">
                 <div style="
-                    display: flex; 
-                    gap: 4px; 
-                    width: 100%; 
+                    display: flex;      /* Ô nhập tên đường và nút Tìm nằm cùng hàng ngang */
+                    gap: 4px;           /* Khoảng trống giữa ô nhập và nút 4 pixel */
+                    width: 100%;        /* Chiếm 100% bề ngang */
                 ">
-                <!-- Ô nhập tên tuyến đường để lọc giá đất -->
-                <input type="text" id="duongFilter" placeholder="Nhập tên đường tra cứu giá đất..." disabled style="
-                        width: 0; 
-                        flex: 1; 
-                        padding: 8px; 
-                        border: 1px solid #ccc; 
-                        border-radius: 4px; 
-                        box-sizing: border-box; 
-                    " />
-                <!-- Nút kích hoạt tra cứu tuyến đường -->
-                <button id="searchDuongBtn" disabled style="
-                        padding: 8px 12px; 
-                        background-color: #1a73e8;
-                        color: white; 
-                        border: none; 
-                        border-radius: 4px; 
-                        cursor: pointer; 
-                        font-weight: bold; 
-                        white-space: nowrap; 
-                    ">🔍</button>
+                    <!-- Ô nhập tên tuyến đường cụ thể để lọc và tra cứu biểu bảng giá đất -->
+                    <input type="text" id="duongFilter" placeholder="Nhập tên đường tra cứu giá đất..." disabled style="
+                            width: 0;               /* Chiều rộng ban đầu bằng 0 để tận dụng tính năng co giãn của flex */
+                            flex: 1;                /* Tự động giãn nở đầy không gian trên hàng */
+                            padding: 8px;           /* Khoảng đệm trong 8 pixel */
+                            border: 1px solid #ccc; /* Viền màu xám nhạt */
+                            border-radius: 4px;     /* Bo góc 4 pixel */
+                            box-sizing: border-box; /* Tính gộp lề vào chuẩn kích thước tổng */
+                        " />
+                        
+                    <!-- Nút bấm dạng biểu tượng kính lúp (🔍) để kích hoạt lệnh tìm kiếm tuyến đường -->
+                    <button id="searchDuongBtn" disabled style="
+                            padding: 8px 12px;      /* Khoảng đệm nút: trên/dưới 8px, trái/phải 12px */
+                            background-color: #1a73e8; /* Nền xanh dương */
+                            color: white;           /* Chữ màu trắng */
+                            border: none;           /* Bỏ đường viền mặc định */
+                            border-radius: 4px;     /* Bo góc 4 pixel */
+                            cursor: pointer;        /* Con trỏ chuột thành hình bàn tay khi rê chuột vào */
+                            font-weight: bold;      /* Chữ in đậm */
+                            white-space: nowrap;    /* Không cho phép rớt dòng ký tự */
+                        ">🔍</button>
                 </div>
                 
-    <!-- Popup nổi liệt kê danh sách kết quả tìm kiếm tuyến đường gợi ý -->
+                <!-- POPUP NỔI: Hộp thoại danh sách thả xuống kết quả tìm kiếm -->
                 <div id="duongPopupList" style="
-                    display: none; 
-                    position: absolute; 
-                    top: 100%; 
-                    left: 0; 
-                    right: 0; 
-                    background: #ffffff; 
-                    border: 1px solid #ccc; 
-                    border-radius: 4px; 
-                    max-height: 200px; 
-                    overflow-y: auto; 
-                    z-index: 1000; 
-                    box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
-                    margin-top: 2px; 
+                    display: none;              /* Ẩn popup đi khi chưa tìm kiếm */
+                    position: absolute;         /* Ghim vị trí tuyệt đối so với khung tổng (Dòng 3) */
+                    top: 100%;                  /* Vị trí hiển thị ngay bên dưới ô nhập tên đường */
+                    left: 0;                    /* Sát mép bên trái ô nhập */
+                    right: 0;                   /* Sát mép bên phải ô nhập (trải dài đúng bằng bề ngang ô input) */
+                    background: #ffffff;        /* Nền trắng cho danh sách gợi ý */
+                    border: 1px solid #ccc;     /* Viền xám */
+                    border-radius: 4px;         /* Bo góc 4 pixel */
+                    max-height: 200px;          /* Chiều cao tối đa của popup là 200 pixel */
+                    overflow-y: auto;           /* Bật thanh cuộn dọc nếu danh sách gợi ý quá dài vượt quá 200px */
+                    z-index: 200;               /* Tầng hiển thị 200 */
+                    box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Hiệu ứng đổ bóng mờ nhẹ bên dưới popup */
+                    margin-top: 2px;            /* Khoảng cách đẩy xuống phía dưới so với ô input 2 pixel */
                 ">
                 </div>
-                </div>
-                </div>
+            </div>
+        </div>
 
-    <!-- Khung panel nhỏ hiển thị kết quả giá đất sau khi tra cứu -->
+        <!-- KHUNG PANEL NHỎ: Khu vực hiển thị tóm tắt kết quả giá đất ngay sau khi người dùng tra cứu thành công -->
         <div id="giaDatResultPanel" style="
-            display: none; 
-            margin-top: 8px; 
-            padding: 8px 10px; 
-            background: #ffffff; 
-            border: 1px solid #ccc; 
-            border-radius: 4px; 
-            font-size: 13px; 
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            box-sizing: border-box; 
+            display: none;              /* Ẩn khung kết quả đi khi chưa có dữ liệu tra cứu */
+            margin-top: 8px;            /* Khoảng cách đẩy phía trên so với cụm tìm kiếm là 8 pixel */
+            padding: 8px 10px;          /* Đệm trong khung kết quả: trên/dưới 8px, trái/phải 10px */
+            background: #ffffff;        /* Nền màu trắng */
+            border: 1px solid #ccc;     /* Viền màu xám nhạt */
+            border-radius: 4px;         /* Bo góc 4 pixel */
+            font-size: 13px;            /* Cỡ chữ khung kết quả 13 pixel */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Hiệu ứng đổ bóng mờ */
+            box-sizing: border-box;     /* Tính gộp kích thước padding và border */
             ">
-            </div>
-            </div>
+        </div>
+    </div>
 
-    <!-- KHUNG HIỂN THỊ CHÍNH: Bản đồ địa lý tương tác (MapLibre GL) -->
-            <div id="map"></div>
+    <!-- ==========================================================================
+         KHUNG HIỂN THỊ CHÍNH: Bản đồ địa lý tương tác trực tuyến (Sử dụng thư viện MapLibre GL)
+         ========================================================================== -->
+    <div id="map"></div>
 
-    <!-- KHUNG BẢNG PANEL NỔI: Hiển thị thông tin chi tiết của thửa đất khi người dùng click vào bản đồ -->
-            <div id="parcel-info-panel" class="parcel-panel" style="display: none;">
-            <div class="panel-header">
+    <!-- ==========================================================================
+         KHUNG BẢNG PANEL NỔI: Bảng thông tin chi tiết của thửa đất hiển thị khi người dùng click chọn một thửa trên bản đồ
+         ========================================================================== -->
+    <div id="parcel-info-panel" class="parcel-panel" style="display: none;">
+        <div class="panel-header">
             <span><b>THÔNG TIN THỬA ĐẤT</b></span>
-            <!-- Nút bấm đóng panel thông tin -->
+            <!-- Nút bấm hình dấu nhân (&times;) dùng để đóng/tắt panel thông tin thửa đất -->
             <button onclick="closeParcelPanel()" class="close-btn">&times;</button>
-            </div>
-            <!-- Vùng chứa chi tiết các thuộc tính thửa đất -->
-            <div id="panel-content" class="panel-body">
-            </div>
-            </div>
+        </div>
+        <!-- Vùng thân bên trong chứa chi tiết toàn bộ các thuộc tính thông tin của thửa đất -->
+        <div id="panel-content" class="panel-body">
+        </div>
+    </div>
 
-    <!-- CỤM CÔNG CỤ: Đổi lớp nền bản đồ (Vệ tinh/OSM) và công cụ đo khoảng cách -->
-            <div class="map-layer-control" style="
-            display: flex; 
-            gap: 8px; 
-            align-items: center; 
-            ">
-            <!-- Nút chuyển đổi giữa lớp bản đồ Vệ tinh và bản đồ OSM -->
-            <button id="toggleLayerBtn" style="
-            padding: 3px 3px; 
-            height: 25px; 
-            background-color: #ffffff; 
-            color: #333; 
-            border: 1px solid #ccc; 
-            border-radius: 4px; 
-            cursor: pointer; 
-            font-size: 11px; 
-            box-shadow: 0 1px 4px rgba(0,0,0,0.3);
-            box-sizing: border-box; 
-            white-space: nowrap; 
+    <!-- ==========================================================================
+         CỤM CÔNG CỤ (MAP-LAYER-CONTROL): Nút đổi lớp nền bản đồ (Vệ tinh/OSM) & Nút đo khoảng cách
+         ========================================================================== -->
+    <div class="map-layer-control" style="
+        display: flex;          /* Sắp xếp các nút công cụ bên trong nằm ngang hàng */
+        gap: 8px;               /* Khoảng cách khoảng trống giữa các nút công cụ là 8 pixel */
+        align-items: center;    /* Canh chỉnh các thành phần bên trong nằm căn giữa theo chiều dọc */
+        ">
+        
+        <!-- Nút bấm chức năng chuyển đổi qua lại giữa lớp bản đồ nền Hình ảnh Vệ tinh và Bản đồ đường nét OSM -->
+        <button id="toggleLayerBtn" style="
+            padding: 3px 3px;           /* Khoảng đệm bên trong nút rất gọn gàng: 3 pixel xung quanh */
+            height: 25px;               /* Cố định chiều cao của nút đúng 25 pixel */
+            background-color: #ffffff;  /* Màu nền của nút là màu trắng */
+            color: #333;                /* Màu chữ hiển thị bên trong nút là màu xám đậm (#333) */
+            border: 1px solid #ccc;     /* Đường viền khung màu xám nhạt */
+            border-radius: 4px;         /* Bo tròn các góc nút với bán kính 4 pixel */
+            cursor: pointer;            /* Biểu tượng con trỏ chuột đổi thành hình bàn tay khi di vào */
+            font-size: 11px;            /* Cỡ chữ hiển thị nhỏ gọn kích thước 11 pixel */
+            box-shadow: 0 1px 4px rgba(0,0,0,0.3); /* Hiệu ứng đổ bóng nổi rõ ràng cho nút */
+            box-sizing: border-box;     /* Tính gộp kích thước đệm và viền chuẩn xác */
+            white-space: nowrap;        /* Cấm ngắt dòng văn bản chữ bên trong nút */
         ">
             Chuyển sang Bản đồ OSM
         </button>
         
-        <!-- Nút bật chức năng đo khoảng cách trực tiếp trên bản đồ -->
+        <!-- Nút bấm kích hoạt chức năng đo khoảng cách trực tiếp bằng tay ngay trên không gian bản đồ -->
         <button id="measureDistBtn" style="
-            padding: 3px 3px; 
-            height: 25px; 
-            background-color: #ffffff; 
-            color: #333; 
-            border: 1px solid #ccc; 
-            border-radius: 4px; 
-            cursor: pointer; 
-            font-size: 11px; 
-            box-shadow: 0 1px 4px rgba(0,0,0,0.3);
-            box-sizing: border-box; 
-            white-space: nowrap; 
-            display: flex; 
-            align-items: center; 
-            gap: 4px; 
+            padding: 3px 3px;           /* Khoảng đệm bên trong nút gọn gàng 3 pixel xung quanh */
+            height: 25px;               /* Cố định chiều cao nút là 25 pixel */
+            background-color: #ffffff;  /* Màu nền trắng */
+            color: #333;                /* Màu chữ xám đậm */
+            border: 1px solid #ccc;     /* Viền đường nét màu xám nhạt */
+            border-radius: 4px;         /* Bo tròn góc bán kính 4 pixel */
+            cursor: pointer;            /* Biểu tượng con trỏ chuột thành hình bàn tay khi rê vào */
+            font-size: 11px;            /* Kích thước cỡ chữ 11 pixel nhỏ gọn */
+            box-shadow: 0 1px 4px rgba(0,0,0,0.3); /* Hiệu ứng đổ bóng nổi */
+            box-sizing: border-box;     /* Tính gộp kích thước tổng thể */
+            white-space: nowrap;        /* Không cho phép văn bản tự động rớt dòng */
+            display: flex;              /* Kích hoạt Flexbox để canh chỉnh biểu tượng thước kẻ và chữ */
+            align-items: center;        /* Canh giữa theo chiều dọc */
+            gap: 4px;                   /* Khoảng cách giữa biểu tượng thước kẻ (📏) và chữ là 4 pixel */
         ">
             📏 Đo khoảng cách
         </button>
     </div>
 
-    <!-- THANH TRƯỢT: Điều chỉnh độ mờ (Opacity) của lớp bản đồ lớp phủ -->
-            <div id="opacity-control-panel">
-            <label for="opacitySlider">Mờ: <span id="opacityValue">0.6</span></label>
-            <input type="range" id="opacitySlider" min="0" max="1" step="0.05" value="0.6">
-            </div>
+    <!-- ==========================================================================
+         THANH TRƯỢT (OPACITY CONTROL PANEL): Điều chỉnh mức độ trong suốt/độ mờ của lớp bản đồ phủ lớp trên
+         ========================================================================== -->
+    <div id="opacity-control-panel">
+        <!-- Nhãn chữ hiển thị tiêu đề và thông số giá trị độ mờ hiện tại (mặc định hiển thị số 0.6) -->
+        <label for="opacitySlider">Mờ: <span id="opacityValue">0.6</span></label>
+        <!-- Thanh trượt ngang (Range Slider) điều chỉnh tỷ lệ từ 0 đến 1, bước nhảy mỗi lần kéo là 0.05, giá trị khởi tạo là 0.6 -->
+        <input type="range" id="opacitySlider" min="0" max="1" step="0.05" value="0.6">
+    </div>
 
-    <!-- CÁC TỆP MÃ NGUỒN JAVASCRIPT (Được chia theo mô-đun chức năng) -->
-            <script src="js/api.js"></script>
-            <script src="js/sheet.js"></script>
-            <script src="js/giaDatFilter.js"></script>
-            <script src="js/searchThuaDat.js"></script>
-            <script src="js/note.js"></script>
-            <script src="js/measure.js"></script>
-            <script src="js/mark.js"></script>
-            <script src="js/map.js"></script>
+    <!-- ==========================================================================
+         CÁC TỆP MÃ NGUỒN JAVASCRIPT (Được phân chia tổ chức thành các mô-đun chức năng riêng biệt)
+         ========================================================================== -->
+    <script src="js/api.js"></script>          <!-- Tệp xử lý các kết nối gọi API hệ thống máy chủ -->
+    <script src="js/sheet.js"></script>        <!-- Tệp làm việc và kết nối dữ liệu bảng biểu Google Sheet -->
+    <script src="js/giaDatFilter.js"></script> <!-- Tệp xử lýlogic lọc và tra cứu thông tin giá đất tuyến đường -->
+    <script src="js/searchThuaDat.js"></script><!-- Tệp xử lý logic tìm kiếm thông tin thửa đất toàn cục -->
+    <script src="js/note.js"></script>         <!-- Tệp quản lý tính năng thêm, sửa, xem ghi chú dữ liệu thửa đất -->
+    <script src="js/measure.js"></script>      <!-- Tệp xử lý tính toán hình học đo khoảng cách trên bản đồ -->
+    <script src="js/mark.js"></script>         <!-- Tệp xử lý đánh dấu điểm, ký hiệu vị trí trên bản đồ -->
+    <script src="js/map.js"></script>          <!-- Tệp cốt lõi khởi tạo, cấu hình và điều khiển hiển thị bản đồ MapLibre GL -->
 
-    <!-- MODAL POPUP GHI CHÚ: Hộp thoại nhập/xem ghi chú cho thửa đất -->
-            <div id="noteModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center;">
-            <div style="background: white; padding: 20px; border-radius: 8px; width: 400px; max-width: 90%; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
-            <h3 id="noteModalTitle" style="margin-top: 0; font-size: 16px; color: #333;">Ghi chú thửa đất</h3>
-            <!-- Phần thân chứa nội dung/form ghi chú -->
-            <div id="noteModalBody" style="margin-bottom: 15px;"></div>
-            <!-- Các nút thao tác trong modal (Lưu / Đóng) -->
-            <div style="text-align: right; display: flex; gap: 8px; justify-content: flex-end;">
-                <button id="noteModalSaveBtn" style="display: none; padding: 6px 14px; background: #1a73e8; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Lưu</button>
-                <button onclick="closeNoteModal()" style="padding: 6px 14px; background: #ccc; border: none; border-radius: 4px; cursor: pointer;">Đóng</button>
+    <!-- ==========================================================================
+         MODAL POPUP GHI CHÚ: Hộp thoại cửa sổ nổi chuyên dùng để nhập, lưu hoặc xem ghi chú chi tiết cho từng thửa đất
+         ========================================================================== -->
+    <div id="noteModal" style="
+        display: none;                  /* Mặc định ẩn hoàn toàn modal popup ghi chú khi chưa gọi tới */
+        position: fixed;                /* Ghim cố định vị trí tuyệt đối phủ kín toàn bộ màn hình trình duyệt */
+        top: 0;                         /* Đặt bám sát mép trên cùng màn hình */
+        left: 0;                        /* Đặt bám sát mép bên trái cùng màn hình */
+        width: 100%;                    /* Chiều rộng phủ kín 100% không gian màn hình */
+        height: 100%;                   /* Chiều cao phủ kín 100% không gian màn hình */
+        background: rgba(0,0,0,0.5);    /* Tạo lớp nền màn hình tối mờ màu đen với độ trong suốt 50% (làm mờ phần phía sau) */
+        z-index: 2000;                  /* Độ ưu tiên hiển thị cực cao tầng 2000 (nằm nổi lên trên cùng của mọi thành phần) */
+        justify-content: center;        /* Canh chỉnh hộp thoại nội dung nằm căn giữa theo chiều ngang màn hình */
+        align-items: center;            /* Canh chỉnh hộp thoại nội dung nằm căn giữa theo chiều dọc màn hình */
+    ">
+        <!-- Khung hộp thoại trắng chứa nội dung ghi chú bên trong -->
+        <div style="
+            background: white;          /* Màu nền khung hộp thoại là màu trắng */
+            padding: 20px;              /* Khoảng đệm bao quanh bên trong hộp thoại là 20 pixel đều các phía */
+            border-radius: 8px;         /* Bo tròn 4 góc hộp thoại với bán kính 8 pixel */
+            width: 400px;               /* Cố định chiều rộng lý tưởng của hộp thoại là 400 pixel */
+            max-width: 90%;             /* Giới hạn chiều rộng tối đa không vượt quá 90% màn hình trên điện thoại */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); /* Hiệu ứng đổ bóng nổi sâu tạo chiều nổi bật cho hộp thoại */
+        ">
+            <!-- Tiêu đề của hộp thoại ghi chú thửa đất -->
+            <h3 id="noteModalTitle" style="
+                margin-top: 0;          /* Triệt tiêu khoảng cách lề phía trên tiêu đề */
+                font-size: 16px;        /* Cỡ chữ tiêu đề là 16 pixel */
+                color: #333;            /* Màu chữ tiêu đề là màu xám đậm (#333) */
+            ">Ghi chú thửa đất</h3>
+            
+            <!-- Phần thân (Body) chuyên dùng chứa các ô nhập liệu nội dung hoặc hiển thị văn bản ghi chú -->
+            <div id="noteModalBody" style="
+                margin-bottom: 15px;    /* Tạo khoảng cách đẩy cách phần nút bấm bên dưới lên một khoảng 15 pixel */
+            "></div>
+            
+            <!-- Khu vực chứa các nút thao tác tương tác bên trong modal (Nút Lưu dữ liệu / Nút Đóng hộp thoại) -->
+            <div style="
+                text-align: right;      /* Canh lề các nút thao tác lệch về phía bên phải */
+                display: flex;          /* Kích hoạt Flexbox sắp xếp các nút nằm trên hàng ngang */
+                gap: 8px;               /* Khoảng cách khoảng trống giữa nút Lưu và nút Đóng là 8 pixel */
+                justify-content: flex-end; /* Căn chỉnh nội dung dịch chuyển sát về phía bên phải */
+            ">
+                <!-- Nút bấm xác nhận lưu nội dung ghi chú -->
+                <button id="noteModalSaveBtn" style="
+                    display: none;              /* Mặc định ẩn nút Lưu đi, chỉ bật hiển thị khi cần thiết */
+                    padding: 6px 14px;          /* Khoảng đệm bên trong nút: trên/dưới 6px, trái/phải 14px */
+                    background: #1a73e8;        /* Màu nền xanh dương nổi bật (#1a73e8) */
+                    color: white;               /* Màu chữ màu trắng */
+                    border: none;               /* Không có đường viền */
+                    border-radius: 4px;         /* Bo góc bán kính 4 pixel */
+                    cursor: pointer;            /* Đổi con trỏ chuột thành hình bàn tay */
+                    font-weight: bold;          /* Định dạng chữ in đậm */
+                ">Lưu</button>
+                
+                <!-- Nút bấm đóng/hủy bỏ hộp thoại ghi chú -->
+                <button onclick="closeNoteModal()" style="
+                    padding: 6px 14px;          /* Khoảng đệm bên trong nút: trên/dưới 6px, trái/phải 14px */
+                    background: #ccc;           /* Màu nền màu xám nhạt */
+                    border: none;               /* Không có đường viền */
+                    border-radius: 4px;         /* Bo góc bán kính 4 pixel */
+                    cursor: pointer;            /* Đổi con trỏ chuột thành hình bàn tay */
+                ">Đóng</button>
             </div>
         </div>
     </div>
