@@ -89,41 +89,41 @@
                 }
                 }
 
-    /* Triệt tiêu toàn bộ margin/padding thừa của các thành phần con bên trong */
-    .map-control * {
-    margin: 0 !important;
-    }
+                /* Triệt tiêu toàn bộ margin/padding thừa của các thành phần con bên trong */
+                .map-control * {
+                margin: 0 !important;
+                    }
 
-        /* 3.2. CẤU TRÚC HÀNG VÀ CÁC THÀNH PHẦN CON BÊN TRONG */
+        /* 3.2. CÁC THÀNH PHẦN CON BÊN TRONG */
         .filter-row {
             display: flex;               /* Hiển thị dạng Flexbox */
-            flex-wrap: nowrap;           /* Ép tất cả các ô trên hàng nằm gọn trên 1 dòng, không bị rớt xuống */
-            gap: 3px;                    /* Khoảng hở theo chiều ngang giữa các cột là 3 pixel */
-            width: 100%;                 /* Chiếm trọn 100% chiều rộng khung chứa */
+            flex-wrap: nowrap;           /* Các ô trên hàng nằm cùng 1 dòng, không bị rớt xuống */
+            gap: 3px;                    /* Khoảng hở ngang giữa các cột 3 pixel */
+            width: 100%;                 /* Chiếm 100% chiều rộng khung chứa */
             margin-bottom: 4px;          /* Khoảng cách lề dưới giữa các hàng */
             box-sizing: border-box;
-        }
-        /* Dòng cuối cùng của bảng không cần chừa khoảng trống lề dưới */
-        .filter-row:last-child {
+            }
+            /* Dòng cuối cùng của bảng không chừa khoảng trống lề dưới */
+            .filter-row:last-child {
             margin-bottom: 0;            
-        }
-        .filter-item {
-            min-width: 0;                /* Ngăn chặn tuyệt đối tình trạng chữ làm tràn vỡ khung Flexbox */
+            }
+            .filter-item {
+            min-width: 0;                /* Ngăn chữ tràn vỡ khung Flexbox */
             box-sizing: border-box;
-        }
+            }
         /* Hàng 1 & Hàng 3: Khung chứa ô nhập liệu đi kèm nút bấm ở đuôi */
-        .filter-row > .filter-item:first-child:has(button),
-        .filter-row > .filter-item:has(input[type="text"] + button),
-        .filter-row:nth-child(3) .filter-item:first-child {
-            flex: 1;                     /* Tự động giãn nở linh hoạt chiếm trọn không gian */
+            .filter-row > .filter-item:first-child:has(button),
+            .filter-row > .filter-item:has(input[type="text"] + button),
+            .filter-row:nth-child(3) .filter-item:first-child {
+            flex: 1;                     /* Tự động giãn nở chiếm trọn không gian */
             display: flex;               
             gap: 3px;                    /* Khoảng hở giữa ô input và nút bấm */
-            align-items: stretch;        /* Ép chiều cao ô input và nút bấm luôn bằng nhau tuyệt đối */
-        }
-        /* Các hàng chứa dropdown bên dưới (chia đều không gian các cột) */
-        .filter-row > .filter-item:not(:first-child) {
+            align-items: stretch;        /* Chiều cao ô input và nút bấm luôn bằng nhau tuyệt đối */
+            }
+        /* Các hàng chứa dropdown (chia đều không gian các cột) */
+            .filter-row > .filter-item:not(:first-child) {
             flex: 1;                     
-        }
+            }
 
         /* ==========================================================================
            --- 3A, 3B, 3C, 3D, 3E. TOÀN BỘ Ô NHẬP, NÚT BẤM VÀ DROPDOWN ---
