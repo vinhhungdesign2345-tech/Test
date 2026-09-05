@@ -63,8 +63,8 @@ function initMarkFeature(map) {
   map.on('click', (e) => {
     if (!isMarkingMode) return;
 
-    const lng = e.lngLat.lng.toFixed(6);
-    const lat = e.lngLat.lat.toFixed(6);
+    const lng = e.lngLat.lng.toFixed(4);
+    const lat = e.lngLat.lat.toFixed(4);
     const coordinatesStr = `${lat}, ${lng}`;
 
     // Xóa ghim tạm cũ nếu có trước khi tạo ghim tạm mới
