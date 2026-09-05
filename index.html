@@ -71,22 +71,23 @@
            --- 3. CỤM ĐIỀU KHIỂN DROPDOWN & BỘ LỌC ---
            =============================================== */
         
-        /* 3.1. KHUNG BẢNG ĐIỀU KHIỂN TỔNG THỂ */
-    .map-control {
-    position: absolute !important;          
-    top: 12px !important;                   
-    left: 12px !important;                  
-    z-index: 100 !important;                
-    background: rgba(255, 255, 255, 0.92) !important; 
-    padding: 3px 4px 2px 4px !important;    /* Thu hẹp tối đa padding trên và đáy (đáy chỉ còn 2px) */
-    border-radius: 6px !important;          
-    max-width: 300px !important;            
-    width: calc(100% - 20px) !important;    
-    box-sizing: border-box !important;      
-    display: flex !important;               
-    flex-direction: column !important;      
-    gap: 2px !important;                    /* Giảm khoảng cách giữa các hàng bên trong xuống 2px */
-    }
+        /* 3.1. KHUNG TỔNG THỂ */
+            .map-control {
+                position: absolute !important;          /* Ghim cố định vị trí của khung trên bản đồ */
+                top: 12px !important;                   /* Cách mép trên 12 px */
+                left: 12px !important;                  /* Cách mép trái 12 px */
+                z-index: 100 !important;                /* Tầng hiển thị 100 */
+                background: rgba(255, 255, 255, 0.92) !important; /* Nền màu trắng độ trong suốt 92% */
+                padding: 3px 4px 2px 4px !important;    /* Khoảng đệm trong : trên (3px), phải (4px), dưới (2px), trái (4px) */
+                border-radius: 6px !important;          /* Bo góc 6 px */
+                max-width: 300px !important;            /* Chiều rộng của khung không quá 300 px */
+                width: calc(100% - 20px) !important;    /* Co giãn theo chiều rộng màn hình, luôn trừ mỗi bên 10px */
+                box-sizing: border-box !important;      /* padding và border gộp vào kích thước tổng tránh bị tràn khung */
+                display: flex !important;               /* Mô hình hiển thị dạng Flexbox */
+                flex-direction: column !important;      /* Sắp xếp thành phần con theo chiều dọc từ trên xuống dưới */
+                gap: 2px !important;                    /* Khoảng cách các hàng con bên trong 2 px */
+                }
+                }
 
     /* Triệt tiêu toàn bộ margin/padding thừa của các thành phần con bên trong */
     .map-control * {
@@ -672,10 +673,8 @@
             </div>
 
     <!-- CÁC TỆP MÃ NGUỒN JS MÔ-ĐUN -->
-            <script src="js/config.js"></script>
             <script src="js/api.js"></script>
             <script src="js/sheet.js"></script>
-            <script src="js/province.js"></script>
             <script src="js/giaDatFilter.js"></script>
             <script src="js/searchThuaDat.js"></script>
             <script src="js/note.js"></script>
