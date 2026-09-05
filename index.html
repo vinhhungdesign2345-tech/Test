@@ -359,81 +359,94 @@
            --- 7. 📱 GIAO DIỆN CHO ĐIỆN THOẠI (DƯỚI 768px) ---
            ========================================================================== */
         @media screen and (max-width: 768px) {
+            /* Tùy chỉnh bảng hiển thị thông tin thửa đất trên mobile */
             .parcel-panel {
-                width: 95% !important; 
-                max-width: none !important; 
-                bottom: 10px !important; 
-                padding: 6px 8px !important; 
-                max-height: 48vh !important; 
-                overflow-y: auto !important; 
+                width: 95% !important; /* Chiếm 95% chiều ngang màn hình */
+                max-width: none !important; /* Hủy giới hạn chiều rộng tối đa */
+                bottom: 10px !important; /* Cách đáy màn hình 10px */
+                padding: 6px 8px !important; /* Khoảng đệm bên trong panel */
+                max-height: 48vh !important; /* Chiều cao tối đa bằng 48% chiều cao màn hình */
+                overflow-y: auto !important; /* Cho phép cuộn dọc nếu nội dung dài */
             }
 
+            /* Tiêu đề của panel thông tin thửa đất */
             .panel-header {
-                font-size: 12px !important; 
-                padding-bottom: 3px !important;
-                margin-bottom: 4px !important; 
+                font-size: 12px !important; /* Thu nhỏ cỡ chữ tiêu đề */
+                padding-bottom: 3px !important; /* Khoảng cách dưới chữ tới đường kẻ */
+                margin-bottom: 4px !important; /* Khoảng cách lề dưới */
             }
 
+            /* Phần nội dung chi tiết thông tin thửa đất dạng lưới 2 cột */
             .panel-body {
-                display: grid !important; 
-                grid-template-columns: 1fr 1fr !important; 
-                flex-direction: unset !important; 
-                gap: 4px 8px !important; 
+                display: grid !important; /* Dùng kiểu hiển thị dạng lưới (Grid) */
+                grid-template-columns: 1fr 1fr !important; /* Chia đều thành 2 cột bằng nhau */
+                flex-direction: unset !important; /* Hủy thuộc tính flex cũ nếu có */
+                gap: 4px 8px !important; /* Khoảng cách giữa các ô: hàng 4px, cột 8px */
             }
 
+            /* Các mục dữ liệu con bên trong panel-body */
             .panel-body div {
-                width: 100% !important; 
-                font-size: 11px !important; 
-                white-space: nowrap !important;
-                text-overflow: ellipsis !important; 
-                overflow: hidden !important; 
+                width: 100% !important; /* Chiếm toàn bộ chiều rộng ô lưới */
+                font-size: 11px !important; /* Cỡ chữ nhỏ gọn phù hợp di động */
+                white-space: nowrap !important; /* Không xuống dòng chữ */
+                text-overflow: ellipsis !important; /* Thêm dấu ba chấm (...) nếu chữ quá dài */
+                overflow: hidden !important; /* Ẩn phần chữ bị tràn khung */
             }
 
+            /* Khung điều khiển bộ lọc/tìm kiếm chính trên bản đồ */
             .map-control {
-                top: 4px !important; 
-                left: 4px !important; 
-                width: calc(100% - 38px) !important; 
-                max-width: 320px !important; 
-                padding: 3px !important; 
+                top: 4px !important; /* Cách mép trên 4px */
+                left: 4px !important; /* Cách mép trái 4px */
+                width: calc(100% - 38px) !important; /* Chiều rộng co giãn theo màn hình trừ lề */
+                max-width: 320px !important; /* Giới hạn chiều rộng tối đa là 320px */
+                padding: 3px !important; /* Khoảng đệm gọn gàng bên trong khung */
             }
 
+            /* Khoảng cách giữa các hàng bộ lọc */
             .filter-row {
-                gap: 3px !important; 
+                gap: 3px !important; /* Khoảng cách giữa các phần tử trong hàng */
             }
 
+            /* Thu nhỏ kích thước chung cho ô input, nút bấm và thẻ select trên mobile */
             .map-control select, 
             #searchThuaDatInput, 
             #searchThuaDatBtn {
-                font-size: 11px !important; 
-                height: 24px !important; 
-                padding: 2px 5px !important; 
+                font-size: 11px !important; /* Cỡ chữ nhỏ */
+                height: 24px !important; /* Chiều cao cố định 24px */
+                padding: 2px 5px !important; /* Khoảng đệm bên trong */
             }
 
+            /* Tùy chỉnh riêng nút Tìm kiếm thửa đất */
             #searchThuaDatBtn {
-                padding: 0 8px !important; 
+                padding: 0 8px !important; /* Đệm trái phải cho cân đối */
             }
 
+            /* Khung điều khiển thanh trượt độ mờ lớp bản đồ */
             #opacity-control-panel {
-                top: 4px !important; 
-                right: 4px !important; 
-                width: 26px !important; 
-                padding: 3px 2px !important; 
+                top: 4px !important; /* Cách mép trên 4px */
+                right: 4px !important; /* Cách mép phải 4px */
+                width: 26px !important; /* Chiều rộng siêu nhỏ gọn */
+                padding: 3px 2px !important; /* Đệm trong thu gọn */
             }
 
+            /* Thanh trượt (slider) điều chỉnh độ mờ */
             #opacity-control-panel input[type="range"] {
-                height: 50px !important; 
-                width: 10px !important; 
+                height: 50px !important; /* Chiều cao thanh trượt */
+                width: 10px !important; /* Độ dày thanh trượt */
             }
 
+            /* Vị trí cụm điều khiển mặc định của MapLibre góc trên bên phải */
             .maplibregl-ctrl-top-right {
-                top: 60px !important; 
-                right: 4px !important; 
+                top: 60px !important; /* Dịch xuống dưới 60px để không đè lên các nút khác */
+                right: 4px !important; /* Cách mép phải 4px */
             }
 
+            /* Thu nhỏ kích thước các nút điều khiển mặc định của bản đồ */
             .maplibregl-ctrl-top-right .maplibregl-ctrl {
-                width: 26px !important; 
+                width: 26px !important;
             }
 
+            /* Ẩn các mũi tên nhọn (mũi tên chỉ hướng) của khung Popup trên mobile */
             .maplibregl-popup-anchor-top .maplibregl-popup-tip,
             .maplibregl-popup-anchor-bottom .maplibregl-popup-tip,
             .maplibregl-popup-anchor-left .maplibregl-popup-tip,
@@ -442,35 +455,37 @@
                 display: none !important;
             }
 
+            /* Định vị khung Popup thông tin nổi khi bấm vào bản đồ */
             .maplibregl-popup {
-                position: fixed !important;
-                bottom: 130px !important; 
-                left: 50% !important;
-                transform: translateX(-50%) !important;
+                position: fixed !important; /* Cố định vị trí trên màn hình */
+                bottom: 130px !important; /* Cách đáy màn hình 130px */
+                left: 50% !important; /* Căn giữa màn hình theo chiều ngang */
+                transform: translateX(-50%) !important; /* Dịch chuyển chính xác vào giữa */
                 top: auto !important;
                 right: auto !important;
-                max-width: 92% !important;
+                max-width: 92% !important; /* Chiều rộng tối đa 92% màn hình */
                 width: 92% !important;
-                z-index: 10000 !important;
-                transition: bottom 0.2s ease !important;
+                z-index: 10000 !important; /* Đảm bảo nổi lên trên cùng */
+                transition: bottom 0.2s ease !important; /* Hiệu ứng chuyển động mượt */
             }
 
+            /* Phần nội dung bên trong Popup bản đồ */
             .maplibregl-popup-content {
                 width: 100% !important;
                 box-sizing: border-box !important;
-                padding: 8px 12px !important;
-                background: rgba(255, 255, 255, 0.95) !important;
-                backdrop-filter: blur(10px);
+                padding: 8px 12px !important; /* Khoảng đệm trong */
+                background: rgba(255, 255, 255, 0.95) !important; /* Nền trắng hơi trong suốt */
+                backdrop-filter: blur(10px); /* Hiệu ứng làm mờ nền phía sau */
                 -webkit-backdrop-filter: blur(10px);
-                border-radius: 12px !important;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important;
+                border-radius: 12px !important; /* Bo góc mềm mại */
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important; /* Đổ bóng nổi bật */
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- Khung chứa cụm tìm kiếm cách mép trên 10px -->
+    <!-- Khung chứa cụm tìm kiếm tổng thể đặt ở góc trên bản đồ -->
                 <div class="map-control" style="
                 width: 320px; 
                 max-width: 100%; 
@@ -482,13 +497,14 @@
                 gap: 6px; 
                 width: 100%; 
                     ">
-            
+           
     <!-- DÒNG 1: Ô tìm kiếm thửa đất toàn cục và nút bấm Tìm -->
             <div style="
                 display: flex; 
                 gap: 6px; 
                 width: 100%; 
                     ">
+                <!-- Ô nhập từ khóa tìm kiếm thửa đất (tên, mã định danh, tờ/thửa) -->
                 <input type="text" id="searchThuaDatInput" placeholder="Tìm theo tên, mã ĐD, tờ/thửa (VD: 7/29)..." style="
                     width: 0; 
                     flex: 1; 
@@ -497,6 +513,7 @@
                     border-radius: 4px; 
                     box-sizing: border-box; 
                   " />
+                <!-- Nút xác nhận thực hiện tìm kiếm thửa đất -->
                 <button id="searchThuaDatBtn" style="
                     padding: 8px 16px; 
                     background-color: #1a73e8; 
@@ -509,21 +526,23 @@
                 ">Tìm</button>
                 </div>
 
-    <!-- DÒNG 2: Dropdown Tỉnh/TP và Phường/Xã chia đều không gian -->
+    <!-- DÒNG 2: Dropdown chọn Tỉnh/TP và Phường/Xã chia đều không gian -->
                  <div style="
                  display: flex; 
                  gap: 6px; 
                  width: 100%; 
                  ">
+                 <!-- Danh sách lựa chọn Tỉnh / Thành phố -->
                  <select id="tinhFilter">
                      <option value="">-- Tỉnh / TP --</option>
                  </select>
+                 <!-- Danh sách lựa chọn Phường / Xã (mặc định bị khóa chờ chọn Tỉnh) -->
                  <select id="phuongFilter" disabled>
                      <option value="">-- Phường / Xã --</option>
                  </select>
-             </div>
+               </div>
 
-    <!-- DÒNG 3: Ô nhập tên đường tra cứu giá đất -->
+    <!-- DÒNG 3: Ô nhập tên đường tra cứu giá đất kèm nút tìm kiếm -->
             <div style="
                 position: relative; 
                 width: 100%; 
@@ -533,6 +552,7 @@
                     gap: 4px; 
                     width: 100%; 
                 ">
+                <!-- Ô nhập tên tuyến đường để lọc giá đất -->
                 <input type="text" id="duongFilter" placeholder="Nhập tên đường tra cứu giá đất..." disabled style="
                         width: 0; 
                         flex: 1; 
@@ -541,6 +561,7 @@
                         border-radius: 4px; 
                         box-sizing: border-box; 
                     " />
+                <!-- Nút kích hoạt tra cứu tuyến đường -->
                 <button id="searchDuongBtn" disabled style="
                         padding: 8px 12px; 
                         background-color: #1a73e8;
@@ -553,7 +574,7 @@
                     ">🔍</button>
                 </div>
                 
-    <!-- Popup nổi liệt kê kết quả tìm kiếm tuyến đường -->
+    <!-- Popup nổi liệt kê danh sách kết quả tìm kiếm tuyến đường gợi ý -->
                 <div id="duongPopupList" style="
                     display: none; 
                     position: absolute; 
@@ -573,7 +594,7 @@
                 </div>
                 </div>
 
-    <!-- Khung panel nhỏ hiển thị kết quả giá đất -->
+    <!-- Khung panel nhỏ hiển thị kết quả giá đất sau khi tra cứu -->
         <div id="giaDatResultPanel" style="
             display: none; 
             margin-top: 8px; 
@@ -588,25 +609,28 @@
             </div>
             </div>
 
-    <!-- KHUNG HIỂN THỊ CHÍNH BẢN ĐỒ ĐỊA LÝ TƯƠNG TÁC -->
+    <!-- KHUNG HIỂN THỊ CHÍNH: Bản đồ địa lý tương tác (MapLibre GL) -->
             <div id="map"></div>
 
-    <!-- KHUNG BẢNG PANEL NỔI HIỂN THỊ THÔNG TIN THỬA ĐẤT KHI CLICK -->
+    <!-- KHUNG BẢNG PANEL NỔI: Hiển thị thông tin chi tiết của thửa đất khi người dùng click vào bản đồ -->
             <div id="parcel-info-panel" class="parcel-panel" style="display: none;">
             <div class="panel-header">
             <span><b>THÔNG TIN THỬA ĐẤT</b></span>
+            <!-- Nút bấm đóng panel thông tin -->
             <button onclick="closeParcelPanel()" class="close-btn">&times;</button>
             </div>
+            <!-- Vùng chứa chi tiết các thuộc tính thửa đất -->
             <div id="panel-content" class="panel-body">
             </div>
             </div>
 
-    <!-- CỤM CÔNG CỤ ĐỔI LỚP NỀN BẢN ĐỒ VÀ ĐO KHOẢNG CÁCH -->
+    <!-- CỤM CÔNG CỤ: Đổi lớp nền bản đồ (Vệ tinh/OSM) và công cụ đo khoảng cách -->
             <div class="map-layer-control" style="
             display: flex; 
             gap: 8px; 
             align-items: center; 
             ">
+            <!-- Nút chuyển đổi giữa lớp bản đồ Vệ tinh và bản đồ OSM -->
             <button id="toggleLayerBtn" style="
             padding: 3px 3px; 
             height: 25px; 
@@ -623,6 +647,7 @@
             Chuyển sang Bản đồ OSM
         </button>
         
+        <!-- Nút bật chức năng đo khoảng cách trực tiếp trên bản đồ -->
         <button id="measureDistBtn" style="
             padding: 3px 3px; 
             height: 25px; 
@@ -643,13 +668,13 @@
         </button>
     </div>
 
-    <!-- THANH TRƯỢT ĐIỀU CHỈNH ĐỘ MỜ (OPACITY) -->
+    <!-- THANH TRƯỢT: Điều chỉnh độ mờ (Opacity) của lớp bản đồ lớp phủ -->
             <div id="opacity-control-panel">
             <label for="opacitySlider">Mờ: <span id="opacityValue">0.6</span></label>
             <input type="range" id="opacitySlider" min="0" max="1" step="0.05" value="0.6">
             </div>
 
-    <!-- CÁC TỆP MÃ NGUỒN JS MÔ-ĐUN -->
+    <!-- CÁC TỆP MÃ NGUỒN JAVASCRIPT (Được chia theo mô-đun chức năng) -->
             <script src="js/api.js"></script>
             <script src="js/sheet.js"></script>
             <script src="js/giaDatFilter.js"></script>
@@ -659,11 +684,13 @@
             <script src="js/mark.js"></script>
             <script src="js/map.js"></script>
 
-    <!-- MODAL POPUP GHI CHÚ -->
+    <!-- MODAL POPUP GHI CHÚ: Hộp thoại nhập/xem ghi chú cho thửa đất -->
             <div id="noteModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center;">
             <div style="background: white; padding: 20px; border-radius: 8px; width: 400px; max-width: 90%; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
             <h3 id="noteModalTitle" style="margin-top: 0; font-size: 16px; color: #333;">Ghi chú thửa đất</h3>
+            <!-- Phần thân chứa nội dung/form ghi chú -->
             <div id="noteModalBody" style="margin-bottom: 15px;"></div>
+            <!-- Các nút thao tác trong modal (Lưu / Đóng) -->
             <div style="text-align: right; display: flex; gap: 8px; justify-content: flex-end;">
                 <button id="noteModalSaveBtn" style="display: none; padding: 6px 14px; background: #1a73e8; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Lưu</button>
                 <button onclick="closeNoteModal()" style="padding: 6px 14px; background: #ccc; border: none; border-radius: 4px; cursor: pointer;">Đóng</button>
