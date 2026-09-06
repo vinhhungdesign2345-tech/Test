@@ -644,6 +644,7 @@ function initMap() {
             if (map.getLayer('sheet-thua-dat-highlight-fill')) map.setFilter('sheet-thua-dat-highlight-fill', selectFilter);
             if (map.getLayer('sheet-thua-dat-highlight-line')) map.setFilter('sheet-thua-dat-highlight-line', selectFilter);
 
+            // 1. Khai báo nội dung thông tin thửa đất
             const panelContent = `
                 <div><b>Số tờ:</b> ${soTo}</div>
                 <div><b>Số thửa:</b> ${soThua}</div>
@@ -656,8 +657,35 @@ function initMap() {
 
             const panelContentEl = document.getElementById('panel-content');
             const panelEl = document.getElementById('parcel-info-panel');
+            
+            // Gán nội dung vào panel
             if (panelContentEl) panelContentEl.innerHTML = panelContent;
-            if (panelEl) panelEl.style.display = 'block'; 
+            
+            // 2. Hiển thị panel và tự động quét gắn nút "Hiện nhãn" / "Ẩn nhãn" cạnh tiêu đề có sẵn
+            if (panelEl) {
+                panelEl.style.display = 'block';
+                
+                const allDivs = panelEl.querySelectorAll('div, span, b, h3, h4');
+                for (let el of allDivs) {
+                    if (el.innerText && el.innerText.includes('THÔNG TIN THỬA ĐẤT') && !document.getElementById('toggle-labels-btn')) {
+                        const btn = document.createElement('button');
+                        btn.id = 'toggle-labels-btn';
+                        btn.innerText = 'Hiện nhãn';
+                        btn.style.marginLeft = '10px';
+                        btn.style.padding = '2px 6px';
+                        btn.style.fontSize = '11px';
+                        btn.style.fontWeight = 'bold';
+                        btn.style.cursor = 'pointer';
+                        btn.style.backgroundColor = '#f0f0f0';
+                        btn.style.border = '1px solid #ccc';
+                        btn.style.borderRadius = '3px';
+                        
+                        btn.onclick = window.toggleParcelLabels;
+                        el.appendChild(btn);
+                        break;
+                    }
+                }
+            }
         });
 
         map.on('mouseenter', layerId, () => map.getCanvas().style.cursor = 'default');
