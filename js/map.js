@@ -571,7 +571,7 @@ function initMap() {
                         const el = document.createElement('div');
                         el.style.color = '#ffffff';                 // Màu chữ trắng
                         el.style.fontSize = '12px';                 // Kích thước chữ 12px
-                        el.style.fontWeight = 'normal';               // Chữ in đậm
+                        el.style.fontWeight = 'normal';               // Chữ không in đậm
                         el.style.textShadow = '1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000'; // Viền đen quanh chữ giúp dễ nhìn trên nền vệ tinh
                         el.style.whiteSpace = 'nowrap';             // Không bị ngắt dòng chữ
                         el.innerText = formattedLength;             // Nội dung là chiều dài cạnh (VD: 30.3m)
@@ -605,14 +605,14 @@ function initMap() {
 
                         // Vòng lặp qua từng đỉnh góc của thửa đất
                         uniqueCoords.forEach((coord, index) => {
-                            const lng = coord[0].toFixed(6); // Kinh độ lấy 6 chữ số thập phân chính xác
-                            const lat = coord[1].toFixed(6); // Vĩ độ lấy 6 chữ số thập phân chính xác
+                            const lng = coord[0].toFixed(4); // Kinh độ lấy 4 chữ số thập phân chính xác
+                            const lat = coord[1].toFixed(4); // Vĩ độ lấy 4 chữ số thập phân chính xác
 
                             // Tạo phần tử HTML chứa nhãn tọa độ góc
                             const cornerEl = document.createElement('div');
                             cornerEl.style.color = '#ffffff';                 // Màu chữ trắng
                             cornerEl.style.fontSize = '12px';                 // Kích thước chữ 12px
-                            cornerEl.style.fontWeight = 'bold';               // Chữ in đậm
+                            cornerEl.style.fontWeight = 'normal';               // Chữ in đậm
                             cornerEl.style.textShadow = '1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000'; // Viền đen chống lóa
                             cornerEl.style.whiteSpace = 'nowrap';             // Không ngắt dòng
                             cornerEl.innerHTML = `G${index + 1}: ${lat}, ${lng}`; // Hiển thị dạng: G1: lat, lng
