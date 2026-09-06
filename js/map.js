@@ -519,8 +519,34 @@ function initMap() {
             window.selectedThuaDatId = parcelId;
 
             clearLengthMarkers();
+
+            // Biến trạng thái nhãn (mặc định là false - ẩn)
+            window._isParcelLabelsVisible = false;
+
+            // Hàm toggle bật/tắt nhãn
+            window.toggleParcelLabels = function() {
+                window._isParcelLabelsVisible = !window._isParcelLabelsVisible;
+                const btn = document.getElementById('toggle-labels-btn');
+                if (btn) {
+                    btn.innerText = window._isParcelLabelsVisible ? 'Ẩn nhãn' : 'Hiện nhãn';
+                }
+                
+                // Ẩn/hiện các marker độ dài cạnh và tọa độ góc
+                activeMarkers.forEach(marker => {
+                    const el = marker.getElement();
+                    if (el) {
+                        el.style.display = window._isParcelLabelsVisible ? 'block' : 'none';
+                    }
+                });
+
+                // Ẩn/hiện layer hiển thị nét độ dài cạnh trên bản đồ (nếu có)
+                if (map.getLayer('parcel-dimensions-line')) {
+                    map.setLayoutProperty('parcel-dimensions-line', 'visibility', window._isParcelLabelsVisible ? 'visible' : 'none');
+                }
+            };
+
             // ==========================================
-            // ĐOẠN CODE TÍNH TOÁN VÀ GHI ĐỘ DÀI CẠNH
+            // ĐOẠN CODE TÍNH TOÁN VÀ GHI ĐỘ DÀI CẠNH & TỌA ĐỘ GÓC
             // ==========================================
             if (typeof turf !== 'undefined' && selectedFeature.geometry) {
                 try {
@@ -544,7 +570,10 @@ function initMap() {
                         el.style.textShadow = '1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000'; 
                         el.style.whiteSpace = 'nowrap'; 
                         el.innerText = formattedLength; 
-            // Tạo Marker hiển thị độ dài cạnh ở điểm giữa
+                        
+                        // Mặc định ẩn nhãn khi khởi tạo
+                        el.style.display = 'none';
+
                         const marker = new maplibregl.Marker({ element: el, anchor: 'center' }).setLngLat(midCoord).addTo(map); 
                         activeMarkers.push(marker); 
                     });
@@ -552,9 +581,8 @@ function initMap() {
                     if (map.getSource('parcel-dimensions-source')) {
                         map.getSource('parcel-dimensions-source').setData({ type: 'FeatureCollection', features: dimensionFeatures });
                     }
-                    // ==========================================
-                    // TÍCH HỢP: HIỂN THỊ TỌA ĐỘ CÁC GÓC THỬA ĐẤT (G1, G2,...)
-                    // ==========================================
+
+                    // TỌA ĐỘ CÁC GÓC THỬA ĐẤT (G1, G2,...)
                     let polygonCoords = [];
                     if (selectedFeature.geometry.type === 'Polygon') {
                         polygonCoords = selectedFeature.geometry.coordinates[0];
@@ -563,7 +591,6 @@ function initMap() {
                     }
 
                     if (polygonCoords && polygonCoords.length > 0) {
-                    // Loại bỏ điểm trùng cuối cùng trong vòng khép kín của GeoJSON
                         const uniqueCoords = polygonCoords.slice(0, polygonCoords.length - 1);
 
                         uniqueCoords.forEach((coord, index) => {
@@ -571,14 +598,16 @@ function initMap() {
                             const lat = coord[1].toFixed(6);
 
                             const cornerEl = document.createElement('div');
-                            cornerEl.style.color = '#ffffff'; // Màu trắng giống độ dài cạnh
+                            cornerEl.style.color = '#ffffff';
                             cornerEl.style.fontSize = '12px';
                             cornerEl.style.fontWeight = 'bold';
-                            cornerEl.style.textShadow = '1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000'; // Viền đen
+                            cornerEl.style.textShadow = '1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000';
                             cornerEl.style.whiteSpace = 'nowrap';
                             cornerEl.innerHTML = `G${index + 1}: ${lat}, ${lng}`;
+                            
+                            // Mặc định ẩn nhãn góc khi khởi tạo
+                            cornerEl.style.display = 'none';
 
-                            // Đổi anchor thành 'top' (hoặc dùng offset) để đẩy nhãn dịch xuống phía dưới điểm góc
                             const cornerMarker = new maplibregl.Marker({ element: cornerEl, anchor: 'top', offset: [0, 5] })
                                 .setLngLat(coord)
                                 .addTo(map);
