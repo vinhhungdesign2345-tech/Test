@@ -571,22 +571,18 @@ function initMap() {
                             const lat = coord[1].toFixed(6);
 
                             const cornerEl = document.createElement('div');
-                            cornerEl.style.color = '#00ffcc';
-                            cornerEl.style.fontSize = '11px';
+                            cornerEl.style.color = '#00ffcc'; // Màu chữ xanh ngọc (hoặc '#ffffff' màu trắng)
+                            cornerEl.style.fontSize = '12px';
                             cornerEl.style.fontWeight = 'bold';
-                            cornerEl.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-                            cornerEl.style.padding = '2px 5px';
-                            cornerEl.style.borderRadius = '3px';
-                            cornerEl.style.border = '1px solid #00ffcc';
+                            cornerEl.style.textShadow = '1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000';
                             cornerEl.style.whiteSpace = 'nowrap';
-                            cornerEl.style.boxShadow = '0 1px 3px rgba(0,0,0,0.5)';
-                            cornerEl.innerHTML = `G${index + 1}<br>${lat}, ${lng}`;
+                            cornerEl.innerHTML = `G${index + 1}: ${lat}, ${lng}`; // Hiển thị trên cùng 1 dòng cho gọn
 
-                            const cornerMarker = new maplibregl.Marker({ element: cornerEl, anchor: 'bottom' })
+                            const cornerMarker = new maplibregl.Marker({ element: cornerEl, anchor: 'center' })
                                 .setLngLat(coord)
                                 .addTo(map);
 
-                            activeMarkers.push(cornerMarker); // Đưa vào mảng để tự động xóa khi click thửa khác
+                            activeMarkers.push(cornerMarker);
                         });
                     }
                 } catch (err) {
