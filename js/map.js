@@ -563,7 +563,7 @@ function initMap() {
                     }
 
                     if (polygonCoords && polygonCoords.length > 0) {
-                        // Loại bỏ điểm trùng cuối cùng trong vòng khép kín của GeoJSON
+                    // Loại bỏ điểm trùng cuối cùng trong vòng khép kín của GeoJSON
                         const uniqueCoords = polygonCoords.slice(0, polygonCoords.length - 1);
 
                         uniqueCoords.forEach((coord, index) => {
@@ -571,14 +571,15 @@ function initMap() {
                             const lat = coord[1].toFixed(6);
 
                             const cornerEl = document.createElement('div');
-                            cornerEl.style.color = '#00ffcc'; // Màu chữ xanh ngọc (hoặc '#ffffff' màu trắng)
+                            cornerEl.style.color = '#ffffff'; // Màu trắng giống độ dài cạnh
                             cornerEl.style.fontSize = '12px';
                             cornerEl.style.fontWeight = 'bold';
-                            cornerEl.style.textShadow = '1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000';
+                            cornerEl.style.textShadow = '1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000'; // Viền đen
                             cornerEl.style.whiteSpace = 'nowrap';
-                            cornerEl.innerHTML = `G${index + 1}: ${lat}, ${lng}`; // Hiển thị trên cùng 1 dòng cho gọn
+                            cornerEl.innerHTML = `G${index + 1}: ${lat}, ${lng}`;
 
-                            const cornerMarker = new maplibregl.Marker({ element: cornerEl, anchor: 'center' })
+                            // Đổi anchor thành 'top' (hoặc dùng offset) để đẩy nhãn dịch xuống phía dưới điểm góc
+                            const cornerMarker = new maplibregl.Marker({ element: cornerEl, anchor: 'top', offset: [0, 5] })
                                 .setLngLat(coord)
                                 .addTo(map);
 
