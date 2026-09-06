@@ -2,158 +2,141 @@
 // 1. CẤU HÌNH HỆ THỐNG VÀ BẢN ĐỒ
 // ==========================================
 const CONFIG = {
-    // Danh sách các tỉnh thành tích hợp trên bản đồ (ID, Tên hiển thị và đường dẫn file GeoJSON tương ứng)
-    PROVINCES: [
-        { id: "CaMau", name: "1. Tỉnh Cà Mau", file: "./geojson/Ca-Mau.json" },
-        { id: "AnGiang", name: "2. Tỉnh An Giang", file: "./geojson/An-Giang.json" },
-        { id: "TPCanTho", name: "3. Thành Phố Cần Thơ", file: "./geojson/TP-Can-Tho.json" },
-        { id: "VinhLong", name: "4.Tỉnh Vĩnh Long", file: "./geojson/Vinh-Long.json" },
-        { id: "DongThap", name: "5. Tỉnh Đồng Tháp", file: "./geojson/Dong-Thap.json" },
-        { id: "TPHoChiMinh", name: "6. Thành Phố Hồ Chí Minh", file: "./geojson/TP-Ho-Chi-Minh.json" },
-        { id: "TayNinh", name: "7. Tỉnh Tây Ninh", file: "./geojson/Tay-Ninh.json" },
-        { id: "TPDongNai", name: "8. Thành Phố Đồng Nai", file: "./geojson/TP-Dong-Nai.json" },
-        { id: "LamDong", name: "9. Tỉnh Lâm Đồng", file: "./geojson/Lam-Dong.json" },
-        { id: "KhanhHoa", name: "10. Tỉnh Khánh Hòa", file: "./geojson/Khanh-Hoa.json" },
-        { id: "DakLak", name: "11. Tỉnh Dak Lak", file: "./geojson/Dak-Lak.json" },
-        { id: "GiaLai", name: "12. Tỉnh Gia Lai", file: "./geojson/Gia-Lai.json" },
-        { id: "QuangNgai", name: "13. Tỉnh Quảng Ngãi", file: "./geojson/Quang-Ngai.json" },
-        { id: "TPDaNang", name: "14. Thành Phố Đà Nẵng", file: "./geojson/TP-Da-Nang.json" },
-        { id: "TPHue", name: "15. Thành Phố Huế", file: "./geojson/TP-Hue.json" },
-        { id: "QuangTri", name: "16. Tỉnh Quảng Trị", file: "./geojson/TP-Quang-Tri.json" },
-        { id: "HaTinh", name: "17. Tỉnh Hà Tĩnh", file: "./geojson/Ha-Tinh.json" },
-        { id: "NgheAn", name: "18. Tỉnh Nghệ An", file: "./geojson/Nghe-An.json" },
-        { id: "ThanhHoa", name: "19. Tỉnh Thanh Hóa", file: "./geojson/Thanh-Hoa.json" },
-        { id: "NinhBinh", name: "20. Tỉnh Ninh Bình", file: "./geojson/Ninh_Binh.json" },
-        { id: "HungYen", name: "21. Tỉnh Hưng Yên", file: "./geojson/Hung-Yen.json" },
-        { id: "SonLa", name: "22. Tỉnh Sơn La", file: "./geojson/Son-La.json" },
-        { id: "PhuTho", name: "23. Tỉnh Phú Thọ", file: "./geojson/Phu-Tho.json" },
-        { id: "TPHaNoi", name: "24. Thành Phố Hà Nội", file: "./geojson/TP-Ha-Noi.json" },
-        { id: "TPHaiPhong", name: "25. Thành Phố Hải Phòng", file: "./geojson/TP-Hai-Phong.json" },
-        { id: "BacNinh", name: "26. TP. Bắc Ninh", file: "./geojson/Bac-Ninh.json" },
-        { id: "QuangNinh", name: "27. TP. Quảng Ninh", file: "./geojson/Quang-Ninh.json" },
-        { id: "DienBien", name: "28. Tỉnh Điện Biên", file: "./geojson/Dien-Bien.json" },
-        { id: "LaiChau", name: "29. Tỉnh Lai Châu", file: "./geojson/Lai-Chau.json" },
-        { id: "LaoCai", name: "30. Tỉnh Lào Cai", file: "./geojson/Lao-Cai.json" },
-        { id: "TuyenQuang", name: "31. Tỉnh Tuyên Quang", file: "./geojson/Tuyen-Quang.json" },
-        { id: "ThaiNguyen", name: "32. Tỉnh Thái Nguyên", file: "./geojson/Thai-Nguyên.json" },
-        { id: "CaoBang", name: "33. Tỉnh Cao Bằng", file: "./geojson/Cao-Bang.json" },
-        { id: "LangSon", name: "34. Tỉnh Lạng Sơn", file: "./geojson/Lang-Son.json" },  
-    ],
+    PROVINCES: [
+        { id: "CaMau", name: "1. Tỉnh Cà Mau", file: "./geojson/Ca-Mau.json" },
+        { id: "AnGiang", name: "2. Tỉnh An Giang", file: "./geojson/An-Giang.json" },
+        { id: "TPCanTho", name: "3. Thành Phố Cần Thơ", file: "./geojson/TP-Can-Tho.json" },
+        { id: "VinhLong", name: "4.Tỉnh Vĩnh Long", file: "./geojson/Vinh-Long.json" },
+        { id: "DongThap", name: "5. Tỉnh Đồng Tháp", file: "./geojson/Dong-Thap.json" },
+        { id: "TPHoChiMinh", name: "6. Thành Phố Hồ Chí Minh", file: "./geojson/TP-Ho-Chi-Minh.json" },
+        { id: "TayNinh", name: "7. Tỉnh Tây Ninh", file: "./geojson/Tay-Ninh.json" },
+        { id: "TPDongNai", name: "8. Thành Phố Đồng Nai", file: "./geojson/TP-Dong-Nai.json" },
+        { id: "LamDong", name: "9. Tỉnh Lâm Đồng", file: "./geojson/Lam-Dong.json" },
+        { id: "KhanhHoa", name: "10. Tỉnh Khánh Hòa", file: "./geojson/Khanh-Hoa.json" },
+        { id: "DakLak", name: "11. Tỉnh Dak Lak", file: "./geojson/Dak-Lak.json" },
+        { id: "GiaLai", name: "12. Tỉnh Gia Lai", file: "./geojson/Gia-Lai.json" },
+        { id: "QuangNgai", name: "13. Tỉnh Quảng Ngãi", file: "./geojson/Quang-Ngai.json" },
+        { id: "TPDaNang", name: "14. Thành Phố Đà Nẵng", file: "./geojson/TP-Da-Nang.json" },
+        { id: "TPHue", name: "15. Thành Phố Huế", file: "./geojson/TP-Hue.json" },
+        { id: "QuangTri", name: "16. Tỉnh Quảng Trị", file: "./geojson/TP-Quang-Tri.json" },
+        { id: "HaTinh", name: "17. Tỉnh Hà Tĩnh", file: "./geojson/Ha-Tinh.json" },
+        { id: "NgheAn", name: "18. Tỉnh Nghệ An", file: "./geojson/Nghe-An.json" },
+        { id: "ThanhHoa", name: "19. Tỉnh Thanh Hóa", file: "./geojson/Thanh-Hoa.json" },
+        { id: "NinhBinh", name: "20. Tỉnh Ninh Bình", file: "./geojson/Ninh_Binh.json" },
+        { id: "HungYen", name: "21. Tỉnh Hưng Yên", file: "./geojson/Hung-Yen.json" },
+        { id: "SonLa", name: "22. Tỉnh Sơn La", file: "./geojson/Son-La.json" },
+        { id: "PhuTho", name: "23. Tỉnh Phú Thọ", file: "./geojson/Phu-Tho.json" },
+        { id: "TPHaNoi", name: "24. Thành Phố Hà Nội", file: "./geojson/TP-Ha-Noi.json" },
+        { id: "TPHaiPhong", name: "25. Thành Phố Hải Phòng", file: "./geojson/TP-Hai-Phong.json" },
+        { id: "BacNinh", name: "26. TP. Bắc Ninh", file: "./geojson/Bac-Ninh.json" },
+        { id: "QuangNinh", name: "27. TP. Quảng Ninh", file: "./geojson/Quang-Ninh.json" },
+        { id: "DienBien", name: "28. Tỉnh Điện Biên", file: "./geojson/Dien-Bien.json" },
+        { id: "LaiChau", name: "29. Tỉnh Lai Châu", file: "./geojson/Lai-Chau.json" },
+        { id: "LaoCai", name: "30. Tỉnh Lào Cai", file: "./geojson/Lao-Cai.json" },
+        { id: "TuyenQuang", name: "31. Tỉnh Tuyên Quang", file: "./geojson/Tuyen-Quang.json" },
+        { id: "ThaiNguyen", name: "32. Tỉnh Thái Nguyên", file: "./geojson/Thai-Nguyên.json" },
+        { id: "CaoBang", name: "33. Tỉnh Cao Bằng", file: "./geojson/Cao-Bang.json" },
+        { id: "LangSon", name: "34. Tỉnh Lạng Sơn", file: "./geojson/Lang-Son.json" }, 
+    ],
 
-    // Đường dẫn Google Apps Script đồng bộ với Google Sheets
-    SHEET_DATA_URL: 'https://script.google.com/macros/s/AKfycbz87dcUkndM5w5BeFqUFYJt8JDEcPu98IH5mbzNdov_6eXTNUEhIiknFQ9P7H2c0ZQE/exec',
+    SHEET_DATA_URL: 'https://script.google.com/macros/s/AKfycbz87dcUkndM5w5BeFqUFYJt8JDEcPu98IH5mbzNdov_6eXTNUEhIiknFQ9P7H2c0ZQE/exec',
 
-    // Cấu hình kiểu hiển thị bản đồ (Map Style theo chuẩn MapLibre GL / Mapbox v8)
-    MAP_STYLE: {
-        'version': 8,
-        // Khai báo các nguồn dữ liệu bản đồ (Raster tiles từ Google/OSM và Vector GeoJSON hạ tầng điện)
-        'sources': {
-            // Nguồn bản đồ vệ tinh Google (Hybrid: Ảnh vệ tinh kết hợp nhãn giao thông)
-            'google-satellite': {
-                'type': 'raster',
-                'tiles': ['https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}'], // Template URL lấy tile ảnh từ Google Maps
-                'tileSize': 256 // Kích thước tiêu chuẩn của một tile ảnh (pixels)
-            },
-            // Nguồn bản đồ giao thông OpenStreetMap (OSM tiêu chuẩn)
-            'osm-map': { 
-                'type': 'raster',
-                'tiles': ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'], // Template URL lấy tile từ OSM
-                'tileSize': 256,
-                'attribution': '&copy; OpenStreetMap contributors' // Dòng bản quyền bắt buộc của OSM
-            },
-            // Nguồn dữ liệu GeoJSON hiển thị đường dây và trạm hạ tầng điện (mặc định trỏ đến Cà Mau)
-            'ha-tang-dien-source': {
-                'type': 'geojson',
-                'data': './geojson/Ca-Mau-ha-tang-dien.json'
-            }
-        },
-        // Danh sách các lớp (layers) hiển thị lần lượt từ dưới lên trên bản đồ
-        'layers': [
-            // Lớp hiển thị bản đồ vệ tinh Google (lớp nền dưới cùng)
-            {
-                'id': 'google-satellite-layer',
-                'type': 'raster',
-                'source': 'google-satellite',
-                'minzoom': 0,   // Mức zoom tối thiểu hiển thị lớp này
-                'maxzoom': 22   // Mức zoom tối đa hiển thị lớp này
-            },
-            // Lớp hiển thị bản đồ OpenStreetMap (mặc định ẩn do cấu hình 'visibility': 'none')
-            {
-                'id': 'osm-layer', 
-                'type': 'raster',
-                'source': 'osm-map',
-                'layout': { 'visibility': 'none' }, // Ẩn mặc định khi khởi động ứng dụng
-                'minzoom': 0, 
-                'maxzoom': 22
-            },
-            // Lớp vẽ đường dây hạ tầng điện (LineString) lọc từ nguồn hạ tầng điện
-            {
-                'id': 'ha-tang-dien-line',
-                'type': 'line',
-                'source': 'ha-tang-dien-source',
-                'filter': ['==', '$type', 'LineString'], // Chỉ lấy các đối tượng dạng đường (LineString)
-                'minzoom': 0, 
-                'maxzoom': 22,
-                'paint': {
-                    'line-color': '#ffcc00',   // Màu đường dây: Vàng cam
-                    'line-width': 1,           // Độ dày đường nét (pixels)
-                    'line-opacity': 0.5        // Độ trong suốt của đường (50%)
-                }
-            },
-            // Lớp vẽ các điểm trạm/cột hạ tầng điện (Point) lọc từ nguồn hạ tầng điện
-            {
-                'id': 'ha-tang-dien-points',
-                'type': 'circle',
-                'source': 'ha-tang-dien-source',
-                'filter': ['==', '$type', 'Point'], // Chỉ lấy các đối tượng dạng điểm (Point)
-                'minzoom': 14, // Chỉ hiện điểm khi người dùng zoom sát vào bản đồ (từ cấp độ 14 trở lên)
-                'maxzoom': 22,
-                'paint': {
-                    'circle-radius': 4,               // Bán kính chấm tròn điểm (pixels)
-                    'circle-color': '#ff0000',        // Màu bên trong chấm tròn: Màu đỏ
-                    'circle-stroke-width': 1,         // Độ rộng viền quanh chấm tròn
-                    'circle-stroke-color': '#ffffff'  // Màu viền trắng tạo độ nổi bật
-                }
-            }
-        ]
-    },
+    MAP_STYLE: {
+        'version': 8,
+        'sources': {
+            'google-satellite': {
+                'type': 'raster',
+                'tiles': ['https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}'],
+                'tileSize': 256
+            },
+            'osm-map': { 
+                'type': 'raster',
+                'tiles': ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+                'tileSize': 256,
+                'attribution': '&copy; OpenStreetMap contributors'
+            },
+            'ha-tang-dien-source': {
+                'type': 'geojson',
+                'data': './geojson/Ca-Mau-ha-tang-dien.json'
+            }
+        },
+        'layers': [
+            {
+                'id': 'google-satellite-layer',
+                'type': 'raster',
+                'source': 'google-satellite',
+                'minzoom': 0, 'maxzoom': 22
+            },
+            {
+                'id': 'osm-layer', 
+                'type': 'raster',
+                'source': 'osm-map',
+                'layout': { 'visibility': 'none' },
+                'minzoom': 0, 'maxzoom': 22
+            },
+            {
+                'id': 'ha-tang-dien-line',
+                'type': 'line',
+                'source': 'ha-tang-dien-source',
+                'filter': ['==', '$type', 'LineString'],
+                'minzoom': 0, 'maxzoom': 22,
+                'paint': {
+                    'line-color': '#ffcc00',
+                    'line-width': 1,
+                    'line-opacity': 0.5
+                }
+            },
+            {
+                'id': 'ha-tang-dien-points',
+                'type': 'circle',
+                'source': 'ha-tang-dien-source',
+                'filter': ['==', '$type', 'Point'],
+                'minzoom': 14,
+                'maxzoom': 22,
+                'paint': {
+                    'circle-radius': 4,
+                    'circle-color': '#ff0000',
+                    'circle-stroke-width': 1,
+                    'circle-stroke-color': '#ffffff'
+                }
+            }
+        ]
+    },
 
-    
-    MAP_CENTER: [105.15, 9.18],  // Tọa độ mặc định tại Cà Mau
-    MAP_ZOOM: 12,                // Mức zoom mặc định khi mở bản đồ
-    FILL_COLOR: '#00ffcc',       // Màu mặc định các vùng ranh giới hành chính
-    FILL_OPACITY: 0.3,           // Độ trong suốt màu nền ranh giới
-    OUTLINE_COLOR: '#ffffff'     // Màu viền ranh giới hành chính
+    MAP_CENTER: [105.15, 9.18],
+    MAP_ZOOM: 12,
+    FILL_COLOR: '#00ffcc',
+    FILL_OPACITY: 0.3,
+    OUTLINE_COLOR: '#ffffff'
 };
 
-// Biểu thức quy tắc màu (Mapbox/MapLibre Style Expression) dùng để tô màu thuộc tính 'Loại Đất'
 const COLOR_MATCH_EXPRESSION = [
-    'match',                                // Hàm so khớp giá trị thuộc tính
-    ['get', 'Loại Đất'],                    // Lấy giá trị thuộc tính 'Loại Đất' từ dữ liệu bản đồ
-    'Đất ở tại đô thị', '#e063ce',          // Nếu là đất ở đô thị -> Màu hồng tím (#e063ce)
-    'Đất ở tại nông thôn', '#cf99c7',       // Nếu là đất ở nông thôn -> Màu hồng nhạt (#cf99c7)
-    'Đất nuôi trồng thuỷ sản', '#00b4d8',   // Nếu là đất nuôi trồng thủy sản (vần 'ỷ') -> Màu xanh dương (#00b4d8)
-    'Đất nuôi trồng thủy sản', '#00b4d8',   // Nếu là đất nuôi trồng thủy sản (vần 'y') -> Màu xanh dương (#00b4d8)
-    'Đất trồng cây lâu năm', '#519e05',     // Nếu là đất trồng cây lâu năm -> Màu xanh lá (#519e05)
-    'Đất trồng cây hàng năm khác', '#519e05',// Nếu là đất trồng cây hàng năm khác -> Màu xanh lá (#519e05)
-    'Đất trồng lúa', '#f5e753',             // Nếu là đất trồng lúa -> Màu vàng sáng (#f5e753)
-    'Đất chuyên trồng lúa nước', '#ffea00', // Nếu là đất chuyên trồng lúa nước -> Màu vàng đậm (#ffea00)
-    '#c2b9ab'                               // Màu mặc định (Màu xám cát) nếu không khớp với các loại trên
+    'match',
+    ['get', 'Loại Đất'],
+    'Đất ở tại đô thị', '#e063ce',
+    'Đất ở tại nông thôn', '#cf99c7',
+    'Đất nuôi trồng thuỷ sản', '#00b4d8',
+    'Đất nuôi trồng thủy sản', '#00b4d8',
+    'Đất trồng cây lâu năm', '#519e05',
+    'Đất trồng cây hàng năm khác', '#519e05',
+    'Đất trồng lúa', '#f5e753',
+    'Đất chuyên trồng lúa nước', '#ffea00',
+    '#c2b9ab'
 ];
+
 
 // ==========================================
 // 1A. HÀM PHỤ TRỢ TẢI FILE GEOJSON AN TOÀN
 // ==========================================
-// Hàm async nhận vào đường dẫn URL của file GeoJSON, thực hiện fetch dữ liệu và xử lý lỗi tránh crash ứng dụng
 async function fetchGeoDataByUrl(url) {
-    try {
-        const response = await fetch(url);    // Gửi yêu cầu HTTP GET tải file
-        if (!response.ok) throw new Error(`Không thể tải file: ${url}`);    // Nếu HTTP status không thành công thì báo lỗi
-        return await response.json();    // Chuyển đổi phản hồi sang định dạng JSON và trả về dữ liệu
-    } catch (error) {
-        console.error("Lỗi tải GeoJSON:", error);    // Bắt lỗi trong quá trình tải và in ra console
-        return null;    // Trả về null nếu tải thất bại để chương trình phía trên xử lý
-    }
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`Không thể tải file: ${url}`);
+        return await response.json();
+    } catch (error) {
+        console.error("Lỗi tải GeoJSON:", error);
+        return null;
+    }
 }
 // ==========================================
 // 2. XỬ LÝ LOGIC BẢN ĐỒ VÀ HÀNH CHÍNH
