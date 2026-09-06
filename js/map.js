@@ -645,6 +645,10 @@ function initMap() {
             if (map.getLayer('sheet-thua-dat-highlight-line')) map.setFilter('sheet-thua-dat-highlight-line', selectFilter);
 
             const panelContent = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid #ddd; padding-bottom: 5px;">
+                    <b style="color: #0056b3; font-size: 14px;">THÔNG TIN THỬA ĐẤT</b>
+                    <button id="toggle-labels-btn" onclick="window.toggleParcelLabels()" style="background-color: #f0f0f0; border: 1px solid #ccc; padding: 3px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold;">Hiện nhãn</button>
+                </div>
                 <div><b>Số tờ:</b> ${soTo}</div>
                 <div><b>Số thửa:</b> ${soThua}</div>
                 <div><b>Diện tích:</b> ${dienTich} m²</div>
