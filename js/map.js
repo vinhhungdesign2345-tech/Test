@@ -520,30 +520,32 @@ function initMap() {
 
             clearLengthMarkers();
 
-            // Biến trạng thái nhãn (mặc định là false - ẩn)
-            window._isParcelLabelsVisible = false;
+// Chỉ gán mặc định là false nếu chưa từng được khởi tạo trước đó
+if (window._isParcelLabelsVisible === undefined) {
+    window._isParcelLabelsVisible = false;
+}
 
-            // Hàm toggle bật/tắt nhãn
-            window.toggleParcelLabels = function() {
-                window._isParcelLabelsVisible = !window._isParcelLabelsVisible;
-                const btn = document.getElementById('toggle-labels-btn');
-                if (btn) {
-                    btn.innerText = window._isParcelLabelsVisible ? 'Ẩn nhãn' : 'Hiện nhãn';
-                }
-                
-                // Ẩn/hiện các marker độ dài cạnh và tọa độ góc
-                activeMarkers.forEach(marker => {
-                    const el = marker.getElement();
-                    if (el) {
-                        el.style.display = window._isParcelLabelsVisible ? 'block' : 'none';
-                    }
-                });
+// Hàm toggle bật/tắt nhãn
+window.toggleParcelLabels = function() {
+    window._isParcelLabelsVisible = !window._isParcelLabelsVisible;
+    const btn = document.getElementById('toggle-labels-btn');
+    if (btn) {
+        btn.innerText = window._isParcelLabelsVisible ? 'Ẩn nhãn' : 'Hiện nhãn';
+    }
+    
+    // Ẩn/hiện các marker độ dài cạnh và tọa độ góc
+    activeMarkers.forEach(marker => {
+        const el = marker.getElement();
+        if (el) {
+            el.style.display = window._isParcelLabelsVisible ? 'block' : 'none';
+        }
+    });
 
-                // Ẩn/hiện layer hiển thị nét độ dài cạnh trên bản đồ (nếu có)
-                if (map.getLayer('parcel-dimensions-line')) {
-                    map.setLayoutProperty('parcel-dimensions-line', 'visibility', window._isParcelLabelsVisible ? 'visible' : 'none');
-                }
-            };
+    // Ẩn/hiện layer hiển thị nét độ dài cạnh trên bản đồ (nếu có)
+    if (map.getLayer('parcel-dimensions-line')) {
+        map.setLayoutProperty('parcel-dimensions-line', 'visibility', window._isParcelLabelsVisible ? 'visible' : 'none');
+    }
+};
 
             // ==========================================
             // ĐOẠN CODE TÍNH TOÁN VÀ GHI ĐỘ DÀI CẠNH & TỌA ĐỘ GÓC
