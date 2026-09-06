@@ -667,12 +667,13 @@ function initMap() {
                 
                 const allDivs = panelEl.querySelectorAll('div, span, b, h3, h4');
                 for (let el of allDivs) {
-                    if (el.innerText && el.innerText.includes('THÔNG TIN THỬA ĐẤT') && !document.getElementById('toggle-labels-btn')) {
+                    // Tìm chính xác thẻ chứa tiêu đề "THÔNG TIN THỬA ĐẤT"
+                    if (el.innerText && el.innerText.trim() === 'THÔNG TIN THỬA ĐẤT' && !document.getElementById('toggle-labels-btn')) {
                         const btn = document.createElement('button');
                         btn.id = 'toggle-labels-btn';
-                        btn.innerText = 'Hiện nhãn';
+                        btn.innerText = window._isParcelLabelsVisible ? 'Ẩn nhãn' : 'Hiện nhãn';
                         btn.style.marginLeft = '10px';
-                        btn.style.padding = '2px 6px';
+                        btn.style.padding = '1px 6px';
                         btn.style.fontSize = '11px';
                         btn.style.fontWeight = 'bold';
                         btn.style.cursor = 'pointer';
@@ -681,6 +682,8 @@ function initMap() {
                         btn.style.borderRadius = '3px';
                         
                         btn.onclick = window.toggleParcelLabels;
+                        
+                        // Chèn trực tiếp ngay sau chữ THÔNG TIN THỬA ĐẤT
                         el.appendChild(btn);
                         break;
                     }
