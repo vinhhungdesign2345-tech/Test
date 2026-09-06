@@ -504,9 +504,6 @@ function initMap() {
     const sheetLayers = ['sheet-thua-dat-fill', 'sheet-thua-dat-line'];
     let isFeatureClicked = false; 
 
-    const sheetLayers = ['sheet-thua-dat-fill', 'sheet-thua-dat-line'];
-    let isFeatureClicked = false; 
-
     sheetLayers.forEach(layerId => {
         map.on('click', layerId, (e) => {
             if (typeof isMeasuring !== 'undefined' && isMeasuring || (typeof isMarkingMode !== 'undefined' && isMarkingMode)) return; 
@@ -522,13 +519,11 @@ function initMap() {
             window.selectedThuaDatId = parcelId;
 
             clearLengthMarkers();
-
             // ==========================================
-            // TÍNH TOÁN VÀ HIỂN THỊ ĐỘ DÀI CẠNH & TỌA ĐỘ GÓC
+            // ĐOẠN CODE TÍNH TOÁN VÀ GHI ĐỘ DÀI CẠNH
             // ==========================================
             if (typeof turf !== 'undefined' && selectedFeature.geometry) {
                 try {
-                    // 1. Hiển thị độ dài các cạnh
                     const lineSegments = turf.lineSegment(selectedFeature); 
                     const dimensionFeatures = [];
 
@@ -549,7 +544,7 @@ function initMap() {
                         el.style.textShadow = '1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000'; 
                         el.style.whiteSpace = 'nowrap'; 
                         el.innerText = formattedLength; 
-
+            // Tạo Marker hiển thị độ dài cạnh ở điểm giữa
                         const marker = new maplibregl.Marker({ element: el, anchor: 'center' }).setLngLat(midCoord).addTo(map); 
                         activeMarkers.push(marker); 
                     });
@@ -557,48 +552,11 @@ function initMap() {
                     if (map.getSource('parcel-dimensions-source')) {
                         map.getSource('parcel-dimensions-source').setData({ type: 'FeatureCollection', features: dimensionFeatures });
                     }
-
-                    // 2. Hiển thị tọa độ các góc (G1, G2, ...)
-                    let polygonCoords = [];
-                    if (selectedFeature.geometry.type === 'Polygon') {
-                        polygonCoords = selectedFeature.geometry.coordinates[0];
-                    } else if (selectedFeature.geometry.type === 'MultiPolygon') {
-                        polygonCoords = selectedFeature.geometry.coordinates[0][0];
-                    }
-
-                    if (polygonCoords && polygonCoords.length > 0) {
-                        // Loại bỏ điểm trùng cuối cùng nếu vòng khép kín
-                        const uniqueCoords = polygonCoords.slice(0, polygonCoords.length - 1);
-
-                        uniqueCoords.forEach((coord, index) => {
-                            const lng = coord[0].toFixed(6);
-                            const lat = coord[1].toFixed(6);
-
-                            const cornerEl = document.createElement('div');
-                            cornerEl.style.color = '#00ffcc';
-                            cornerEl.style.fontSize = '11px';
-                            cornerEl.style.fontWeight = 'bold';
-                            cornerEl.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-                            cornerEl.style.padding = '2px 5px';
-                            cornerEl.style.borderRadius = '3px';
-                            cornerEl.style.border = '1px solid #00ffcc';
-                            cornerEl.style.whiteSpace = 'nowrap';
-                            cornerEl.style.boxShadow = '0 1px 3px rgba(0,0,0,0.5)';
-                            cornerEl.innerHTML = `G${index + 1}<br>${lat}, ${lng}`;
-
-                            const cornerMarker = new maplibregl.Marker({ element: cornerEl, anchor: 'bottom' })
-                                .setLngLat(coord)
-                                .addTo(map);
-
-                            activeMarkers.push(cornerMarker);
-                        });
-                    }
                 } catch (err) {
-                    console.error("Lỗi trong quá trình tính toán độ dài cạnh và tọa độ góc:", err);
+                    console.error("Lỗi trong quá trình tính toán độ dài cạnh thửa đất:", err);
                 }
             }
-            // ==========================================
-
+        // ==========================================
             const soTo = rawProps['Số tờ'] || rawProps['So to'] || '-';
             const soThua = rawProps['Số thửa'] || rawProps['So thua'] || '-';
             const rawDienTich = rawProps['Diện tích'] || rawProps['Dien tich'] || rawProps['dien_tich'] || rawProps['DienTich'] || rawProps['DIỆN TÍCH'] || '-';
