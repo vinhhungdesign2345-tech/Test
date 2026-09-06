@@ -138,6 +138,97 @@ async function fetchGeoDataByUrl(url) {
         return null;
     }
 }
+
+// ==========================================
+// 1B. HÀM XỬ LÝ BẢN ĐỒ THU NHỎ (RANH ĐẤT)
+// ==========================================
+let miniMapInstance = null;
+
+window._openRanhDat = function(parcelId) {
+    const feature = window._currentParcelFeature;
+    if (!feature || !feature.geometry) {
+        console.warn("Không tìm thấy hình học (geometry) của thửa đất!");
+        return;
+    }
+
+    const panelEl = document.getElementById('parcel-info-panel');
+    if (panelEl) panelEl.style.display = 'block';
+
+    setTimeout(() => {
+        const container = document.getElementById('mini-parcel-map');
+        if (!container) return;
+
+        const geojsonFeature = {
+            type: "Feature",
+            geometry: feature.geometry,
+            properties: feature.properties || {}
+        };
+
+        if (miniMapInstance) {
+            const source = miniMapInstance.getSource('mini-source');
+            if (source) {
+                source.setData(geojsonFeature);
+            }
+            
+            try {
+                const bbox = turf.bbox(geojsonFeature);
+                miniMapInstance.fitBounds(bbox, { padding: 30, duration: 300, maxZoom: 18 });
+            } catch (e) {
+                console.error("Lỗi fitBounds mini map:", e);
+            }
+            return;
+        }
+
+        miniMapInstance = new maplibregl.Map({
+            container: 'mini-parcel-map',
+            style: CONFIG.MAP_STYLE,
+            center: [0, 0],
+            zoom: 15,
+            dragRotate: false,
+            pitchWithRotate: false,
+            touchZoomRotate: true
+        });
+
+        if (miniMapInstance.touchZoomRotate) {
+            miniMapInstance.touchZoomRotate.disableRotation();
+        }
+
+        miniMapInstance.on('load', () => {
+            miniMapInstance.addSource('mini-source', {
+                type: 'geojson',
+                data: geojsonFeature
+            });
+
+            miniMapInstance.addLayer({
+                id: 'mini-fill',
+                type: 'fill',
+                source: 'mini-source',
+                paint: {
+                    'fill-color': CONFIG.FILL_COLOR || '#00ffcc',
+                    'fill-opacity': 0.4
+                }
+            });
+
+            miniMapInstance.addLayer({
+                id: 'mini-line',
+                type: 'line',
+                source: 'mini-source',
+                paint: {
+                    'line-color': '#ff0000',
+                    'line-width': 2.5
+                }
+            });
+
+            try {
+                const bbox = turf.bbox(geojsonFeature);
+                miniMapInstance.fitBounds(bbox, { padding: 30, maxZoom: 18 });
+            } catch (e) {
+                console.error("Lỗi fitBounds lần đầu cho mini map:", e);
+            }
+        });
+    }, 150);
+};
+
 // ==========================================
 // 2. XỬ LÝ LOGIC BẢN ĐỒ VÀ HÀNH CHÍNH
 // ==========================================
