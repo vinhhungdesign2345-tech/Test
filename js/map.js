@@ -552,6 +552,43 @@ function initMap() {
                     if (map.getSource('parcel-dimensions-source')) {
                         map.getSource('parcel-dimensions-source').setData({ type: 'FeatureCollection', features: dimensionFeatures });
                     }
+                    // ==========================================
+                    // TÍCH HỢP: HIỂN THỊ TỌA ĐỘ CÁC GÓC THỬA ĐẤT (G1, G2,...)
+                    // ==========================================
+                    let polygonCoords = [];
+                    if (selectedFeature.geometry.type === 'Polygon') {
+                        polygonCoords = selectedFeature.geometry.coordinates[0];
+                    } else if (selectedFeature.geometry.type === 'MultiPolygon') {
+                        polygonCoords = selectedFeature.geometry.coordinates[0][0];
+                    }
+
+                    if (polygonCoords && polygonCoords.length > 0) {
+                        // Loại bỏ điểm trùng cuối cùng trong vòng khép kín của GeoJSON
+                        const uniqueCoords = polygonCoords.slice(0, polygonCoords.length - 1);
+
+                        uniqueCoords.forEach((coord, index) => {
+                            const lng = coord[0].toFixed(6);
+                            const lat = coord[1].toFixed(6);
+
+                            const cornerEl = document.createElement('div');
+                            cornerEl.style.color = '#00ffcc';
+                            cornerEl.style.fontSize = '11px';
+                            cornerEl.style.fontWeight = 'bold';
+                            cornerEl.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+                            cornerEl.style.padding = '2px 5px';
+                            cornerEl.style.borderRadius = '3px';
+                            cornerEl.style.border = '1px solid #00ffcc';
+                            cornerEl.style.whiteSpace = 'nowrap';
+                            cornerEl.style.boxShadow = '0 1px 3px rgba(0,0,0,0.5)';
+                            cornerEl.innerHTML = `G${index + 1}<br>${lat}, ${lng}`;
+
+                            const cornerMarker = new maplibregl.Marker({ element: cornerEl, anchor: 'bottom' })
+                                .setLngLat(coord)
+                                .addTo(map);
+
+                            activeMarkers.push(cornerMarker); // Đưa vào mảng để tự động xóa khi click thửa khác
+                        });
+                    }
                 } catch (err) {
                     console.error("Lỗi trong quá trình tính toán độ dài cạnh thửa đất:", err);
                 }
