@@ -509,7 +509,8 @@ function initMap() {
             if (!e.features || !e.features.length) return;
             isFeatureClicked = true; 
 
-            const selectedFeature = e.features[0]; 
+            const selectedFeature = e.features[0];
+            window._currentParcelFeature = selectedFeature; // <--- THÊM DÒNG NÀY ĐỂ LƯU FEATURE VẼ RANH ĐẤT
             const rawProps = selectedFeature.properties || {}; 
             window._currentParcelRawProps = rawProps;
 
@@ -585,6 +586,7 @@ function initMap() {
                 <div style="grid-column: span 2;"><b>Tên chủ:</b> ${tenChu}</div>
                 <div><b>Số định danh:</b> ${soDinhDanh}</div>
                 <div><b>Ghi chú:</b> ${columnNLinkHTML}</div>
+                <div><b>Ranh đất:</b> ${ranhDatLinkHTML}</div>
             `;
 
             const panelContentEl = document.getElementById('panel-content');
