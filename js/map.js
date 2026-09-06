@@ -651,7 +651,7 @@ function initMap() {
                             cornerEl.style.fontWeight = 'normal';        
                             cornerEl.style.textShadow = '1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000';
                             cornerEl.style.whiteSpace = 'nowrap';
-                            cornerEl.innerHTML = `G${index + 1}:<br>${lat}, ${lng}`; // Tên góc (G1, G2...) nằm hàng trên, tọa độ lat/lng xuống hàng dưới bằng thẻ <br>
+                            cornerEl.innerHTML = `G${index + 1}:<br>${lat},<br> ${lng}`; // Tên góc: lat, xuống hàng lng
                             
                             // ĐIỀU CHỈNH TRẠNG THÁI HIỂN THỊ CHO NHÃN GÓC TƯƠNG TỰ
                             cornerEl.style.display = window._isParcelLabelsVisible ? 'block' : 'none';
