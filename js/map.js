@@ -546,88 +546,105 @@ function initMap() {
             };
 
             // ==========================================
-            // ĐOẠN CODE TÍNH TOÁN VÀ GHI ĐỘ DÀI CẠNH & TỌA ĐỘ GÓC
+            // GHI ĐỘ DÀI CẠNH & TỌA ĐỘ GÓC
             // ==========================================
             if (typeof turf !== 'undefined' && selectedFeature.geometry) {
                 try {
+                    // Dùng thư viện Turf.js để bóc tách các cạnh của đa giác thửa đất
                     const lineSegments = turf.lineSegment(selectedFeature); 
                     const dimensionFeatures = [];
 
+                    // Vòng lặp qua từng cạnh để tính chiều dài và tạo marker hiển thị ở điểm giữa cạnh
                     lineSegments.features.forEach(segment => {
-                        const lengthMeters = turf.length(segment, { units: 'meters' }); 
+                        const lengthMeters = turf.length(segment, { units: 'meters' }); // Tính chiều dài theo mét
+                        // Quy cách hiển thị: >= 10m thì lấy 1 chữ số thập phân, nhỏ hơn thì lấy 2 chữ số
                         const formattedLength = lengthMeters >= 10 ? `${lengthMeters.toFixed(1)}m` : `${lengthMeters.toFixed(2)}m`;
 
                         segment.properties.length = formattedLength;
                         dimensionFeatures.push(segment);
 
+                        // Tính tọa độ trung điểm của cạnh để đặt nhãn độ dài
                         const coords = segment.geometry.coordinates;
                         const midCoord = [(coords[0][0] + coords[1][0]) / 2, (coords[0][1] + coords[1][1]) / 2];
 
+                        // Tạo phần tử HTML chứa nhãn độ dài cạnh
                         const el = document.createElement('div');
-                        el.style.color = '#ffffff'; 
-                        el.style.fontSize = '12px'; 
-                        el.style.fontWeight = 'Bold'; 
-                        el.style.textShadow = '1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000'; 
-                        el.style.whiteSpace = 'nowrap'; 
-                        el.innerText = formattedLength; 
+                        el.style.color = '#ffffff';                 // Màu chữ trắng
+                        el.style.fontSize = '12px';                 // Kích thước chữ 12px
+                        el.style.fontWeight = 'normal';               // Chữ in đậm
+                        el.style.textShadow = '1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000'; // Viền đen quanh chữ giúp dễ nhìn trên nền vệ tinh
+                        el.style.whiteSpace = 'nowrap';             // Không bị ngắt dòng chữ
+                        el.innerText = formattedLength;             // Nội dung là chiều dài cạnh (VD: 30.3m)
                         
-                        // Mặc định ẩn nhãn khi khởi tạo
+                        // Mặc định ẩn nhãn khi mới click chọn thửa đất
                         el.style.display = 'none';
 
+                        // Khởi tạo MapLibre Marker đặt tại trung điểm cạnh
                         const marker = new maplibregl.Marker({ element: el, anchor: 'center' }).setLngLat(midCoord).addTo(map); 
-                        activeMarkers.push(marker); 
+                        activeMarkers.push(marker); // Đưa vào mảng quản lý để dễ dàng xóa khi chuyển thửa khác
                     });
 
+                    // Cập nhật nguồn dữ liệu cho layer vẽ đường kích thước cạnh trên bản đồ (nếu có nguồn này)
                     if (map.getSource('parcel-dimensions-source')) {
                         map.getSource('parcel-dimensions-source').setData({ type: 'FeatureCollection', features: dimensionFeatures });
                     }
 
-                    // TỌA ĐỘ CÁC GÓC THỬA ĐẤT (G1, G2,...)
+                    // ==========================================
+                    // TÍCH HỢP: HIỂN THỊ TỌA ĐỘ CÁC GÓC THỬA ĐẤT (G1, G2,...)
+                    // ==========================================
                     let polygonCoords = [];
                     if (selectedFeature.geometry.type === 'Polygon') {
-                        polygonCoords = selectedFeature.geometry.coordinates[0];
+                        polygonCoords = selectedFeature.geometry.coordinates[0]; // Lấy danh sách tọa độ vòng ngoài của Polygon
                     } else if (selectedFeature.geometry.type === 'MultiPolygon') {
-                        polygonCoords = selectedFeature.geometry.coordinates[0][0];
+                        polygonCoords = selectedFeature.geometry.coordinates[0][0]; // Lấy polygon đầu tiên nếu là MultiPolygon
                     }
 
                     if (polygonCoords && polygonCoords.length > 0) {
+                        // Cấu trúc GeoJSON lặp lại điểm đầu ở cuối vòng khép kín -> cắt bỏ điểm cuối trùng lặp
                         const uniqueCoords = polygonCoords.slice(0, polygonCoords.length - 1);
 
+                        // Vòng lặp qua từng đỉnh góc của thửa đất
                         uniqueCoords.forEach((coord, index) => {
-                            const lng = coord[0].toFixed(6);
-                            const lat = coord[1].toFixed(6);
+                            const lng = coord[0].toFixed(6); // Kinh độ lấy 6 chữ số thập phân chính xác
+                            const lat = coord[1].toFixed(6); // Vĩ độ lấy 6 chữ số thập phân chính xác
 
+                            // Tạo phần tử HTML chứa nhãn tọa độ góc
                             const cornerEl = document.createElement('div');
-                            cornerEl.style.color = '#ffffff';
-                            cornerEl.style.fontSize = '12px';
-                            cornerEl.style.fontWeight = 'bold';
-                            cornerEl.style.textShadow = '1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000';
-                            cornerEl.style.whiteSpace = 'nowrap';
-                            cornerEl.innerHTML = `G${index + 1}: ${lat}, ${lng}`;
+                            cornerEl.style.color = '#ffffff';                 // Màu chữ trắng
+                            cornerEl.style.fontSize = '12px';                 // Kích thước chữ 12px
+                            cornerEl.style.fontWeight = 'bold';               // Chữ in đậm
+                            cornerEl.style.textShadow = '1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000'; // Viền đen chống lóa
+                            cornerEl.style.whiteSpace = 'nowrap';             // Không ngắt dòng
+                            cornerEl.innerHTML = `G${index + 1}: ${lat}, ${lng}`; // Hiển thị dạng: G1: lat, lng
                             
-                            // Mặc định ẩn nhãn góc khi khởi tạo
+                            // Mặc định ẩn nhãn tọa độ góc khi mới click chọn thửa đất
                             cornerEl.style.display = 'none';
 
+                            // Tạo Marker đặt tại tọa độ góc. 
+                            // anchor: 'top' và offset: [0, 5] giúp nhãn dịch xuống dưới một chút để không che mất điểm góc thực tế của thửa đất
                             const cornerMarker = new maplibregl.Marker({ element: cornerEl, anchor: 'top', offset: [0, 5] })
                                 .setLngLat(coord)
                                 .addTo(map);
 
-                            activeMarkers.push(cornerMarker);
+                            activeMarkers.push(cornerMarker); // Đưa vào mảng quản lý chung
                         });
                     }
                 } catch (err) {
                     console.error("Lỗi trong quá trình tính toán độ dài cạnh thửa đất:", err);
                 }
             }
-        // ==========================================
+            // ==========================================
+            // TRÍCH XUẤT THÔNG TIN THUỘC TÍNH THỬA ĐẤT
+            // ==========================================
             const soTo = rawProps['Số tờ'] || rawProps['So to'] || '-';
             const soThua = rawProps['Số thửa'] || rawProps['So thua'] || '-';
             const rawDienTich = rawProps['Diện tích'] || rawProps['Dien tich'] || rawProps['dien_tich'] || rawProps['DienTich'] || rawProps['DIỆN TÍCH'] || '-';
-            const dienTich = formatNumberVN(rawDienTich); 
+            const dienTich = formatNumberVN(rawDienTich); // Định dạng kiểu số Việt Nam
             const loaiDat = rawProps['Loại Đất'] || rawProps['Loại Đất:'] || rawProps['Loại đất'] || rawProps['loai_dat'] || '-';
             const tenChu = rawProps['Tên Chủ'] || rawProps['Tên chủ'] || '-';
             const soDinhDanh = rawProps['Số định danh chủ đất'] || rawProps['Số định danh'] || 'Không có';
             
+            // Xử lý thông tin hiển thị hoặc nút bấm tại cột ghi chú / Cột N
             const columnNValue = rawProps['Cột N'] || rawProps['cot_n'] || rawProps['Ghi Chú'] || rawProps['Ghi chú'] || '';
             let columnNLinkHTML = '';
 
@@ -639,12 +656,13 @@ function initMap() {
                 columnNLinkHTML = `<a href="javascript:void(0);" onclick="window._inputColN_${parcelId}();" style="color: #d93025; text-decoration: underline; font-weight: bold;">Nhập</a>`;
             }
 
+            // Thiết lập bộ lọc (Filter) để tô sáng thửa đất đang chọn trên bản đồ
             let selectFilter = parcelId ? ['==', ['get', 'ID Thửa Đất'], rawProps['ID Thửa Đất'] || parcelId] : ['==', ['get', 'Tên Chủ'], tenChu];
 
             if (map.getLayer('sheet-thua-dat-highlight-fill')) map.setFilter('sheet-thua-dat-highlight-fill', selectFilter);
             if (map.getLayer('sheet-thua-dat-highlight-line')) map.setFilter('sheet-thua-dat-highlight-line', selectFilter);
 
-            // 1. Khai báo nội dung thông tin thửa đất
+            // 1. Khai báo nội dung HTML chi tiết cho bảng thông tin (Panel)
             const panelContent = `
                 <div><b>Số tờ:</b> ${soTo}</div>
                 <div><b>Số thửa:</b> ${soThua}</div>
@@ -658,32 +676,34 @@ function initMap() {
             const panelContentEl = document.getElementById('panel-content');
             const panelEl = document.getElementById('parcel-info-panel');
             
-            // Gán nội dung vào panel
+            // Gán nội dung thông tin vào khung panel
             if (panelContentEl) panelContentEl.innerHTML = panelContent;
             
-            // 2. Hiển thị panel và tự động quét gắn nút "Hiện nhãn" / "Ẩn nhãn" cạnh tiêu đề có sẵn
+            // 2. Hiển thị panel và tự động quét gắn nút "Hiện nhãn" / "Ẩn nhãn" ngay cạnh tiêu đề có sẵn
             if (panelEl) {
-                panelEl.style.display = 'block';
+                panelEl.style.display = 'block'; // Bật hiển thị panel
                 
+                // Lọc các thẻ HTML bên trong panel để tìm tiêu đề chính xác
                 const allDivs = panelEl.querySelectorAll('div, span, b, h3, h4');
                 for (let el of allDivs) {
-                    // Tìm chính xác thẻ chứa tiêu đề "THÔNG TIN THỬA ĐẤT"
+                    // Tìm đúng thẻ chứa đoạn chữ "THÔNG TIN THỬA ĐẤT" và đảm bảo chưa gắn nút trước đó
                     if (el.innerText && el.innerText.trim() === 'THÔNG TIN THỬA ĐẤT' && !document.getElementById('toggle-labels-btn')) {
                         const btn = document.createElement('button');
                         btn.id = 'toggle-labels-btn';
-                        btn.innerText = window._isParcelLabelsVisible ? 'Ẩn nhãn' : 'Hiện nhãn';
-                        btn.style.marginLeft = '10px';
-                        btn.style.padding = '1px 6px';
-                        btn.style.fontSize = '11px';
-                        btn.style.fontWeight = 'bold';
-                        btn.style.cursor = 'pointer';
-                        btn.style.backgroundColor = '#f0f0f0';
-                        btn.style.border = '1px solid #ccc';
-                        btn.style.borderRadius = '3px';
+                        btn.innerText = window._isParcelLabelsVisible ? 'Ẩn nhãn' : 'Hiện nhãn'; // Thay đổi text dựa theo trạng thái hiện tại
+                        btn.style.marginLeft = '10px';  // Cách lề trái một chút để tạo khoảng cách với chữ tiêu đề
+                        btn.style.padding = '1px 6px';   // Khoảng đệm trong nút bấm
+                        btn.style.fontSize = '11px';    // Cỡ chữ nhỏ gọn
+                        btn.style.fontWeight = 'bold';  // Chữ in đậm
+                        btn.style.cursor = 'pointer';   // Đổi hình con trỏ chuột thành dạng bàn tay khi hover
+                        btn.style.backgroundColor = '#f0f0f0'; // Màu nền xám nhạt cho nút
+                        btn.style.border = '1px solid #ccc';   // Viền xám nhạt
+                        btn.style.borderRadius = '3px';        // Bo góc nhẹ
                         
+                        // Gắn sự kiện khi click vào nút sẽ gọi hàm bật/tắt nhãn toàn cục
                         btn.onclick = window.toggleParcelLabels;
                         
-                        // Chèn trực tiếp ngay sau chữ THÔNG TIN THỬA ĐẤT
+                        // Chèn trực tiếp nút bấm vào ngay sau chữ tiêu đề (giúp giữ nguyên nút 'x' đóng popup ở góc phải)
                         el.appendChild(btn);
                         break;
                     }
@@ -691,10 +711,12 @@ function initMap() {
             }
         });
 
+        // Thiết lập sự kiện trỏ chuột khi hover vào layer thửa đất
         map.on('mouseenter', layerId, () => map.getCanvas().style.cursor = 'default');
         map.on('mouseleave', layerId, () => map.getCanvas().style.cursor = 'default');
     });
 
+    // Sự kiện click toàn cục trên bản đồ (dùng cho công cụ đo khoảng cách hoặc click ra vùng trống)
     map.on('click', (e) => {
         if (typeof isMeasuring !== 'undefined' && isMeasuring) {
             if (window._isDraggingMarker) return;
@@ -715,6 +737,7 @@ function initMap() {
             return;
         }
 
+        // Nếu click ra vùng trống (không trúng thửa đất nào) thì ẩn panel thông tin
         if (!isFeatureClicked) {
             closeParcelPanel(); 
             if (typeof selectPhuongFromPoint === 'function') {
@@ -725,4 +748,5 @@ function initMap() {
     });
 }
 
+// Khởi chạy hàm khởi tạo bản đồ khi DOM trang web đã tải xong hoàn toàn
 document.addEventListener('DOMContentLoaded', initMap);
