@@ -546,87 +546,74 @@ function initMap() {
             };
 
             // ==========================================
-            // GHI ĐỘ DÀI CẠNH & TỌA ĐỘ GÓC
+            // ĐOẠN CODE TÍNH TOÁN VÀ GHI ĐỘ DÀI CẠNH & TỌA ĐỘ GÓC
             // ==========================================
             if (typeof turf !== 'undefined' && selectedFeature.geometry) {
                 try {
-                    // Dùng thư viện Turf.js để bóc tách các cạnh của đa giác thửa đất
                     const lineSegments = turf.lineSegment(selectedFeature); 
                     const dimensionFeatures = [];
 
-                    // Vòng lặp qua từng cạnh để tính chiều dài và tạo marker hiển thị ở điểm giữa cạnh
                     lineSegments.features.forEach(segment => {
-                        const lengthMeters = turf.length(segment, { units: 'meters' }); // Tính chiều dài theo mét
-                        // Quy cách hiển thị: >= 10m thì lấy 1 chữ số thập phân, nhỏ hơn thì lấy 2 chữ số
+                        const lengthMeters = turf.length(segment, { units: 'meters' }); 
                         const formattedLength = lengthMeters >= 10 ? `${lengthMeters.toFixed(1)}m` : `${lengthMeters.toFixed(2)}m`;
 
                         segment.properties.length = formattedLength;
                         dimensionFeatures.push(segment);
 
-                        // Tính tọa độ trung điểm của cạnh để đặt nhãn độ dài
                         const coords = segment.geometry.coordinates;
                         const midCoord = [(coords[0][0] + coords[1][0]) / 2, (coords[0][1] + coords[1][1]) / 2];
 
-                        // Tạo phần tử HTML chứa nhãn độ dài cạnh
                         const el = document.createElement('div');
-                        el.style.color = '#ffffff';                 // Màu chữ trắng
-                        el.style.fontSize = '12px';                 // Kích thước chữ 12px
-                        el.style.fontWeight = 'normal';               // Chữ không in đậm
-                        el.style.textShadow = '1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000'; // Viền đen quanh chữ giúp dễ nhìn trên nền vệ tinh
-                        el.style.whiteSpace = 'nowrap';             // Không bị ngắt dòng chữ
-                        el.innerText = formattedLength;             // Nội dung là chiều dài cạnh (VD: 30.3m)
+                        el.style.color = '#ffffff';                 
+                        el.style.fontSize = '12px';                 
+                        el.style.fontWeight = 'normal';             
+                        el.style.textShadow = '1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000'; 
+                        el.style.whiteSpace = 'nowrap';             
+                        el.innerText = formattedLength;             
                         
-                        // Mặc định ẩn nhãn khi mới click chọn thửa đất
-                        el.style.display = 'none';
+                        // ĐIỀU CHỈNH TRẠNG THÁI HIỂN THỊ: 
+                        // Kiểm tra nếu biến toàn cục đang là true (đang bật nhãn) thì hiện luôn, ngược lại thì ẩn ('none')
+                        el.style.display = window._isParcelLabelsVisible ? 'block' : 'none';
 
-                        // Khởi tạo MapLibre Marker đặt tại trung điểm cạnh
                         const marker = new maplibregl.Marker({ element: el, anchor: 'center' }).setLngLat(midCoord).addTo(map); 
-                        activeMarkers.push(marker); // Đưa vào mảng quản lý để dễ dàng xóa khi chuyển thửa khác
+                        activeMarkers.push(marker); 
                     });
 
-                    // Cập nhật nguồn dữ liệu cho layer vẽ đường kích thước cạnh trên bản đồ (nếu có nguồn này)
                     if (map.getSource('parcel-dimensions-source')) {
                         map.getSource('parcel-dimensions-source').setData({ type: 'FeatureCollection', features: dimensionFeatures });
                     }
 
-                    // ==========================================
-                    // TÍCH HỢP: HIỂN THỊ TỌA ĐỘ CÁC GÓC THỬA ĐẤT (G1, G2,...)
-                    // ==========================================
+                    // TỌA ĐỘ CÁC GÓC THỬA ĐẤT (G1, G2,...)
                     let polygonCoords = [];
                     if (selectedFeature.geometry.type === 'Polygon') {
-                        polygonCoords = selectedFeature.geometry.coordinates[0]; // Lấy danh sách tọa độ vòng ngoài của Polygon
+                        polygonCoords = selectedFeature.geometry.coordinates[0];
                     } else if (selectedFeature.geometry.type === 'MultiPolygon') {
-                        polygonCoords = selectedFeature.geometry.coordinates[0][0]; // Lấy polygon đầu tiên nếu là MultiPolygon
+                        polygonCoords = selectedFeature.geometry.coordinates[0][0];
                     }
 
                     if (polygonCoords && polygonCoords.length > 0) {
-                        // Cấu trúc GeoJSON lặp lại điểm đầu ở cuối vòng khép kín -> cắt bỏ điểm cuối trùng lặp
                         const uniqueCoords = polygonCoords.slice(0, polygonCoords.length - 1);
 
-                        // Vòng lặp qua từng đỉnh góc của thửa đất
                         uniqueCoords.forEach((coord, index) => {
-                            const lng = coord[0].toFixed(4); // Kinh độ lấy 4 chữ số thập phân chính xác
-                            const lat = coord[1].toFixed(4); // Vĩ độ lấy 4 chữ số thập phân chính xác
+                            const lng = coord[0].toFixed(6);
+                            const lat = coord[1].toFixed(6);
 
-                            // Tạo phần tử HTML chứa nhãn tọa độ góc
                             const cornerEl = document.createElement('div');
-                            cornerEl.style.color = '#ffffff';                 // Màu chữ trắng
-                            cornerEl.style.fontSize = '12px';                 // Kích thước chữ 12px
-                            cornerEl.style.fontWeight = 'normal';               // Chữ in đậm
-                            cornerEl.style.textShadow = '1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000'; // Viền đen chống lóa
-                            cornerEl.style.whiteSpace = 'nowrap';             // Không ngắt dòng
-                            cornerEl.innerHTML = `G${index + 1}:<br>${lat}, ${lng}`; // Hiển thị dạng: G1: Xuống dòng lat, lng
+                            cornerEl.style.color = '#ffffff';
+                            cornerEl.style.fontSize = '12px';
+                            cornerEl.style.fontWeight = 'normal';       
+                            cornerEl.style.textShadow = '1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000';
+                            cornerEl.style.whiteSpace = 'nowrap';
+                            cornerEl.innerHTML = `G${index + 1}:<br>${lat}, ${lng}`;
                             
-                            // Mặc định ẩn nhãn tọa độ góc khi mới click chọn thửa đất
-                            cornerEl.style.display = 'none';
+                            // ĐIỀU CHỈNH TRẠNG THÁI HIỂN THỊ CHO NHÃN GÓC TƯƠNG TỰ
+                            cornerEl.style.display = window._isParcelLabelsVisible ? 'block' : 'none';
 
-                            // Tạo Marker đặt tại tọa độ góc. 
-                            // anchor: 'top' và offset: [0, 5] giúp nhãn dịch xuống dưới một chút để không che mất điểm góc thực tế của thửa đất
                             const cornerMarker = new maplibregl.Marker({ element: cornerEl, anchor: 'top', offset: [0, 5] })
                                 .setLngLat(coord)
                                 .addTo(map);
 
-                            activeMarkers.push(cornerMarker); // Đưa vào mảng quản lý chung
+                            activeMarkers.push(cornerMarker);
                         });
                     }
                 } catch (err) {
