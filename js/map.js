@@ -518,14 +518,13 @@ function initMap() {
             const parcelId = rawProps['ID Thửa Đất'] || rawProps['id'] || '';
             window.selectedThuaDatId = parcelId;
 
-            clearLengthMarkers();
+    clearLengthMarkers();
+    // Chỉ gán mặc định là false nếu chưa từng được khởi tạo trước đó
+            if (window._isParcelLabelsVisible === undefined) {
+            window._isParcelLabelsVisible = false;
+            }
 
-// Chỉ gán mặc định là false nếu chưa từng được khởi tạo trước đó
-if (window._isParcelLabelsVisible === undefined) {
-    window._isParcelLabelsVisible = false;
-}
-
-// Hàm toggle bật/tắt nhãn
+    // Hàm toggle bật/tắt nhãn
 window.toggleParcelLabels = function() {
     window._isParcelLabelsVisible = !window._isParcelLabelsVisible;
     const btn = document.getElementById('toggle-labels-btn');
@@ -597,8 +596,8 @@ window.toggleParcelLabels = function() {
                         const uniqueCoords = polygonCoords.slice(0, polygonCoords.length - 1);
 
                         uniqueCoords.forEach((coord, index) => {
-                            const lng = coord[0].toFixed(6);
-                            const lat = coord[1].toFixed(6);
+                            const lng = coord[0].toFixed(4);
+                            const lat = coord[1].toFixed(4);
 
                             const cornerEl = document.createElement('div');
                             cornerEl.style.color = '#ffffff';
