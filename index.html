@@ -374,23 +374,23 @@
             /* Tùy chỉnh bảng hiển thị thông tin thửa đất trên mobile */
             .parcel-panel {
                 width: 95% !important; /* Chiếm 95% chiều ngang màn hình */
-                max-width: none !important; /* Không giới hạn chiều rộng tối đa */
-                bottom: 10px !important;    /* Cách đáy màn hình 10px */
+                max-width: none !important; /* Hủy giới hạn chiều rộng tối đa */
+                bottom: 10px !important; /* Cách đáy màn hình 10px */
                 padding: 6px 8px !important; /* Khoảng đệm bên trong panel */
                 max-height: 48vh !important; /* Chiều cao tối đa bằng 48% chiều cao màn hình */
                 overflow-y: auto !important; /* Cho phép cuộn dọc nếu nội dung dài */
             }
 
-            /* Tiêu đề "THÔNG TIN THỬA ĐẤT" */
+            /* Tiêu đề của panel thông tin thửa đất */
             .panel-header {
-                font-size: 12px !important;     /* Cỡ chữ 12px */
-                padding-bottom: 3px !important; /* Khoảng cách dưới của chữ tới đường kẻ 3px*/
-                margin-bottom: 4px !important; /* Khoảng cách lề dưới 4px*/
+                font-size: 12px !important; /* Thu nhỏ cỡ chữ tiêu đề */
+                padding-bottom: 3px !important; /* Khoảng cách dưới chữ tới đường kẻ */
+                margin-bottom: 4px !important; /* Khoảng cách lề dưới */
             }
 
-            /* Nội dung thông tin thửa đất */
+            /* Phần nội dung chi tiết thông tin thửa đất dạng lưới 2 cột */
             .panel-body {
-                display: grid !important; /* Kiểu hiển thị dạng lưới */
+                display: grid !important; /* Dùng kiểu hiển thị dạng lưới (Grid) */
                 grid-template-columns: 1fr 1fr !important; /* Chia đều thành 2 cột bằng nhau */
                 flex-direction: unset !important; /* Hủy thuộc tính flex cũ nếu có */
                 gap: 4px 8px !important; /* Khoảng cách giữa các ô: hàng 4px, cột 8px */
@@ -398,8 +398,8 @@
 
             /* Các mục dữ liệu con bên trong panel-body */
             .panel-body div {
-                width: 100% !important; /* Chiếm toàn bộ chiều rộng ô */
-                font-size: 11px !important; /* Cỡ chữ 11px */
+                width: 100% !important; /* Chiếm toàn bộ chiều rộng ô lưới */
+                font-size: 11px !important; /* Cỡ chữ nhỏ gọn phù hợp di động */
                 white-space: nowrap !important; /* Không xuống dòng chữ */
                 text-overflow: ellipsis !important; /* Thêm dấu ba chấm (...) nếu chữ quá dài */
                 overflow: hidden !important; /* Ẩn phần chữ bị tràn khung */
@@ -410,8 +410,8 @@
                 top: 4px !important; /* Cách mép trên 4px */
                 left: 4px !important; /* Cách mép trái 4px */
                 width: calc(100% - 38px) !important; /* Chiều rộng co giãn theo màn hình trừ lề */
-                max-width: 320px !important; /* Chiều rộng tối đa 320px */
-                padding: 3px !important; /* Khoảng đệm bên trong khung 3px*/
+                max-width: 320px !important; /* Giới hạn chiều rộng tối đa là 320px */
+                padding: 3px !important; /* Khoảng đệm gọn gàng bên trong khung */
             }
 
             /* Khoảng cách giữa các hàng bộ lọc */
@@ -641,22 +641,19 @@
          ========================================================================== -->
     <div id="map"></div>
 
-    <!-- Khung hiển thị thông tin thửa đất và bản đồ thu nhỏ ranh đất -->
-<div id="parcel-info-panel" style="display: none; position: absolute; bottom: 20px; right: 20px; width: 350px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 1000; font-family: sans-serif;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px;">
-        <h3 style="margin: 0; font-size: 15px; color: #333;">Thông tin thửa đất</h3>
-        <button onclick="closeParcelPanel()" style="background: none; border: none; font-size: 16px; cursor: pointer; font-weight: bold;">✕</button>
+    <!-- ==========================================================================
+         KHUNG BẢNG PANEL NỔI: Bảng thông tin chi tiết của thửa đất hiển thị khi người dùng click chọn một thửa trên bản đồ
+         ========================================================================== -->
+    <div id="parcel-info-panel" class="parcel-panel" style="display: none;">
+        <div class="panel-header">
+            <span><b>THÔNG TIN THỬA ĐẤT</b></span>
+            <!-- Nút bấm hình dấu nhân (&times;) dùng để đóng/tắt panel thông tin thửa đất -->
+            <button onclick="closeParcelPanel()" class="close-btn">&times;</button>
+        </div>
+        <!-- Vùng thân bên trong chứa chi tiết toàn bộ các thuộc tính thông tin của thửa đất -->
+        <div id="panel-content" class="panel-body">
+        </div>
     </div>
-    
-    <!-- Nội dung thông tin thửa đất -->
-    <div id="panel-content" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; margin-bottom: 12px; color: #444;">
-        <!-- Dữ liệu sẽ được điền tự động vào đây khi click vào thửa đất -->
-    </div>
-    
-    <!-- Tiêu đề và khung chứa bản đồ thu nhỏ ranh đất -->
-    <div style="font-weight: bold; font-size: 13px; margin-bottom: 5px; color: #333;">Ranh giới thửa đất:</div>
-    <div id="mini-parcel-map" style="width: 100%; height: 200px; border-radius: 6px; border: 1px solid #ddd; background: #f9f9f9;"></div>
-</div>
 
     <!-- ==========================================================================
          CỤM CÔNG CỤ (MAP-LAYER-CONTROL): Nút đổi lớp nền bản đồ (Vệ tinh/OSM) & Nút đo khoảng cách
@@ -719,14 +716,13 @@
          CÁC TỆP MÃ NGUỒN JAVASCRIPT (Được phân chia tổ chức thành các mô-đun chức năng riêng biệt)
          ========================================================================== -->
     <script src="js/api.js"></script>          <!-- Tệp xử lý các kết nối gọi API hệ thống máy chủ -->
-    <script src="js/sheet.js"></script>        <!-- Tệp kết nối dữ liệu với Google Sheet -->
-    <script src="js/giaDatFilter.js"></script> <!-- Tệp tra cứu thông tin giá đất -->
-    <script src="js/searchThuaDat.js"></script><!-- Tệp tìm kiếm thông tin thửa đất -->
-    <script src="js/note.js"></script>         <!-- Tệp ghi chú -->
-    <script src="js/measure.js"></script>      <!-- Tệp tính toán hình học đo khoảng cách-->
-    <script src="js/mark.js"></script>         <!-- Tệp đánh dấu-->
-    <script src="./js/ranhdat.js"></script>    <!-- Tệp xử lý xem ranh đất -->
-    <script src="js/map.js"></script>          <!-- Tệp cấu hình và điều khiển hiển thị bản đồ MapLibre GL -->
+    <script src="js/sheet.js"></script>        <!-- Tệp làm việc và kết nối dữ liệu bảng biểu Google Sheet -->
+    <script src="js/giaDatFilter.js"></script> <!-- Tệp xử lýlogic lọc và tra cứu thông tin giá đất tuyến đường -->
+    <script src="js/searchThuaDat.js"></script><!-- Tệp xử lý logic tìm kiếm thông tin thửa đất toàn cục -->
+    <script src="js/note.js"></script>         <!-- Tệp quản lý tính năng thêm, sửa, xem ghi chú dữ liệu thửa đất -->
+    <script src="js/measure.js"></script>      <!-- Tệp xử lý tính toán hình học đo khoảng cách trên bản đồ -->
+    <script src="js/mark.js"></script>         <!-- Tệp xử lý đánh dấu điểm, ký hiệu vị trí trên bản đồ -->
+    <script src="js/map.js"></script>          <!-- Tệp cốt lõi khởi tạo, cấu hình và điều khiển hiển thị bản đồ MapLibre GL -->
 
     <!-- ==========================================================================
          MODAL POPUP GHI CHÚ: Hộp thoại cửa sổ nổi chuyên dùng để nhập, lưu hoặc xem ghi chú chi tiết cho từng thửa đất
