@@ -1,5 +1,5 @@
 // ==========================================
-// 1. CẤU HÌNH HỆ THỐNG VÀ BẢN ĐỒ (CONFIG)
+// 1. CẤU HÌNH HỆ THỐNG VÀ BẢN ĐỒ
 // ==========================================
 const CONFIG = {
     PROVINCES: [
@@ -126,7 +126,7 @@ const COLOR_MATCH_EXPRESSION = [
 
 
 // ==========================================
-// 1.5. HÀM PHỤ TRỢ TẢI FILE GEOJSON AN TOÀN
+// 1A. HÀM PHỤ TRỢ TẢI FILE GEOJSON AN TOÀN
 // ==========================================
 async function fetchGeoDataByUrl(url) {
     try {
@@ -141,7 +141,7 @@ async function fetchGeoDataByUrl(url) {
 
 
 // ==========================================
-// 2. XỬ LÝ LOGIC BẢN ĐỒ VÀ HÀNH CHÍNH (PROVINCE)
+// 2. XỬ LÝ LOGIC BẢN ĐỒ VÀ HÀNH CHÍNH
 // ==========================================
 let currentGeoData = null;
 
@@ -363,7 +363,7 @@ function initFilter(map) {
 
 
 // ==========================================
-// 3. QUẢN LÝ BẢN ĐỒ MAPLIBRE VÀ TƯƠNG TÁC (MAP)
+// 3. QUẢN LÝ BẢN ĐỒ MAPLIBRE VÀ TƯƠNG TÁC
 // ==========================================
 let activeMarkers = []; 
 window.selectedThuaDatId = null; 
