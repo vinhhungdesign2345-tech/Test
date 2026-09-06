@@ -615,7 +615,7 @@ function initMap() {
                             cornerEl.style.fontWeight = 'normal';               // Chữ in đậm
                             cornerEl.style.textShadow = '1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000'; // Viền đen chống lóa
                             cornerEl.style.whiteSpace = 'nowrap';             // Không ngắt dòng
-                            cornerEl.innerHTML = `G${index + 1}: ${lat}, ${lng}`; // Hiển thị dạng: G1: lat, lng
+                            cornerEl.innerHTML = `G${index + 1}:<br>${lat}, ${lng}`; // Hiển thị dạng: G1: Xuống dòng lat, lng
                             
                             // Mặc định ẩn nhãn tọa độ góc khi mới click chọn thửa đất
                             cornerEl.style.display = 'none';
