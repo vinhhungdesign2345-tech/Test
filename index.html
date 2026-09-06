@@ -641,19 +641,22 @@
          ========================================================================== -->
     <div id="map"></div>
 
-    <!-- ==========================================================================
-         KHUNG BẢNG PANEL NỔI: Bảng thông tin chi tiết của thửa đất hiển thị khi người dùng click chọn một thửa trên bản đồ
-         ========================================================================== -->
-    <div id="parcel-info-panel" class="parcel-panel" style="display: none;">
-        <div class="panel-header">
-            <span><b>THÔNG TIN THỬA ĐẤT</b></span>
-            <!-- Nút bấm hình dấu nhân (&times;) dùng để đóng/tắt panel thông tin thửa đất -->
-            <button onclick="closeParcelPanel()" class="close-btn">&times;</button>
-        </div>
-        <!-- Vùng thân bên trong chứa chi tiết toàn bộ các thuộc tính thông tin của thửa đất -->
-        <div id="panel-content" class="panel-body">
-        </div>
+    <!-- Khung hiển thị thông tin thửa đất và bản đồ thu nhỏ ranh đất -->
+<div id="parcel-info-panel" style="display: none; position: absolute; bottom: 20px; right: 20px; width: 350px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 1000; font-family: sans-serif;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px;">
+        <h3 style="margin: 0; font-size: 15px; color: #333;">Thông tin thửa đất</h3>
+        <button onclick="closeParcelPanel()" style="background: none; border: none; font-size: 16px; cursor: pointer; font-weight: bold;">✕</button>
     </div>
+    
+    <!-- Nội dung thông tin thửa đất -->
+    <div id="panel-content" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; margin-bottom: 12px; color: #444;">
+        <!-- Dữ liệu sẽ được điền tự động vào đây khi click vào thửa đất -->
+    </div>
+    
+    <!-- Tiêu đề và khung chứa bản đồ thu nhỏ ranh đất -->
+    <div style="font-weight: bold; font-size: 13px; margin-bottom: 5px; color: #333;">Ranh giới thửa đất:</div>
+    <div id="mini-parcel-map" style="width: 100%; height: 200px; border-radius: 6px; border: 1px solid #ddd; background: #f9f9f9;"></div>
+</div>
 
     <!-- ==========================================================================
          CỤM CÔNG CỤ (MAP-LAYER-CONTROL): Nút đổi lớp nền bản đồ (Vệ tinh/OSM) & Nút đo khoảng cách
