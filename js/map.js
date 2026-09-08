@@ -466,61 +466,50 @@ function initMap() {
         }
     });
 
-   // Sự kiện xảy ra khi bản đồ đã tải xong hoàn toàn cấu trúc cơ bản
-map.on('load', () => {
-    const satLayer = 'google-satellite-layer'; // ID lớp bản đồ vệ tinh Google
-    const osmLayer = 'osm-layer'; // ID lớp bản đồ nền OpenStreetMap
+    // Sự kiện xảy ra khi bản đồ đã tải xong hoàn toàn cấu trúc cơ bản
+    map.on('load', () => {
+        const satLayer = 'google-satellite-layer'; // ID lớp bản đồ vệ tinh Google
+        const osmLayer = 'osm-layer'; // ID lớp bản đồ nền OpenStreetMap
 
-    map.setLayoutProperty(satLayer, 'visibility', 'visible'); // Mặc định bật hiển thị lớp vệ tinh
-    map.setLayoutProperty(osmLayer, 'visibility', 'none');    // Mặc định ẩn lớp OSM
+        map.setLayoutProperty(satLayer, 'visibility', 'visible'); // Mặc định bật hiển thị lớp vệ tinh
+        map.setLayoutProperty(osmLayer, 'visibility', 'none');    // Mặc định ẩn lớp OSM
 
-    // 1. Khởi tạo lớp quy hoạch từ file riêng
-    initQuyHoachLayer(map);
+        // Thiết lập nút bấm chuyển đổi qua lại giữa bản đồ Vệ tinh và bản đồ OSM
+        const toggleBtn = document.getElementById('toggleLayerBtn');
+        if (toggleBtn) {
+            toggleBtn.innerText = 'Chuyển sang Bản đồ OSM';
+            toggleBtn.onclick = function() {
+                const isSatVisible = map.getLayoutProperty(satLayer, 'visibility') === 'visible';
+                if (isSatVisible) {
+                    map.setLayoutProperty(satLayer, 'visibility', 'none');
+                    map.setLayoutProperty(osmLayer, 'visibility', 'visible');
+                    this.innerText = 'Chuyển sang Bản đồ Vệ tinh';
+                } else {
+                    map.setLayoutProperty(satLayer, 'visibility', 'visible');
+                    map.setLayoutProperty(osmLayer, 'visibility', 'none');
+                    this.innerText = 'Chuyển sang Bản đồ OSM';
+                }
+            };
+        }
 
-    // 2. Gắn sự kiện cho nút bấm bật/tắt quy hoạch
-    const quyHoachBtn = document.getElementById('toggleQuyHoachBtn');
-    if (quyHoachBtn) {
-        quyHoachBtn.onclick = toggleQuyHoach;
-    }
+        // Thiết lập thanh trượt (slider) điều chỉnh độ mờ (opacity) của lớp thửa đất
+        const opacitySlider = document.getElementById('opacitySlider');
+        const opacityValueLabel = document.getElementById('opacityValue');
 
-    // 3. Thiết lập nút bấm chuyển đổi qua lại giữa bản đồ Vệ tinh và bản đồ OSM
-    const toggleBtn = document.getElementById('toggleLayerBtn');
-    if (toggleBtn) {
-        toggleBtn.innerText = 'Chuyển sang Bản đồ OSM';
-        toggleBtn.onclick = function() {
-            const isSatVisible = map.getLayoutProperty(satLayer, 'visibility') === 'visible';
-            if (isSatVisible) {
-                map.setLayoutProperty(satLayer, 'visibility', 'none');
-                map.setLayoutProperty(osmLayer, 'visibility', 'visible');
-                this.innerText = 'Chuyển sang Bản đồ Vệ tinh';
-            } else {
-                map.setLayoutProperty(satLayer, 'visibility', 'visible');
-                map.setLayoutProperty(osmLayer, 'visibility', 'none');
-                this.innerText = 'Chuyển sang Bản đồ OSM';
-            }
-        };
-    }
-
-    // 4. Thiết lập thanh trượt (slider) điều chỉnh độ mờ (opacity) của lớp thửa đất
-    const opacitySlider = document.getElementById('opacitySlider');
-    const opacityValueLabel = document.getElementById('opacityValue');
-
-    if (opacitySlider) {
-        opacitySlider.oninput = function() {
-            const val = parseFloat(this.value); // Lấy giá trị số thực từ thanh trượt
-            if (opacityValueLabel) opacityValueLabel.innerText = val; // Hiển thị số liệu trực quan ra giao diện
-            
-            // Cập nhật độ mờ cho lớp nền thửa đất từ Google Sheets
-            if (map.getLayer('sheet-thua-dat-fill')) {
-                map.setPaintProperty('sheet-thua-dat-fill', 'fill-opacity', val);
-            }
-            // Cập nhật độ mờ cao hơn một chút cho lớp thửa đang được chọn (highlight)
-            if (map.getLayer('sheet-thua-dat-highlight-fill')) {
-                map.setPaintProperty('sheet-thua-dat-highlight-fill', 'fill-opacity', Math.min(val + 0.2, 1.0));
-            }
-        };
-    }
-});
+        if (opacitySlider) {
+            opacitySlider.oninput = function() {
+                const val = parseFloat(this.value); // Lấy giá trị số thực từ thanh trượt
+                if (opacityValueLabel) opacityValueLabel.innerText = val; // Hiển thị số liệu trực quan ra giao diện
+                // Cập nhật độ mờ cho lớp nền thửa đất từ Google Sheets
+                if (map.getLayer('sheet-thua-dat-fill')) {
+                    map.setPaintProperty('sheet-thua-dat-fill', 'fill-opacity', val);
+                }
+                // Cập nhật độ mờ cao hơn một chút cho lớp thửa đang được chọn (highlight)
+                if (map.getLayer('sheet-thua-dat-highlight-fill')) {
+                    map.setPaintProperty('sheet-thua-dat-highlight-fill', 'fill-opacity', Math.min(val + 0.2, 1.0));
+                }
+            };
+        }
 
         // Thêm nguồn dữ liệu và lớp hiển thị kích thước cạnh thửa đất nếu chưa có sẵn
         if (!map.getSource('parcel-dimensions-source')) {
@@ -548,6 +537,7 @@ map.on('load', () => {
 
         initFilter(map); // Khởi tạo bộ lọc hành chính (Tỉnh, Phường)
         if (typeof initThuaDatSearch === 'function') initThuaDatSearch(map); // Khởi tạo tính năng tìm kiếm thửa đất
+    });
 
     const sheetLayers = ['sheet-thua-dat-fill', 'sheet-thua-dat-line']; // Danh sách các lớp tương ứng với thửa đất tải từ Google Sheets
     let isFeatureClicked = false; // Biến cờ kiểm tra xem người dùng có click trúng đối tượng thửa đất hay không
