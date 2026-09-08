@@ -548,7 +548,6 @@ map.on('load', () => {
 
         initFilter(map); // Khởi tạo bộ lọc hành chính (Tỉnh, Phường)
         if (typeof initThuaDatSearch === 'function') initThuaDatSearch(map); // Khởi tạo tính năng tìm kiếm thửa đất
-    });
 
     const sheetLayers = ['sheet-thua-dat-fill', 'sheet-thua-dat-line']; // Danh sách các lớp tương ứng với thửa đất tải từ Google Sheets
     let isFeatureClicked = false; // Biến cờ kiểm tra xem người dùng có click trúng đối tượng thửa đất hay không
