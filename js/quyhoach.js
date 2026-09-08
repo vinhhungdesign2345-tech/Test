@@ -2,12 +2,12 @@
 // QUẢN LÝ LỚP BẢN ĐỒ QUY HOẠCH
 // ==========================================
 
-function initQuyHoachLayer(map) {
-    if (!map) return;
+function initQuyHoachLayer(mapInstance) {
+    if (!mapInstance) return;
 
     // 1. Thêm nguồn dữ liệu (Source) dạng raster tiles quy hoạch
-    if (!map.getSource('quy-hoach-source')) {
-        map.addSource('quy-hoach-source', {
+    if (!mapInstance.getSource('quy-hoach-source')) {
+        mapInstance.addSource('quy-hoach-source', {
             type: 'raster',
             tiles: [
                 'https://r4gmiynxmeobj.vcdn.cloud/ca-mau-2030/14/{z}/{x}/{y}.png'
@@ -17,10 +17,9 @@ function initQuyHoachLayer(map) {
         });
 
         // 2. Thêm lớp hiển thị (Layer) lên bản đồ
-        // Đặt phía sau lớp 'sheet-thua-dat-fill' (nếu có) để lớp quy hoạch nằm dưới lớp thửa đất
-        const targetLayer = map.getLayer('sheet-thua-dat-fill') ? 'sheet-thua-dat-fill' : undefined;
+        const targetLayer = mapInstance.getLayer('sheet-thua-dat-fill') ? 'sheet-thua-dat-fill' : undefined;
 
-        map.addLayer({
+        mapInstance.addLayer({
             id: 'quy-hoach-layer',
             type: 'raster',
             source: 'quy-hoach-source',
@@ -33,12 +32,13 @@ function initQuyHoachLayer(map) {
 
 // Hàm bật/tắt (Toggle) hiển thị lớp quy hoạch
 function toggleQuyHoach() {
-    const map = window.currentMapInstance;
-    if (!map) return;
+    // Dùng biến 'map' toàn cục đang có sẵn trong project của bạn thay vì window.currentMapInstance
+    if (typeof map === 'undefined' || !map) return; 
 
     const layerId = 'quy-hoach-layer';
     if (map.getLayer(layerId)) {
         const currentVisibility = map.getLayoutProperty(layerId, 'visibility');
+        // Nếu đang là 'none' hoặc chưa thiết lập thì chuyển thành 'visible'
         const newVisibility = (currentVisibility === 'none') ? 'visible' : 'none';
         
         map.setLayoutProperty(layerId, 'visibility', newVisibility);
