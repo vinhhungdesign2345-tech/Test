@@ -1,11 +1,22 @@
 // ==========================================
-// QUẢN LÝ LỚP BẢN ĐỒ QUY HOẠCH (TỰ BẮT MAP)
+// QUẢN LÝ LỚP BẢN ĐỒ QUY HOẠCH
 // ==========================================
 
 document.addEventListener("DOMContentLoaded", function () {
     const checkInterval = setInterval(() => {
-        const targetMap = window.map || window.currentMapInstance || (typeof map !== 'undefined' ? map : null);
-        
+        let targetMap = null;
+
+        // Quét tìm thực thể bản đồ MapLibre thực sự (có hàm getSource)
+        for (let key in window) {
+            try {
+                const obj = window[key];
+                if (obj && typeof obj.getSource === 'function' && typeof obj.addLayer === 'function') {
+                    targetMap = obj;
+                    break;
+                }
+            } catch (e) {}
+        }
+
         if (targetMap) {
             clearInterval(checkInterval);
             initQuyHoachLayer(targetMap);
@@ -21,7 +32,8 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function initQuyHoachLayer(m) {
-    if (!m) return;
+    if (!m || typeof m.getSource !== 'function') return;
+
     if (!m.getSource('quy-hoach-source')) {
         m.addSource('quy-hoach-source', {
             type: 'raster',
@@ -42,7 +54,7 @@ function initQuyHoachLayer(m) {
 }
 
 function toggleQuyHoachDirect(m) {
-    if (!m) return;
+    if (!m || typeof m.getLayer !== 'function') return;
     const layerId = 'quy-hoach-layer';
     
     if (m.getLayer(layerId)) {
