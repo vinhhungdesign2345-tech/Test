@@ -630,42 +630,64 @@ function initMap() {
                     }
 
                     // ==========================================
-// TỌA ĐỘ CÁC GÓC THỬA ĐẤT (CỐ ĐỊNH THỨ TỰ GỐC TỪ GEOJSON)
+// ==========================================
+// TỌA ĐỘ CÁC GÓC THỬA ĐẤT (CHUẨN HÓA VỊ TRÍ CỐ ĐỊNH 100%)
 // ==========================================
 let polygonCoords = [];
 if (selectedFeature.geometry.type === 'Polygon') {
-    polygonCoords = selectedFeature.geometry.coordinates[0]; // Lấy danh sách tọa độ vòng ngoài của Polygon
+    polygonCoords = selectedFeature.geometry.coordinates[0];
 } else if (selectedFeature.geometry.type === 'MultiPolygon') {
-    polygonCoords = selectedFeature.geometry.coordinates[0][0]; // Lấy danh sách tọa độ của MultiPolygon[cite: 2]
+    polygonCoords = selectedFeature.geometry.coordinates[0][0];
 }
 
-// Nếu có tọa độ góc, tiến hành tạo nhãn hiển thị tọa độ từng góc G1, G2...
 if (polygonCoords && polygonCoords.length > 0) {
-    const uniqueCoords = polygonCoords.slice(0, polygonCoords.length - 1); // Loại bỏ điểm trùng lặp cuối vòng khép kín[cite: 2]
-    const totalCorners = uniqueCoords.length;
+    let uniqueCoords = polygonCoords.slice(0, polygonCoords.length - 1); // Bỏ điểm lặp cuối
 
-    uniqueCoords.forEach((coord, index) => {
-        const lng = coord[0].toFixed(4); // Lấy kinh độ, làm tròn 4 chữ số thập phân[cite: 2]
-        const lat = coord[1].toFixed(4); // Lấy vĩ độ, làm tròn 4 chữ số thập phân[cite: 2]
+    if (uniqueCoords.length > 0) {
+        // THUẬT TOÁN CỐ ĐỊNH ĐIỂM G1: Luôn tìm điểm có tọa độ Tây-Nam nhất (Kinh độ nhỏ nhất, nếu trùng thì Vĩ độ nhỏ nhất) 
+        // làm gốc G1. Cách này ép mọi bản sao của thửa đất dù được vẽ ngược xuôi kiểu gì cũng phải bắt đầu từ cùng một góc!
+        let startIndex = 0;
+        let minLng = uniqueCoords[0][0];
+        let minLat = uniqueCoords[0][1];
 
-        const cornerEl = document.createElement('div');
-        cornerEl.style.color = '#ffffff';
-        cornerEl.style.fontSize = '12px';
-        cornerEl.style.fontWeight = 'normal'; 
-        cornerEl.style.textShadow = '1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000';
-        cornerEl.style.whiteSpace = 'nowrap';
-        
-        // Hiển thị chuẩn định dạng G1/4, G2/4 kèm tọa độ lat, lng
-        cornerEl.innerHTML = `G${index + 1}/${totalCorners}:<br>${lat},<br> ${lng}`; //[cite: 2]
-        
-        cornerEl.style.display = window._isParcelLabelsVisible ? 'block' : 'none'; //[cite: 2]
+        for (let i = 1; i < uniqueCoords.length; i++) {
+            let lng = uniqueCoords[i][0];
+            let lat = uniqueCoords[i][1];
+            if (lng < minLng || (lng === minLng && lat < minLat)) {
+                minLng = lng;
+                minLat = lat;
+                startIndex = i;
+            }
+        }
 
-        const cornerMarker = new maplibregl.Marker({ element: cornerEl, anchor: 'top', offset: [0, 5] })
-            .setLngLat(coord)
-            .addTo(map); // Thêm marker tọa độ góc lên bản đồ[cite: 2]
+        // Xoay mảng sao cho điểm Tây-Nam nhất luôn đứng ở vị trí đầu tiên (G1)
+        uniqueCoords = uniqueCoords.slice(startIndex).concat(uniqueCoords.slice(0, startIndex));
 
-        activeMarkers.push(cornerMarker); //[cite: 2]
-    });
+        const totalCorners = uniqueCoords.length;
+
+        uniqueCoords.forEach((coord, index) => {
+            const lng = coord[0].toFixed(4);
+            const lat = coord[1].toFixed(4);
+
+            const cornerEl = document.createElement('div');
+            cornerEl.style.color = '#ffffff';
+            cornerEl.style.fontSize = '12px';
+            cornerEl.style.fontWeight = 'normal'; 
+            cornerEl.style.textShadow = '1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000';
+            cornerEl.style.whiteSpace = 'nowrap';
+            
+            // Hiển thị chuẩn G1/4, G2/4 kèm tọa độ
+            cornerEl.innerHTML = `G${index + 1}/${totalCorners}:<br>${lat} <br> ${lng}`;
+            
+            cornerEl.style.display = window._isParcelLabelsVisible ? 'block' : 'none';
+
+            const cornerMarker = new maplibregl.Marker({ element: cornerEl, anchor: 'top', offset: [0, 5] })
+                .setLngLat(coord)
+                .addTo(map);
+
+            activeMarkers.push(cornerMarker);
+        });
+    }
 }
             // ==========================================
             // TRÍCH XUẤT THÔNG TIN THUỘC TÍNH THỬA ĐẤT
