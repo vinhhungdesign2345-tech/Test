@@ -643,7 +643,6 @@ function initMap() {
 
                         if (uniqueCoords.length > 0) {
                             // CỐ ĐỊNH ĐIỂM G1: Tìm đỉnh có tọa độ Tây-Nam nhất (Kinh độ nhỏ nhất, nếu trùng thì Vĩ độ nhỏ nhất)
-                            // Làm mốc chuẩn cố định để dù click bất kỳ đâu trên thửa, G1 vẫn luôn nằm đúng một vị trí duy nhất.
                             let startIndex = 0;
                             let minLng = uniqueCoords[0][0];
                             let minLat = uniqueCoords[0][1];
@@ -686,6 +685,10 @@ function initMap() {
                             });
                         }
                     }
+                } catch (err) {
+                    console.error("Lỗi trong quá trình tính toán độ dài cạnh thửa đất:", err);
+                }
+            }
             // ==========================================
             // TRÍCH XUẤT THÔNG TIN THUỘC TÍNH THỬA ĐẤT
             // ==========================================
