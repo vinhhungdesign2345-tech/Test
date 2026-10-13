@@ -629,66 +629,63 @@ function initMap() {
                         map.getSource('parcel-dimensions-source').setData({ type: 'FeatureCollection', features: dimensionFeatures });
                     }
 
-                    // ==========================================
-// ==========================================
-// TỌA ĐỘ CÁC GÓC THỬA ĐẤT (CHUẨN HÓA VỊ TRÍ CỐ ĐỊNH 100%)
-// ==========================================
-let polygonCoords = [];
-if (selectedFeature.geometry.type === 'Polygon') {
-    polygonCoords = selectedFeature.geometry.coordinates[0];
-} else if (selectedFeature.geometry.type === 'MultiPolygon') {
-    polygonCoords = selectedFeature.geometry.coordinates[0][0];
-}
+                    // TỌA ĐỘ CÁC GÓC THỬA ĐẤT (G1, G2,...) - ĐÃ CHUẨN HÓA CỐ ĐỊNH G1
+                    let polygonCoords = [];
+                    if (selectedFeature.geometry.type === 'Polygon') {
+                        polygonCoords = selectedFeature.geometry.coordinates[0]; // Lấy danh sách tọa độ vòng ngoài của Polygon
+                    } else if (selectedFeature.geometry.type === 'MultiPolygon') {
+                        polygonCoords = selectedFeature.geometry.coordinates[0][0]; // Lấy danh sách tọa độ của MultiPolygon
+                    }
 
-if (polygonCoords && polygonCoords.length > 0) {
-    let uniqueCoords = polygonCoords.slice(0, polygonCoords.length - 1); // Bỏ điểm lặp cuối
+                    // Nếu có tọa độ góc, tiến hành tạo nhãn hiển thị tọa độ từng góc G1, G2...
+                    if (polygonCoords && polygonCoords.length > 0) {
+                        let uniqueCoords = polygonCoords.slice(0, polygonCoords.length - 1); // Loại bỏ điểm trùng lặp cuối vòng khép kín
 
-    if (uniqueCoords.length > 0) {
-        // THUẬT TOÁN CỐ ĐỊNH ĐIỂM G1: Luôn tìm điểm có tọa độ Tây-Nam nhất (Kinh độ nhỏ nhất, nếu trùng thì Vĩ độ nhỏ nhất) 
-        // làm gốc G1. Cách này ép mọi bản sao của thửa đất dù được vẽ ngược xuôi kiểu gì cũng phải bắt đầu từ cùng một góc!
-        let startIndex = 0;
-        let minLng = uniqueCoords[0][0];
-        let minLat = uniqueCoords[0][1];
+                        if (uniqueCoords.length > 0) {
+                            // CỐ ĐỊNH ĐIỂM G1: Tìm đỉnh có tọa độ Tây-Nam nhất (Kinh độ nhỏ nhất, nếu trùng thì Vĩ độ nhỏ nhất)
+                            // Làm mốc chuẩn cố định để dù click bất kỳ đâu trên thửa, G1 vẫn luôn nằm đúng một vị trí duy nhất.
+                            let startIndex = 0;
+                            let minLng = uniqueCoords[0][0];
+                            let minLat = uniqueCoords[0][1];
 
-        for (let i = 1; i < uniqueCoords.length; i++) {
-            let lng = uniqueCoords[i][0];
-            let lat = uniqueCoords[i][1];
-            if (lng < minLng || (lng === minLng && lat < minLat)) {
-                minLng = lng;
-                minLat = lat;
-                startIndex = i;
-            }
-        }
+                            for (let i = 1; i < uniqueCoords.length; i++) {
+                                let lng = uniqueCoords[i][0];
+                                let lat = uniqueCoords[i][1];
+                                if (lng < minLng || (lng === minLng && lat < minLat)) {
+                                    minLng = lng;
+                                    minLat = lat;
+                                    startIndex = i;
+                                }
+                            }
 
-        // Xoay mảng sao cho điểm Tây-Nam nhất luôn đứng ở vị trí đầu tiên (G1)
-        uniqueCoords = uniqueCoords.slice(startIndex).concat(uniqueCoords.slice(0, startIndex));
+                            // Xoay mảng tọa độ sao cho đỉnh Tây-Nam nhất luôn đứng ở vị trí đầu tiên (G1)
+                            uniqueCoords = uniqueCoords.slice(startIndex).concat(uniqueCoords.slice(0, startIndex));
 
-        const totalCorners = uniqueCoords.length;
+                            const totalCorners = uniqueCoords.length;
 
-        uniqueCoords.forEach((coord, index) => {
-            const lng = coord[0].toFixed(4);
-            const lat = coord[1].toFixed(4);
+                            uniqueCoords.forEach((coord, index) => {
+                                const lng = coord[0].toFixed(4); // Lấy kinh độ, làm tròn 4 chữ số thập phân
+                                const lat = coord[1].toFixed(4); // Lấy vĩ độ, làm tròn 4 chữ số thập phân
 
-            const cornerEl = document.createElement('div');
-            cornerEl.style.color = '#ffffff';
-            cornerEl.style.fontSize = '12px';
-            cornerEl.style.fontWeight = 'normal'; 
-            cornerEl.style.textShadow = '1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000';
-            cornerEl.style.whiteSpace = 'nowrap';
-            
-            // Hiển thị chuẩn G1/4, G2/4 kèm tọa độ
-            cornerEl.innerHTML = `G${index + 1}/${totalCorners}:<br>${lat} <br> ${lng}`;
-            
-            cornerEl.style.display = window._isParcelLabelsVisible ? 'block' : 'none';
+                                const cornerEl = document.createElement('div');
+                                cornerEl.style.color = '#ffffff';
+                                cornerEl.style.fontSize = '12px';
+                                cornerEl.style.fontWeight = 'normal';        
+                                cornerEl.style.textShadow = '1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000';
+                                cornerEl.style.whiteSpace = 'nowrap';
+                                cornerEl.innerHTML = `G${index + 1}/${totalCorners}:<br>${lat} <br> ${lng}`; // Tên góc chuẩn dạng G1/4, G2/4... kèm tọa độ xuống dòng
+                                
+                                // ĐIỀU CHỈNH TRẠNG THÁI HIỂN THỊ CHO NHÃN GÓC TƯƠNG TỰ
+                                cornerEl.style.display = window._isParcelLabelsVisible ? 'block' : 'none';
 
-            const cornerMarker = new maplibregl.Marker({ element: cornerEl, anchor: 'top', offset: [0, 5] })
-                .setLngLat(coord)
-                .addTo(map);
+                                const cornerMarker = new maplibregl.Marker({ element: cornerEl, anchor: 'top', offset: [0, 5] })
+                                    .setLngLat(coord)
+                                    .addTo(map); // Thêm marker tọa độ góc lên bản đồ
 
-            activeMarkers.push(cornerMarker);
-        });
-    }
-}
+                                activeMarkers.push(cornerMarker);
+                            });
+                        }
+                    }
             // ==========================================
             // TRÍCH XUẤT THÔNG TIN THUỘC TÍNH THỬA ĐẤT
             // ==========================================
