@@ -629,7 +629,7 @@ function initMap() {
                         map.getSource('parcel-dimensions-source').setData({ type: 'FeatureCollection', features: dimensionFeatures });
                     }
 
-                    // TỌA ĐỘ CÁC GÓC THỬA ĐẤT (G1, G2,...) - ĐÃ CHUẨN HÓA CỐ ĐỊNH G1
+                    // TỌA ĐỘ CÁC GÓC THỬA ĐẤT (G1, G2,...)
                     let polygonCoords = [];
                     if (selectedFeature.geometry.type === 'Polygon') {
                         polygonCoords = selectedFeature.geometry.coordinates[0]; // Lấy danh sách tọa độ vòng ngoài của Polygon
@@ -639,51 +639,29 @@ function initMap() {
 
                     // Nếu có tọa độ góc, tiến hành tạo nhãn hiển thị tọa độ từng góc G1, G2...
                     if (polygonCoords && polygonCoords.length > 0) {
-                        let uniqueCoords = polygonCoords.slice(0, polygonCoords.length - 1); // Loại bỏ điểm trùng lặp cuối vòng khép kín
+                        const uniqueCoords = polygonCoords.slice(0, polygonCoords.length - 1); // Loại bỏ điểm trùng lặp cuối vòng khép kín
 
-                        if (uniqueCoords.length > 0) {
-                            // CỐ ĐỊNH ĐIỂM G1: Tìm đỉnh có tọa độ Tây-Nam nhất (Kinh độ nhỏ nhất, nếu trùng thì Vĩ độ nhỏ nhất)
-                            let startIndex = 0;
-                            let minLng = uniqueCoords[0][0];
-                            let minLat = uniqueCoords[0][1];
+                        uniqueCoords.forEach((coord, index) => {
+                            const lng = coord[0].toFixed(4); // Lấy kinh độ, làm tròn 4 chữ số thập phân
+                            const lat = coord[1].toFixed(4); // Lấy vĩ độ, làm tròn 4 chữ số thập phân
 
-                            for (let i = 1; i < uniqueCoords.length; i++) {
-                                let lng = uniqueCoords[i][0];
-                                let lat = uniqueCoords[i][1];
-                                if (lng < minLng || (lng === minLng && lat < minLat)) {
-                                    minLng = lng;
-                                    minLat = lat;
-                                    startIndex = i;
-                                }
-                            }
+                            const cornerEl = document.createElement('div');
+                            cornerEl.style.color = '#ffffff';
+                            cornerEl.style.fontSize = '12px';
+                            cornerEl.style.fontWeight = 'normal';        
+                            cornerEl.style.textShadow = '1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000';
+                            cornerEl.style.whiteSpace = 'nowrap';
+                            cornerEl.innerHTML = `G${index + 1}/${uniqueCoords.length}:<br>${lat} <br> ${lng}`; // Tên góc (G1/tổng...): lat xuống hàng lng
+                            
+                            // ĐIỀU CHỈNH TRẠNG THÁI HIỂN THỊ CHO NHÃN GÓC TƯƠNG TỰ
+                            cornerEl.style.display = window._isParcelLabelsVisible ? 'block' : 'none';
 
-                            // Xoay mảng tọa độ sao cho đỉnh Tây-Nam nhất luôn đứng ở vị trí đầu tiên (G1)
-                            uniqueCoords = uniqueCoords.slice(startIndex).concat(uniqueCoords.slice(0, startIndex));
+                            const cornerMarker = new maplibregl.Marker({ element: cornerEl, anchor: 'top', offset: [0, 5] })
+                                .setLngLat(coord)
+                                .addTo(map); // Thêm marker tọa độ góc lên bản đồ
 
-                            const totalCorners = uniqueCoords.length;
-
-                            uniqueCoords.forEach((coord, index) => {
-                                const lng = coord[0].toFixed(4); // Lấy kinh độ, làm tròn 4 chữ số thập phân
-                                const lat = coord[1].toFixed(4); // Lấy vĩ độ, làm tròn 4 chữ số thập phân
-
-                                const cornerEl = document.createElement('div');
-                                cornerEl.style.color = '#ffffff';
-                                cornerEl.style.fontSize = '12px';
-                                cornerEl.style.fontWeight = 'normal';        
-                                cornerEl.style.textShadow = '1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000';
-                                cornerEl.style.whiteSpace = 'nowrap';
-                                cornerEl.innerHTML = `G${index + 1}/${totalCorners}:<br>${lat} <br> ${lng}`; // Tên góc chuẩn dạng G1/4, G2/4... kèm tọa độ xuống dòng
-                                
-                                // ĐIỀU CHỈNH TRẠNG THÁI HIỂN THỊ CHO NHÃN GÓC TƯƠNG TỰ
-                                cornerEl.style.display = window._isParcelLabelsVisible ? 'block' : 'none';
-
-                                const cornerMarker = new maplibregl.Marker({ element: cornerEl, anchor: 'top', offset: [0, 5] })
-                                    .setLngLat(coord)
-                                    .addTo(map); // Thêm marker tọa độ góc lên bản đồ
-
-                                activeMarkers.push(cornerMarker);
-                            });
-                        }
+                            activeMarkers.push(cornerMarker);
+                        });
                     }
                 } catch (err) {
                     console.error("Lỗi trong quá trình tính toán độ dài cạnh thửa đất:", err);
