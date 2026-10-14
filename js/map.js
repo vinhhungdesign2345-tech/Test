@@ -550,7 +550,25 @@ function initMap() {
             if (!e.features || !e.features.length) return; // Nếu không có đối tượng nào được bấm trúng thì dừng lại
             isFeatureClicked = true; // Đánh dấu là đã click trúng thửa đất
 
-            const selectedFeature = e.features[0]; // Lấy thửa đất đầu tiên bị click trúng
+            const clickedFeature = e.features[0]; // Lấy thửa đất đầu tiên bị click trúng
+            const rawProps = clickedFeature.properties || {};
+            const parcelId = rawProps['ID Thửa Đất'] || rawProps['id'] || '';
+
+            // TRA CỨU NGƯỢC VÀO GEOJSON GỐC ĐỂ LẤY HÌNH HỌC CHUẨN XÁC TUYỆT ĐỐI
+            let selectedFeature = clickedFeature;
+            if (currentGeoData && currentGeoData.features) {
+                const found = currentGeoData.features.find(f => {
+                    const p = f.properties || {};
+                    return (p['ID Thửa Đất'] == parcelId) || (p['id'] == parcelId) || (p['Số tờ'] == rawProps['Số tờ'] && p['Số thửa'] == rawProps['Số thửa']);
+                });
+                if (found) {
+                    selectedFeature = found;
+                }
+            }
+
+            window._currentParcelFeature = selectedFeature; // Lưu tính năng hình học thửa đất vào biến toàn cục
+            window._currentParcelRawProps = rawProps;
+            window.selectedThuaDatId = parcelId;
             window._currentParcelFeature = selectedFeature; // Lưu tính năng hình học thửa đất vào biến toàn cục
             const rawProps = selectedFeature.properties || {}; // Lấy danh sách thuộc tính của thửa đất
             window._currentParcelRawProps = rawProps;
