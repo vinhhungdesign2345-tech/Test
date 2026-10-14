@@ -629,44 +629,44 @@ function initMap() {
                         map.getSource('parcel-dimensions-source').setData({ type: 'FeatureCollection', features: dimensionFeatures });
                     }
 
-                    // TỌA ĐỘ CÁC GÓC THỬA ĐẤT (G1, G2,...) - AN TOÀN VÀ CHUẨN XÁC
+                    // TỌA ĐỘ CÁC GÓC THỬA ĐẤT (G1, G2,...)
                     let polygonCoords = [];
                     if (selectedFeature.geometry.type === 'Polygon') {
-                        polygonCoords = selectedFeature.geometry.coordinates[0];
+                        polygonCoords = selectedFeature.geometry.coordinates[0]; // Lấy danh sách tọa độ vòng ngoài của Polygon
                     } else if (selectedFeature.geometry.type === 'MultiPolygon') {
-                        polygonCoords = selectedFeature.geometry.coordinates[0][0];
+                        polygonCoords = selectedFeature.geometry.coordinates[0][0]; // Lấy danh sách tọa độ của MultiPolygon
                     }
 
+                    // Nếu có tọa độ góc, tiến hành tạo nhãn hiển thị tọa độ từng góc G1, G2...
                     if (polygonCoords && polygonCoords.length > 0) {
-                        const uniqueCoords = polygonCoords.slice(0, polygonCoords.length - 1); // Bỏ điểm lặp cuối
+                        const uniqueCoords = polygonCoords.slice(0, polygonCoords.length - 1); // Loại bỏ điểm trùng lặp cuối vòng khép kín
 
-                        if (uniqueCoords.length > 0) {
-                            const totalCorners = uniqueCoords.length;
+                        uniqueCoords.forEach((coord, index) => {
+                            const lng = coord[0].toFixed(4); // Lấy kinh độ, làm tròn 4 chữ số thập phân
+                            const lat = coord[1].toFixed(4); // Lấy vĩ độ, làm tròn 4 chữ số thập phân
 
-                            uniqueCoords.forEach((coord, index) => {
-                                const lng = coord[0].toFixed(4);
-                                const lat = coord[1].toFixed(4);
+                            const cornerEl = document.createElement('div');
+                            cornerEl.style.color = '#ffffff';
+                            cornerEl.style.fontSize = '12px';
+                            cornerEl.style.fontWeight = 'normal';        
+                            cornerEl.style.textShadow = '1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000';
+                            cornerEl.style.whiteSpace = 'nowrap';
+                            cornerEl.innerHTML = `G${index + 1}/${uniqueCoords.length}:<br>${lat} <br> ${lng}`; // Tên góc (G1/tổng...): lat xuống hàng lng
+                            
+                            // ĐIỀU CHỈNH TRẠNG THÁI HIỂN THỊ CHO NHÃN GÓC TƯƠNG TỰ
+                            cornerEl.style.display = window._isParcelLabelsVisible ? 'block' : 'none';
 
-                                const cornerEl = document.createElement('div');
-                                // Tích hợp chấm tròn màu trắng viền đen ngay tâm, chữ tọa độ bám sát bên dưới
-                                cornerEl.innerHTML = `
-                                    <div style="width: 8px; height: 8px; background-color: #ffffff; border: 2px solid #000000; border-radius: 50%; margin: 0 auto 2px auto;"></div>
-                                    <div style="color: #ffffff; font-size: 11px; font-weight: bold; text-shadow: 1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000; white-space: nowrap; text-align: center;">
-                                        G${index + 1}/${totalCorners}:<br>${lat}, <br>${lng}
-                                    </div>
-                                `;
-                                
-                                cornerEl.style.display = window._isParcelLabelsVisible ? 'block' : 'none';
+                            const cornerMarker = new maplibregl.Marker({ element: cornerEl, anchor: 'top', offset: [0, 5] })
+                                .setLngLat(coord)
+                                .addTo(map); // Thêm marker tọa độ góc lên bản đồ
 
-                                // Ghim chuẩn tâm marker vào tọa độ góc
-                                const cornerMarker = new maplibregl.Marker({ element: cornerEl, anchor: 'center' })
-                                    .setLngLat(coord)
-                                    .addTo(map);
-
-                                activeMarkers.push(cornerMarker);
-                            });
-                        }
+                            activeMarkers.push(cornerMarker);
+                        });
                     }
+                } catch (err) {
+                    console.error("Lỗi trong quá trình tính toán độ dài cạnh thửa đất:", err);
+                }
+            }
             // ==========================================
             // TRÍCH XUẤT THÔNG TIN THUỘC TÍNH THỬA ĐẤT
             // ==========================================
