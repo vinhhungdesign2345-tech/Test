@@ -629,7 +629,7 @@ function initMap() {
                         map.getSource('parcel-dimensions-source').setData({ type: 'FeatureCollection', features: dimensionFeatures });
                     }
 
-                    // TỌA ĐỘ CÁC GÓC THỬA ĐẤT (G1, G2,...)
+                    // TỌA ĐỘ CÁC GÓC THỬA ĐẤT (G1, G2,...) - GHIM CHUẨN TÂM TUYỆT ĐỐI
                     let polygonCoords = [];
                     if (selectedFeature.geometry.type === 'Polygon') {
                         polygonCoords = selectedFeature.geometry.coordinates[0]; // Lấy danh sách tọa độ vòng ngoài của Polygon
@@ -640,33 +640,32 @@ function initMap() {
                     // Nếu có tọa độ góc, tiến hành tạo nhãn hiển thị tọa độ từng góc G1, G2...
                     if (polygonCoords && polygonCoords.length > 0) {
                         const uniqueCoords = polygonCoords.slice(0, polygonCoords.length - 1); // Loại bỏ điểm trùng lặp cuối vòng khép kín
+                        const totalCorners = uniqueCoords.length;
 
                         uniqueCoords.forEach((coord, index) => {
                             const lng = coord[0].toFixed(4); // Lấy kinh độ, làm tròn 4 chữ số thập phân
                             const lat = coord[1].toFixed(4); // Lấy vĩ độ, làm tròn 4 chữ số thập phân
 
                             const cornerEl = document.createElement('div');
-                            cornerEl.style.color = '#ffffff';
-                            cornerEl.style.fontSize = '12px';
-                            cornerEl.style.fontWeight = 'normal';        
-                            cornerEl.style.textShadow = '1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000';
-                            cornerEl.style.whiteSpace = 'nowrap';
-                            cornerEl.innerHTML = `G${index + 1}/${uniqueCoords.length}:<br>${lat} <br> ${lng}`; // Tên góc (G1/tổng...): lat xuống hàng lng
+                            // Tích hợp chấm tròn màu trắng viền đen (8x8px) ngay chính giữa tâm, kèm thông tin tọa độ bám sát bên dưới
+                            cornerEl.innerHTML = `
+                                <div style="width: 8px; height: 8px; background-color: #ffffff; border: 2px solid #000000; border-radius: 50%; margin: 0 auto 2px auto;"></div>
+                                <div style="color: #ffffff; font-size: 11px; font-weight: bold; text-shadow: 1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000; white-space: nowrap; text-align: center;">
+                                    G${index + 1}/${totalCorners}:<br>${lat}, <br>${lng}
+                                </div>
+                            `;
                             
-                            // ĐIỀU CHỈNH TRẠNG THÁI HIỂN THỊ CHO NHÃN GÓC TƯƠNG TỰ
+                            // Điều kiện ẩn/hiện nhãn theo trạng thái chung
                             cornerEl.style.display = window._isParcelLabelsVisible ? 'block' : 'none';
 
-                            const cornerMarker = new maplibregl.Marker({ element: cornerEl, anchor: 'top', offset: [0, 5] })
+                            // Dùng anchor: 'center' để tâm của chấm tròn ghim thẳng tuyệt đối vào tọa độ góc [lng, lat]
+                            const cornerMarker = new maplibregl.Marker({ element: cornerEl, anchor: 'center' })
                                 .setLngLat(coord)
-                                .addTo(map); // Thêm marker tọa độ góc lên bản đồ
+                                .addTo(map);
 
                             activeMarkers.push(cornerMarker);
                         });
                     }
-                } catch (err) {
-                    console.error("Lỗi trong quá trình tính toán độ dài cạnh thửa đất:", err);
-                }
-            }
             // ==========================================
             // TRÍCH XUẤT THÔNG TIN THUỘC TÍNH THỬA ĐẤT
             // ==========================================
