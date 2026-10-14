@@ -646,27 +646,25 @@ function initMap() {
                             const lat = coord[1].toFixed(4); // Lấy vĩ độ, làm tròn 4 chữ số thập phân
 
                             const cornerEl = document.createElement('div');
-                            cornerEl.style.color = '#ffffff';
-                            cornerEl.style.fontSize = '12px';
-                            cornerEl.style.fontWeight = 'normal';        
-                            cornerEl.style.textShadow = '1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000';
-                            cornerEl.style.whiteSpace = 'nowrap';
-                            cornerEl.innerHTML = `G${index + 1}/${uniqueCoords.length}:<br>${lat} <br> ${lng}`; // Tên góc (G1/tổng...): lat xuống hàng lng
+                            // Thêm một chấm tròn nhỏ làm tâm định vị ranh giới ngay tại tọa độ góc
+                            cornerEl.innerHTML = `
+                                <div style="width: 6px; height: 6px; background-color: #ffffff; border: 1.5px solid #000000; border-radius: 50%; margin: 0 auto 2px auto;"></div>
+                                <div style="color: #ffffff; font-size: 12px; font-weight: normal; text-shadow: 1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000; white-space: nowrap; text-align: center;">
+                                    G${index + 1}/${uniqueCoords.length}:<br>${lat} <br> ${lng}
+                                </div>
+                            `;
                             
-                            // ĐIỀU CHỈNH TRẠNG THÁI HIỂN THỊ CHO NHÃN GÓC TƯƠNG TỰ
+                            // ĐIỀU CHỈNH TRẠNG THÁI HIỂN THỊ CHO NHÃN GÓC
                             cornerEl.style.display = window._isParcelLabelsVisible ? 'block' : 'none';
 
-                            const cornerMarker = new maplibregl.Marker({ element: cornerEl, anchor: 'top', offset: [0, 5] })
+                            // ĐỔI TỪ 'top' THÀNH 'center' VÀ XÓA OFFSET ĐỂ TÂM CHẤM TRÒN GHIM CHUẨN XÁC VÀO TỌA ĐỘ
+                            const cornerMarker = new maplibregl.Marker({ element: cornerEl, anchor: 'center' })
                                 .setLngLat(coord)
                                 .addTo(map); // Thêm marker tọa độ góc lên bản đồ
 
                             activeMarkers.push(cornerMarker);
                         });
                     }
-                } catch (err) {
-                    console.error("Lỗi trong quá trình tính toán độ dài cạnh thửa đất:", err);
-                }
-            }
             // ==========================================
             // TRÍCH XUẤT THÔNG TIN THUỘC TÍNH THỬA ĐẤT
             // ==========================================
