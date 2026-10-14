@@ -629,25 +629,50 @@ function initMap() {
                         map.getSource('parcel-dimensions-source').setData({ type: 'FeatureCollection', features: dimensionFeatures });
                     }
 
-                    // TỌA ĐỘ CÁC GÓC THỬA ĐẤT (G1, G2,...) - GHIM CHUẨN TÂM ĐỈNH GỐC
+                    // TỌA ĐỘ CÁC GÓC THỬA ĐẤT (LỌC CHUẨN CÁC ĐỈNH GÓC GỐC - BỎ ĐIỂM DƯ THỪA TRÊN CẠNH)
                     let polygonCoords = [];
                     if (selectedFeature.geometry.type === 'Polygon') {
-                        polygonCoords = selectedFeature.geometry.coordinates[0]; // Lấy danh sách tọa độ vòng ngoài của Polygon
+                        polygonCoords = selectedFeature.geometry.coordinates[0];
                     } else if (selectedFeature.geometry.type === 'MultiPolygon') {
-                        polygonCoords = selectedFeature.geometry.coordinates[0][0]; // Lấy danh sách tọa độ của MultiPolygon
+                        polygonCoords = selectedFeature.geometry.coordinates[0][0];
                     }
 
-                    // Nếu có tọa độ góc, tiến hành tạo nhãn hiển thị tọa độ từng góc G1, G2...
                     if (polygonCoords && polygonCoords.length > 0) {
-                        const uniqueCoords = polygonCoords.slice(0, polygonCoords.length - 1); // Loại bỏ điểm trùng lặp cuối vòng khép kín
-                        const totalCorners = uniqueCoords.length;
+                        const rawCoords = polygonCoords.slice(0, polygonCoords.length - 1); // Bỏ điểm lặp cuối
 
-                        uniqueCoords.forEach((coord, index) => {
-                            const lng = coord[0].toFixed(4); // Lấy kinh độ, làm tròn 4 chữ số thập phân
-                            const lat = coord[1].toFixed(4); // Lấy vĩ độ, làm tròn 4 chữ số thập phân
+                        // Thuật toán lọc: Chỉ giữ lại các điểm là đỉnh góc thực sự (góc bẻ khúc thay đổi hướng)
+                        let cornerCoords = [];
+                        const len = rawCoords.length;
+
+                        for (let i = 0; i < len; i++) {
+                            const prev = rawCoords[(i - 1 + len) % len];
+                            const curr = rawCoords[i];
+                            const next = rawCoords[(i + 1) % len];
+
+                            // Tính vector hướng để kiểm tra xem điểm curr có phải là điểm gấp khúc (góc ranh) hay chỉ là điểm thẳng hàng
+                            const v1x = curr[0] - prev[0];
+                            const v1y = curr[1] - prev[1];
+                            const v2x = next[0] - curr[0];
+                            const v2y = next[1] - curr[1];
+
+                            // Tích chéo để kiểm tra độ đổi hướng (cross product khác 0 nghĩa là có bẻ góc)
+                            const cross = v1x * v2y - v1y * v2x;
+                            
+                            // Nếu có sự thay đổi hướng hoặc là các điểm mốc chính thì đưa vào danh sách góc
+                            if (Math.abs(cross) > 1e-10 || i === 0) {
+                                cornerCoords.push(curr);
+                            }
+                        }
+
+                        // Nếu bộ lọc góc quá ít, fallback về mảng gốc để đảm bảo luôn hiển thị đủ
+                        const finalCorners = cornerCoords.length >= 3 ? cornerCoords : rawCoords;
+                        const totalCorners = finalCorners.length;
+
+                        finalCorners.forEach((coord, index) => {
+                            const lng = coord[0].toFixed(4);
+                            const lat = coord[1].toFixed(4);
 
                             const cornerEl = document.createElement('div');
-                            // Tích hợp chấm tròn định vị ngay tâm (8x8px) và khối chữ tọa độ bám sát bên dưới
                             cornerEl.innerHTML = `
                                 <div style="width: 8px; height: 8px; background-color: #ffffff; border: 2px solid #000000; border-radius: 50%; margin: 0 auto 2px auto;"></div>
                                 <div style="color: #ffffff; font-size: 11px; font-weight: bold; text-shadow: 1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000; white-space: nowrap; text-align: center;">
@@ -655,10 +680,8 @@ function initMap() {
                                 </div>
                             `;
                             
-                            // ĐIỀU CHỈNH TRẠNG THÁI HIỂN THỊ CHO NHÃN GÓC
                             cornerEl.style.display = window._isParcelLabelsVisible ? 'block' : 'none';
 
-                            // Ép tâm marker ghim tuyệt đối vào đúng tọa độ ranh giới góc ở mọi mức zoom
                             const cornerMarker = new maplibregl.Marker({ element: cornerEl, anchor: 'center' })
                                 .setLngLat(coord)
                                 .addTo(map);
@@ -666,10 +689,6 @@ function initMap() {
                             activeMarkers.push(cornerMarker);
                         });
                     }
-                } catch (err) {
-                    console.error("Lỗi trong quá trình tính toán độ dài cạnh thửa đất:", err);
-                }
-            }
             // ==========================================
             // TRÍCH XUẤT THÔNG TIN THUỘC TÍNH THỬA ĐẤT
             // ==========================================
