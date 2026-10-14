@@ -570,39 +570,47 @@ function initMap() {
  map.getSource('parcel-dimensions-source').setData({ type: 'FeatureCollection', features: dimensionFeatures });
  }
 
- // TỌA ĐỘ CÁC GÓC THỬA ĐẤT (G1, G2,...) - GHIM CHUẨN TÂM TUYỆT ĐỐI
- let polygonCoords = [];
- if (selectedFeature.geometry.type === 'Polygon') {
- polygonCoords = selectedFeature.geometry.coordinates[0];
- } else if (selectedFeature.geometry.type === 'MultiPolygon') {
- polygonCoords = selectedFeature.geometry.coordinates[0][0];
- }
+ // TỌA ĐỘ CÁC GÓC THỬA ĐẤT (G1, G2,...) - GHIM TÂM TUYỆT ĐỐI BẰNG CONTAINER 0x0
+                    let polygonCoords = [];
+                    if (selectedFeature.geometry.type === 'Polygon') {
+                        polygonCoords = selectedFeature.geometry.coordinates[0];
+                    } else if (selectedFeature.geometry.type === 'MultiPolygon') {
+                        polygonCoords = selectedFeature.geometry.coordinates[0][0];
+                    }
 
- if (polygonCoords && polygonCoords.length > 0) {
- const uniqueCoords = polygonCoords.slice(0, polygonCoords.length - 1);
- const totalCorners = uniqueCoords.length;
+                    if (polygonCoords && polygonCoords.length > 0) {
+                        const uniqueCoords = polygonCoords.slice(0, polygonCoords.length - 1);
+                        const totalCorners = uniqueCoords.length;
 
- uniqueCoords.forEach((coord, index) => {
- const lng = coord[0].toFixed(4);
- const lat = coord[1].toFixed(4);
+                        uniqueCoords.forEach((coord, index) => {
+                            const lng = coord[0].toFixed(4);
+                            const lat = coord[1].toFixed(4);
 
- const cornerEl = document.createElement('div');
- cornerEl.innerHTML = `
- <div style="width: 6px; height: 6px; background-color: #ffffff; border: 1.5px solid #000000; border-radius: 50%; margin: 0 auto 2px auto;"></div>
- <div style="color: #ffffff; font-size: 11px; font-weight: bold; text-shadow: 1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000; white-space: nowrap; text-align: center;">
- G${index + 1}/${totalCorners}:<br>${lat}, <br>${lng}
- </div>
- `;
- 
- cornerEl.style.display = window._isParcelLabelsVisible ? 'block' : 'none';
+                            const cornerEl = document.createElement('div');
+                            // Khung chứa có kích thước 0x0 để tâm Marker (anchor: 'center') ghim chuẩn 100% vào tọa độ [lng, lat]
+                            cornerEl.style.position = 'relative';
+                            cornerEl.style.width = '0px';
+                            cornerEl.style.height = '0px';
 
- const cornerMarker = new maplibregl.Marker({ element: cornerEl, anchor: 'center' })
- .setLngLat(coord)
- .addTo(map);
+                            cornerEl.innerHTML = `
+                                <!-- Chấm tròn ranh giới: Định vị chính xác tâm nằm đúng tại tọa độ (0,0) -->
+                                <div style="position: absolute; top: -4px; left: -4px; width: 8px; height: 8px; background-color: #ffffff; border: 2px solid #000000; border-radius: 50%;"></div>
+                                <!-- Khối chữ tọa độ: Đặt dịch chuyển nằm bên dưới chấm tròn, tự động căn giữa -->
+                                <div style="position: absolute; top: 6px; left: 50%; transform: translateX(-50%); color: #ffffff; font-size: 11px; font-weight: bold; text-shadow: 1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000; white-space: nowrap; text-align: center;">
+                                    G${index + 1}/${totalCorners}:<br>${lat}, <br>${lng}
+                                </div>
+                            `;
+                            
+                            cornerEl.style.display = window._isParcelLabelsVisible ? 'block' : 'none';
 
- activeMarkers.push(cornerMarker);
- });
- }
+                            // Ghim tâm tuyệt đối vào tọa độ ranh giới
+                            const cornerMarker = new maplibregl.Marker({ element: cornerEl, anchor: 'center' })
+                                .setLngLat(coord)
+                                .addTo(map);
+
+                            activeMarkers.push(cornerMarker);
+                        });
+                    }
  } catch (err) {
  console.error("Lỗi trong quá trình tính toán độ dài cạnh thửa đất:", err);
  }
