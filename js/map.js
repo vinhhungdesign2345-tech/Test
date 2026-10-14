@@ -647,21 +647,20 @@ function initMap() {
                             const lat = coord[1].toFixed(4); // Lấy vĩ độ, làm tròn 4 chữ số thập phân
 
                             const cornerEl = document.createElement('div');
-                            // Tích hợp chấm tròn màu trắng viền đen (8x8px) ngay chính giữa tâm, kèm thông tin tọa độ bám sát bên dưới
                             cornerEl.innerHTML = `
                                 <div style="width: 8px; height: 8px; background-color: #ffffff; border: 2px solid #000000; border-radius: 50%; margin: 0 auto 2px auto;"></div>
-                                <div style="color: #ffffff; font-size: 11px; font-weight: bold; text-shadow: 1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000; white-space: nowrap; text-align: center;">
-                                    G${index + 1}/${totalCorners}:<br>${lat}, <br>${lng}
+                                <div style="color: #ffffff; font-size: 12px; font-weight: normal; text-shadow: 1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000; white-space: nowrap; text-align: center;">
+                                G${index + 1}/${uniqueCoords.length}:<br>${lat} <br> ${lng}
                                 </div>
-                            `;
+                                `;
                             
                             // Điều kiện ẩn/hiện nhãn theo trạng thái chung
                             cornerEl.style.display = window._isParcelLabelsVisible ? 'block' : 'none';
 
                             // Dùng anchor: 'center' để tâm của chấm tròn ghim thẳng tuyệt đối vào tọa độ góc [lng, lat]
                             const cornerMarker = new maplibregl.Marker({ element: cornerEl, anchor: 'center' })
-                                .setLngLat(coord)
-                                .addTo(map);
+                            .setLngLat(coord)
+                            .addTo(map);
 
                             activeMarkers.push(cornerMarker);
                         });
