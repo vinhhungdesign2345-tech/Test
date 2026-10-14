@@ -629,7 +629,7 @@ function initMap() {
                         map.getSource('parcel-dimensions-source').setData({ type: 'FeatureCollection', features: dimensionFeatures });
                     }
 
-                    // TỌA ĐỘ CÁC GÓC THỬA ĐẤT (LỌC CHUẨN CÁC ĐỈNH GÓC GỐC - BỎ ĐIỂM DƯ THỪA TRÊN CẠNH)
+                    // TỌA ĐỘ CÁC GÓC THỬA ĐẤT (G1, G2,...) - AN TOÀN VÀ CHUẨN XÁC
                     let polygonCoords = [];
                     if (selectedFeature.geometry.type === 'Polygon') {
                         polygonCoords = selectedFeature.geometry.coordinates[0];
@@ -638,56 +638,34 @@ function initMap() {
                     }
 
                     if (polygonCoords && polygonCoords.length > 0) {
-                        const rawCoords = polygonCoords.slice(0, polygonCoords.length - 1); // Bỏ điểm lặp cuối
+                        const uniqueCoords = polygonCoords.slice(0, polygonCoords.length - 1); // Bỏ điểm lặp cuối
 
-                        // Thuật toán lọc: Chỉ giữ lại các điểm là đỉnh góc thực sự (góc bẻ khúc thay đổi hướng)
-                        let cornerCoords = [];
-                        const len = rawCoords.length;
+                        if (uniqueCoords.length > 0) {
+                            const totalCorners = uniqueCoords.length;
 
-                        for (let i = 0; i < len; i++) {
-                            const prev = rawCoords[(i - 1 + len) % len];
-                            const curr = rawCoords[i];
-                            const next = rawCoords[(i + 1) % len];
+                            uniqueCoords.forEach((coord, index) => {
+                                const lng = coord[0].toFixed(4);
+                                const lat = coord[1].toFixed(4);
 
-                            // Tính vector hướng để kiểm tra xem điểm curr có phải là điểm gấp khúc (góc ranh) hay chỉ là điểm thẳng hàng
-                            const v1x = curr[0] - prev[0];
-                            const v1y = curr[1] - prev[1];
-                            const v2x = next[0] - curr[0];
-                            const v2y = next[1] - curr[1];
+                                const cornerEl = document.createElement('div');
+                                // Tích hợp chấm tròn màu trắng viền đen ngay tâm, chữ tọa độ bám sát bên dưới
+                                cornerEl.innerHTML = `
+                                    <div style="width: 8px; height: 8px; background-color: #ffffff; border: 2px solid #000000; border-radius: 50%; margin: 0 auto 2px auto;"></div>
+                                    <div style="color: #ffffff; font-size: 11px; font-weight: bold; text-shadow: 1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000; white-space: nowrap; text-align: center;">
+                                        G${index + 1}/${totalCorners}:<br>${lat}, <br>${lng}
+                                    </div>
+                                `;
+                                
+                                cornerEl.style.display = window._isParcelLabelsVisible ? 'block' : 'none';
 
-                            // Tích chéo để kiểm tra độ đổi hướng (cross product khác 0 nghĩa là có bẻ góc)
-                            const cross = v1x * v2y - v1y * v2x;
-                            
-                            // Nếu có sự thay đổi hướng hoặc là các điểm mốc chính thì đưa vào danh sách góc
-                            if (Math.abs(cross) > 1e-10 || i === 0) {
-                                cornerCoords.push(curr);
-                            }
+                                // Ghim chuẩn tâm marker vào tọa độ góc
+                                const cornerMarker = new maplibregl.Marker({ element: cornerEl, anchor: 'center' })
+                                    .setLngLat(coord)
+                                    .addTo(map);
+
+                                activeMarkers.push(cornerMarker);
+                            });
                         }
-
-                        // Nếu bộ lọc góc quá ít, fallback về mảng gốc để đảm bảo luôn hiển thị đủ
-                        const finalCorners = cornerCoords.length >= 3 ? cornerCoords : rawCoords;
-                        const totalCorners = finalCorners.length;
-
-                        finalCorners.forEach((coord, index) => {
-                            const lng = coord[0].toFixed(4);
-                            const lat = coord[1].toFixed(4);
-
-                            const cornerEl = document.createElement('div');
-                            cornerEl.innerHTML = `
-                                <div style="width: 8px; height: 8px; background-color: #ffffff; border: 2px solid #000000; border-radius: 50%; margin: 0 auto 2px auto;"></div>
-                                <div style="color: #ffffff; font-size: 11px; font-weight: bold; text-shadow: 1px 1px 2px #000000, -1px -1px 2px #000000, 1px -1px 2px #000000, -1px 1px 2px #000000; white-space: nowrap; text-align: center;">
-                                    G${index + 1}/${totalCorners}:<br>${lat}, <br>${lng}
-                                </div>
-                            `;
-                            
-                            cornerEl.style.display = window._isParcelLabelsVisible ? 'block' : 'none';
-
-                            const cornerMarker = new maplibregl.Marker({ element: cornerEl, anchor: 'center' })
-                                .setLngLat(coord)
-                                .addTo(map);
-
-                            activeMarkers.push(cornerMarker);
-                        });
                     }
             // ==========================================
             // TRÍCH XUẤT THÔNG TIN THUỘC TÍNH THỬA ĐẤT
